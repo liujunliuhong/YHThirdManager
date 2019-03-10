@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "YHQQManager.h"
 #import "YHWXManager.h"
+#import "SDK.h"
 
 @interface AppDelegate ()
 
@@ -18,7 +19,14 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    
+    
+    [[YHWXManager sharedInstance] initWithAppID:QAQ_WECHAT_APP_ID appSecret:QAQ_WECHAT_APP_SECRET];
+    
+    [[YHQQManager sharedInstance] initWithAppID:QAQ_QQ_APP_ID];
+    
+    
+    
     return YES;
 }
 
