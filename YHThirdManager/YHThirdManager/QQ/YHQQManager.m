@@ -93,15 +93,17 @@
 }
 
 - (void)handleOpenURL:(NSURL *)URL{
-    YHQQDebugLog(@"[handleOpenURL] [URL] %@", URL);
-    [TencentOAuth HandleOpenURL:URL];
-    [QQApiInterface handleOpenURL:URL delegate:self];
+    if ([URL.scheme hasPrefix:@"tencent"]) {
+        YHQQDebugLog(@"[handleOpenURL] [URL] %@", URL);
+        [TencentOAuth HandleOpenURL:URL];
+        [QQApiInterface handleOpenURL:URL delegate:self];
+    }
 }
 
 - (void)loginWithShowHUD:(BOOL)showHUD
          completionBlock:(void (^)(YHQQLoginResult * _Nullable))completionBlock{
     if (!self.appID) {
-        YHQQDebugLog(@"[初始化] appID为空");
+        YHQQDebugLog(@"[登录] appID为空");
         if (completionBlock) {
             completionBlock(nil);
         }

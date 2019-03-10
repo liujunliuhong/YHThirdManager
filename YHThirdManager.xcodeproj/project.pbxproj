@@ -17,6 +17,8 @@
 		EEC998D62234D49B001F16E2 /* YHWXManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EEC998D02234D49B001F16E2 /* YHWXManager.m */; };
 		EEC998D72234D49B001F16E2 /* YHQQManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EEC998D42234D49B001F16E2 /* YHQQManager.m */; };
 		EEC998DB2234D586001F16E2 /* TencentOpenAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC998DA2234D586001F16E2 /* TencentOpenAPI.framework */; };
+		EEC998E02234EE10001F16E2 /* YHSinaManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EEC998DF2234EE10001F16E2 /* YHSinaManager.m */; };
+		EEC998E422351E91001F16E2 /* test_share.png in Resources */ = {isa = PBXBuildFile; fileRef = EEC998E322351E91001F16E2 /* test_share.png */; };
 		F52C662FD6B10D7E9ED6E687 /* libPods-YHThirdManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7CF05DB0FFAAD4A83C48FB2B /* libPods-YHThirdManager.a */; };
 /* End PBXBuildFile section */
 
@@ -42,6 +44,9 @@
 		EEC998D42234D49B001F16E2 /* YHQQManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YHQQManager.m; sourceTree = "<group>"; };
 		EEC998DA2234D586001F16E2 /* TencentOpenAPI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TencentOpenAPI.framework; sourceTree = "<group>"; };
 		EEC998DC2234D730001F16E2 /* SDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDK.h; sourceTree = "<group>"; };
+		EEC998DE2234EE10001F16E2 /* YHSinaManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YHSinaManager.h; sourceTree = "<group>"; };
+		EEC998DF2234EE10001F16E2 /* YHSinaManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YHSinaManager.m; sourceTree = "<group>"; };
+		EEC998E322351E91001F16E2 /* test_share.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = test_share.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +105,7 @@
 				EEA34C5A2234D25600D18F8A /* AppDelegate.m */,
 				EEA34C5C2234D25600D18F8A /* ViewController.h */,
 				EEA34C5D2234D25600D18F8A /* ViewController.m */,
+				EEC998E322351E91001F16E2 /* test_share.png */,
 				EEC998D82234D4D1001F16E2 /* ThirdParty */,
 				EEC998CB2234D49B001F16E2 /* YHThirdManager */,
 				EEA34C5F2234D25600D18F8A /* Main.storyboard */,
@@ -114,6 +120,7 @@
 		EEC998CB2234D49B001F16E2 /* YHThirdManager */ = {
 			isa = PBXGroup;
 			children = (
+				EEC998DD2234EDEA001F16E2 /* Sina */,
 				EEC998CC2234D49B001F16E2 /* WeiXin_NoPay */,
 				EEC998CF2234D49B001F16E2 /* WeiXin */,
 				EEC998D22234D49B001F16E2 /* QQ */,
@@ -162,6 +169,15 @@
 				EEC998DA2234D586001F16E2 /* TencentOpenAPI.framework */,
 			);
 			path = QQ;
+			sourceTree = "<group>";
+		};
+		EEC998DD2234EDEA001F16E2 /* Sina */ = {
+			isa = PBXGroup;
+			children = (
+				EEC998DE2234EE10001F16E2 /* YHSinaManager.h */,
+				EEC998DF2234EE10001F16E2 /* YHSinaManager.m */,
+			);
+			path = Sina;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -226,6 +242,7 @@
 				EEA34C662234D25700D18F8A /* LaunchScreen.storyboard in Resources */,
 				EEA34C632234D25700D18F8A /* Assets.xcassets in Resources */,
 				EEA34C612234D25600D18F8A /* Main.storyboard in Resources */,
+				EEC998E422351E91001F16E2 /* test_share.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -287,6 +304,7 @@
 				EEA34C5E2234D25600D18F8A /* ViewController.m in Sources */,
 				EEA34C692234D25700D18F8A /* main.m in Sources */,
 				EEA34C5B2234D25600D18F8A /* AppDelegate.m in Sources */,
+				EEC998E02234EE10001F16E2 /* YHSinaManager.m in Sources */,
 				EEC998D62234D49B001F16E2 /* YHWXManager.m in Sources */,
 				EEC998D52234D49B001F16E2 /* YHWXNoPayManager.m in Sources */,
 			);
@@ -432,6 +450,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 5F3XP4EHW6;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/YHThirdManager/ThirdParty/QQ",
@@ -442,7 +461,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yinhe.YHThirdManager;
+				PRODUCT_BUNDLE_IDENTIFIER = com.snto.qaq;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -454,6 +473,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 5F3XP4EHW6;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/YHThirdManager/ThirdParty/QQ",
@@ -464,7 +484,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yinhe.YHThirdManager;
+				PRODUCT_BUNDLE_IDENTIFIER = com.snto.qaq;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 			};

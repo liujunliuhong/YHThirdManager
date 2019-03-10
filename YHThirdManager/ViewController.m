@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import "YHWXManager.h"
 #import "YHQQManager.h"
+#import "YHSinaManager.h"
 #import "SDK.h"
 #import <MBProgressHUD/MBProgressHUD.h>
 
@@ -33,32 +34,47 @@
 - (void)btnClick{
     __weak typeof(self) weak_self = self;
     
-    //    [[YHWXManager sharedInstance] loginWithViewController:self showHUD:YES completionBlock:^(YHWXLoginResult * _Nullable result) {
-    //        [YHMBHud hudOnlyMessage:@"成功获取到信息" inView:nil dismissBlock:nil];
-    //        NSLog(@"😆:%@", result);
-    //    }];
+//    //微信登录
+//    [[YHWXManager sharedInstance] loginWithViewController:self showHUD:YES completionBlock:^(YHWXLoginResult * _Nullable result) {
+//        [weak_self hudOnlyMessage:@"成功获取到信息" inView:nil dismissBlock:nil];
+//        NSLog(@"😆:%@", result);
+//    }];
     
     
+//    // 微信分享
+//    [[YHWXManager sharedInstance] shareWebWithURL:@"https://www.baidu.com" title:@"title" description:@"description" thumbImage:nil shareType:YHWXShareType_Session showHUD:YES completionBlock:^(BOOL isSuccess) {
+//        NSLog(@"😆:%d", isSuccess);
+//    }];
+//
+//    // 微信支付
+//    [[YHWXManager sharedInstance] payWithPartnerID:QAQ_WECHAT_PARTNERID secretKey:QAQ_WECHAT_SECRETKEY prepayID:@"wx081644129033974637e0de663796974002" showHUD:YES comletionBlock:^(BOOL isSuccess) {
+//        NSLog(@"😆:%d", isSuccess);
+//    }];
+//
+//    // QQ分享
+//    [[YHQQManager sharedInstance] shareWebWithURL:@"https://www.baidu.com" title:@"SB" description:@"你是SB" thumbImageURL:@"http://r1.ykimg.com/050E000059488937ADBA1F9712028679" shareType:YHQQShareType_QQ shareDestType:YHQQShareDestType_QQ showHUD:YES completionBlock:^(BOOL isSuccess) {
+//        NSLog(@"😄:%d", (int)isSuccess);
+//    }];
+//
+//    // QQ登录
+//    [[YHQQManager sharedInstance] loginWithShowHUD:YES completionBlock:^(YHQQLoginResult * _Nullable result) {
+//        NSLog(@"😄:%@", result);
+//        [weak_self hudOnlyMessage:@"成功获取到信息" inView:nil dismissBlock:nil];
+//    }];
     
+//    //新浪登录
+//    [[YHSinaManager sharedInstance] loginWithShowHUD:YES completionBlock:^(YHSinaLoginResult * _Nullable result) {
+//        NSLog(@"😄:%@", result);
+//        [weak_self hudOnlyMessage:@"成功获取到信息" inView:nil dismissBlock:nil];
+//    }];
     
-    //    [[YHWXManager sharedInstance] shareWebWithURL:@"https://www.baidu.com" title:@"title" description:@"description" thumbImage:nil shareType:YHWXShareType_Session showHUD:YES completionBlock:^(BOOL isSuccess) {
-    //        NSLog(@"😆:%d", isSuccess);
-    //    }];
-    
-    //    [[YHWXManager sharedInstance] payWithPartnerID:@"1483786922" secretKey:@"97a4b0035899c8e0fa9b1364e9b0d643" prepayID:@"wx081644129033974637e0de663796974002" showHUD:YES comletionBlock:^(BOOL isSuccess, NSError * _Nullable error) {
-    //        NSLog(@"😆:%d", isSuccess);
-    //        NSLog(@"😆:%@", error);
-    //    }];
-    
-    
-    //    [[YHQQManager sharedInstance] shareWebWithURL:@"https://www.baidu.com" title:@"SB" description:@"你是SB" thumbImageURL:@"http://r1.ykimg.com/050E000059488937ADBA1F9712028679" shareType:YHQQShareType_QQ shareDestType:YHQQShareDestType_QQ showHUD:YES completionBlock:^(BOOL isSuccess) {
-    //        NSLog(@"😄:%d", (int)isSuccess);
-    //    }];
-    
-    
-    [[YHQQManager sharedInstance] loginWithShowHUD:YES completionBlock:^(YHQQLoginResult * _Nullable result) {
-        NSLog(@"😄:%@", result);
-        [weak_self hudOnlyMessage:@"成功获取到信息" inView:nil dismissBlock:nil];
+    //新浪分享
+//    [[YHSinaManager sharedInstance] shareWebWithURL:@"https://www.baidu.com" title:@"啦啦" description:@"😋😋😋😋😋😋" thumbnailData:[UIImage imageNamed:@"test_share.jpeg"] showHUD:YES completionBlock:^(BOOL isSuccess) {
+//        NSLog(@"😄:%d", isSuccess);
+//    }];
+//
+    [[YHSinaManager sharedInstance] shareWithContent:@"哈哈哈" images:@[[UIImage imageNamed:@"test_share.png"]] showHUD:YES completionBlock:^(BOOL isSuccess) {
+        NSLog(@"😄:%d", isSuccess);
     }];
 }
 

@@ -105,8 +105,10 @@
 }
 
 - (void)handleOpenURL:(NSURL *)URL{
-    YHWXDebugLog(@"[handleOpenURL] [URL] %@", URL);
-    [WXApi handleOpenURL:URL delegate:self];
+    if ([URL.scheme hasPrefix:@"wx"]) {
+        YHWXDebugLog(@"[handleOpenURL] [URL] %@", URL);
+        [WXApi handleOpenURL:URL delegate:self];
+    }
 }
 
 - (void)loginWithViewController:(UIViewController *)viewController
@@ -409,7 +411,7 @@
 }
 
 #pragma mark ------------------ 私有方法 ------------------
-+ (void)requestWithURL:(NSString *)URL completionBlock:(void (^)(id _Nullable, NSError * _Nullable))completionBlock{
++ (void)_requestWithURL:(NSString *)URL completionBlock:(void (^)(id _Nullable responseObject, NSError * _Nullable error))completionBlock{
     NSURL *url = [NSURL URLWithString:URL];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     NSURLSession *session = [NSURLSession sharedSession];
@@ -438,7 +440,7 @@
 - (void)_requestAccessTokenWithCode:(NSString *)code{
     NSString *url = [NSString stringWithFormat:@"https://api.weixin.qq.com/sns/oauth2/access_token?appid=%@&secret=%@&code=%@&grant_type=authorization_code", self.appID, self.appSecret, code];
     __weak typeof(self) weak_self = self;
-    [YHWXManager requestWithURL:url completionBlock:^(id  _Nullable responseObject, NSError * _Nullable error) {
+    [YHWXManager _requestWithURL:url completionBlock:^(id  _Nullable responseObject, NSError * _Nullable error) {
         if (error) {
             YHWXDebugLog(@"[_requestAccessTokenWithCode] [error] %@", error);
         }
@@ -494,7 +496,7 @@
         return;
     }
     NSString *url = [NSString stringWithFormat:@"https://api.weixin.qq.com/sns/userinfo?access_token=%@&openid=%@", self.result.access_token, self.result.openid];
-    [YHWXManager requestWithURL:url completionBlock:^(id  _Nullable responseObject, NSError * _Nullable error) {
+    [YHWXManager _requestWithURL:url completionBlock:^(id  _Nullable responseObject, NSError * _Nullable error) {
         if (error) {
             YHWXDebugLog(@"[_requestUserInfo] [error] %@", error);
         }

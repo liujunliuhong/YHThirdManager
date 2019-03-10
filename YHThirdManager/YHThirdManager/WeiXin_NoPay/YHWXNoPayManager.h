@@ -89,6 +89,7 @@ NS_ASSUME_NONNULL_BEGIN
  注意：
  1、新版本微信SDK分享的时候，即使点击微信分享页面的取消按钮时，也是回调的分享成功。具体请看:https://mp.weixin.qq.com/s?__biz=MjM5NDAwMTA2MA==&mid=2695730124&idx=1&sn=666a448b047d657350de7684798f48d3&chksm=83d74a07b4a0c311569a748f4d11a5ebcce3ba8f6bd5a4b3183a4fea0b3442634a1c71d3cdd0&scene=21#wechat_redirect
  2、微信SDK要求分享图片大小不得超过64K，否则会导致分享失败并且还TMD没任何提示。而通常开发过程中能获得的仅为一个URL，像素和图片文件大小不得而知，我的解决办法是先对图片进行裁剪，再压缩。
+ 3、图片下载可以用SD下载
  
  - (UIImage *)imageWithImage:(UIImage*)image scaledToSize:(CGSize)newSize{
     UIGraphicsBeginImageContext(newSize);

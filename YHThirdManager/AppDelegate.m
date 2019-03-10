@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "YHQQManager.h"
 #import "YHWXManager.h"
+#import "YHSinaManager.h"
 #import "SDK.h"
 
 @interface AppDelegate ()
@@ -25,7 +26,7 @@
     
     [[YHQQManager sharedInstance] initWithAppID:QAQ_QQ_APP_ID];
     
-    
+    [[YHSinaManager sharedInstance] initWithAppID:QAQ_SINA_APP_KEY redirectURI:QAQ_SINA_Redirect_URL];
     
     return YES;
 }
@@ -34,6 +35,7 @@
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options{
     [[YHWXManager sharedInstance] handleOpenURL:url];
     [[YHQQManager sharedInstance] handleOpenURL:url];
+    [[YHSinaManager sharedInstance] handleOpenURL:url];
     return YES;
 }
 
@@ -41,6 +43,7 @@
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url{
     [[YHWXManager sharedInstance] handleOpenURL:url];
     [[YHQQManager sharedInstance] handleOpenURL:url];
+    [[YHSinaManager sharedInstance] handleOpenURL:url];
     return YES;
 }
 
