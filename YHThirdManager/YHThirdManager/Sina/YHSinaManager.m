@@ -130,7 +130,10 @@
     authorizeRequest.shouldShowWebViewForAuthIfCannotSSO = YES;
     authorizeRequest.scope = @"all";
     dispatch_async(dispatch_get_main_queue(), ^{
-       [WeiboSDK sendRequest:authorizeRequest];
+       BOOL res = [WeiboSDK sendRequest:authorizeRequest];
+        if (!res) {
+            [self _loginResult:nil];
+        }
     });
 }
 
@@ -170,7 +173,10 @@
     WBSendMessageToWeiboRequest *request = [WBSendMessageToWeiboRequest requestWithMessage:messageObject authInfo:authorizeRequest access_token:self.access_token]; // access_token传nil会分享不成功，但是如果是一个空的对象，却成功，这微博SDK真怪
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [WeiboSDK sendRequest:request];
+        BOOL res = [WeiboSDK sendRequest:request];
+        if (!res) {
+            [self _shareResult:NO];
+        }
     });
 }
 

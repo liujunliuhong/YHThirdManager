@@ -142,7 +142,17 @@
     SendAuthReq *rq = [[SendAuthReq alloc] init];
     rq.scope = @"snsapi_userinfo";
     rq.state = [NSUUID UUID].UUIDString;
-    [WXApi sendAuthReq:rq viewController:viewController delegate:self];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        BOOL res = NO;
+        if (viewController) {
+            res = [WXApi sendAuthReq:rq viewController:viewController delegate:self];
+        } else {
+            res = [WXApi sendReq:rq];
+        }
+        if (!res) {
+            [self _loginResult:nil];
+        }
+    });
 }
 
 - (void)shareWebWithURL:(NSString *)URL
@@ -191,7 +201,12 @@
     }
     
     req.scene = scene;
-    [WXApi sendReq:req];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        BOOL res = [WXApi sendReq:req];
+        if (!res) {
+            [self _shareResult:NO];
+        }
+    });
 }
 
 #pragma mark ------------------ Notification ------------------

@@ -144,7 +144,15 @@
     rq.scope = @"snsapi_userinfo";
     rq.state = [NSUUID UUID].UUIDString;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [WXApi sendAuthReq:rq viewController:viewController delegate:self];
+        BOOL res = NO;
+        if (viewController) {
+            res = [WXApi sendAuthReq:rq viewController:viewController delegate:self];
+        } else {
+            res = [WXApi sendReq:rq];
+        }
+        if (!res) {
+            [self _loginResult:nil];
+        }
     });
 }
 - (void)shareWebWithURL:(NSString *)URL
@@ -192,7 +200,10 @@
     }
     req.scene = scene;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [WXApi sendReq:req];
+        BOOL res = [WXApi sendReq:req];
+        if (!res) {
+            [self _shareResult:NO];
+        }
     });
 }
 
@@ -258,7 +269,10 @@
     request.timeStamp = timestamp;
     request.sign = sign;
     dispatch_async(dispatch_get_main_queue(), ^{
-       [WXApi sendReq:request];
+        BOOL res = [WXApi sendReq:request];
+        if (!res) {
+            [self _payResult:NO];
+        }
     });
 }
 
@@ -325,7 +339,10 @@
     request.timeStamp = [timeStamp intValue];
     request.sign = sign;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [WXApi sendReq:request];
+        BOOL res = [WXApi sendReq:request];
+        if (!res) {
+            [self _payResult:NO];
+        }
     });
 }
 

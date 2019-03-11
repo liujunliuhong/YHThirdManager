@@ -80,7 +80,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param showHUD 是否显示HUD
  @param completionBlock 登录完成后在主线程的回调
  */
-- (void)loginWithViewController:(UIViewController *)viewController
+- (void)loginWithViewController:(nullable UIViewController *)viewController
                         showHUD:(BOOL)showHUD
                 completionBlock:(void(^_Nullable)(YHWXNoPayLoginResult *_Nullable result))completionBlock;
 

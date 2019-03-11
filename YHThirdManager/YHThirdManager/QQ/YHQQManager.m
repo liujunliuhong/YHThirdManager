@@ -125,7 +125,10 @@
                              kOPEN_PERMISSION_GET_USER_INFO,
                              kOPEN_PERMISSION_GET_SIMPLE_USER_INFO];
     dispatch_async(dispatch_get_main_queue(), ^{
-       [self.oauth authorize:permissions inSafari:NO];
+       BOOL res = [self.oauth authorize:permissions inSafari:NO];
+        if (!res) {
+            [self _loginResult:nil];
+        }
     });
 }
 
