@@ -45,7 +45,7 @@
 
 
 
-@interface YHSinaManager () <WeiboSDKDelegate, WBMediaTransferProtocol>
+@interface YHSinaManager () <WeiboSDKDelegate>
 @property (nonatomic, copy) NSString *appID;
 @property (nonatomic, copy) NSString *redirectURI;
 @property (nonatomic, copy) NSString *access_token;
@@ -134,46 +134,6 @@
     });
 }
 
-- (void)shareWebWithURL:(NSString *)URL
-                  title:(NSString *)title
-            description:(NSString *)description
-          thumbnailData:(NSData *)thumbnailData
-                showHUD:(BOOL)showHUD
-        completionBlock:(void (^)(BOOL))completionBlock{
-    if (!self.redirectURI) {
-        YHSNDebugLog(@"[分享] redirectURI为空");
-        return;
-    }
-    if (showHUD) {
-        [self _removeObserve];
-        [self _addObserve];
-        // shou HUD.
-        [self _showHUD];
-    }
-    self.sdkFlag = NO;
-    self.shareCompletionBlock = completionBlock;
-    
-    WBWebpageObject *webObject = [[WBWebpageObject alloc] init];
-    webObject.webpageUrl = URL;
-    webObject.title = title;
-    webObject.description = description;
-    webObject.objectID = [NSUUID UUID].UUIDString;
-    webObject.thumbnailData = thumbnailData;
-    
-    WBMessageObject *messageObject = [[WBMessageObject alloc] init];
-    messageObject.mediaObject = webObject;
-    
-    WBAuthorizeRequest *authorizeRequest = [WBAuthorizeRequest request];
-    authorizeRequest.scope = @"all";
-    authorizeRequest.redirectURI = self.redirectURI;
-    
-    WBSendMessageToWeiboRequest *request = [WBSendMessageToWeiboRequest requestWithMessage:messageObject authInfo:authorizeRequest access_token:self.access_token ? self.access_token : nil];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-       [WeiboSDK sendRequest:request];
-    });
-}
-
 - (void)shareWithContent:(NSString *)content
                   images:(NSArray<UIImage *> *)images
                  showHUD:(BOOL)showHUD
@@ -192,9 +152,12 @@
     self.sdkFlag = NO;
     self.shareCompletionBlock = completionBlock;
     
+    
     WBImageObject *imageObject = [WBImageObject object];
-    [imageObject addImages:images];
-    imageObject.delegate = self;
+    imageObject.isShareToStory = NO;
+    if (images && images.count > 0) {
+        [imageObject addImages:images];
+    }
     
     WBMessageObject *messageObject = [[WBMessageObject alloc] init];
     messageObject.imageObject = imageObject;
@@ -204,20 +167,13 @@
     authorizeRequest.scope = @"all";
     authorizeRequest.redirectURI = self.redirectURI;
     
-    WBSendMessageToWeiboRequest *request = [WBSendMessageToWeiboRequest requestWithMessage:messageObject authInfo:authorizeRequest access_token:self.access_token ? self.access_token : nil];
+    WBSendMessageToWeiboRequest *request = [WBSendMessageToWeiboRequest requestWithMessage:messageObject authInfo:authorizeRequest access_token:self.access_token]; // access_token传nil会分享不成功，但是如果是一个空的对象，却成功，这微博SDK真怪
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [WeiboSDK sendRequest:request];
     });
 }
 
-- (void)wbsdk_TransferDidReceiveObject:(id)object{
-    NSLog(@"1");
-}
-
-- (void)wbsdk_TransferDidFailWithErrorCode:(WBSDKMediaTransferErrorCode)errorCode andError:(NSError *)error{
-    NSLog(@"2");
-}
 
 #pragma mark ------------------ Notification ------------------
 - (void)applicationWillEnterForeground:(NSNotification *)noti{

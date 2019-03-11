@@ -73,7 +73,7 @@
 //        NSLog(@"😄:%d", isSuccess);
 //    }];
 //
-    [[YHSinaManager sharedInstance] shareWithContent:@"哈哈哈" images:@[[UIImage imageNamed:@"test_share.png"]] showHUD:YES completionBlock:^(BOOL isSuccess) {
+    [[YHSinaManager sharedInstance] shareWithContent:@"哈哈哈" images:@[[UIImage imageNamed:@"1.png"],[UIImage imageNamed:@"2.png"],[UIImage imageNamed:@"4.jpg"]] showHUD:YES completionBlock:^(BOOL isSuccess) {
         NSLog(@"😄:%d", isSuccess);
     }];
 }

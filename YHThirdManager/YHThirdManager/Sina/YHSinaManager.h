@@ -45,23 +45,43 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
+
+/**
+ handleOpenURL
+
+ @param URL URL
+ */
 - (void)handleOpenURL:(NSURL *)URL;
 
+
+/**
+ 微博 SDK初始化
+
+ @param appID appID
+ @param redirectURI redirectURI
+ */
 - (void)initWithAppID:(NSString *)appID redirectURI:(NSString *)redirectURI;
 
+
+/**
+ 微博登录
+
+ @param showHUD 是否显示HUD
+ @param completionBlock completionBlock
+ */
 - (void)loginWithShowHUD:(BOOL)showHUD completionBlock:(void(^_Nullable)(YHSinaLoginResult *_Nullable result))completionBlock;
 
 
-- (void)shareWebWithURL:(NSString *)URL
-                  title:(NSString *)title
-            description:(nullable NSString *)description
-          thumbnailData:(nullable NSData *)thumbnailData
-                showHUD:(BOOL)showHUD
-        completionBlock:(void(^_Nullable)(BOOL isSuccess))completionBlock;
+/**
+ 发微博，会调起微博的发布面板
 
-
+ @param content 文本内容
+ @param images 图片集合(这个图片好像有限制，我在网上随便下载一张图片，拖进工程然后分享，但是分享不成功)
+ @param showHUD 是否显示HUD
+ @param completionBlock completionBlock
+ */
 - (void)shareWithContent:(nullable NSString *)content
-                  images:(NSArray<UIImage *> *)images
+                  images:(nullable NSArray<UIImage *> *)images
                  showHUD:(BOOL)showHUD
          completionBlock:(void(^_Nullable)(BOOL isSuccess))completionBlock;
 
