@@ -61,8 +61,28 @@
 //        NSLog(@"😄:%@", result);
 //        [weak_self hudOnlyMessage:@"成功获取到信息" inView:nil dismissBlock:nil];
 //    }];
-    
-//    //新浪登录
+    // 新浪授权
+    [[YHSinaManager sharedInstance] authWithShowHUD:YES completionBlock:^(WBAuthorizeResponse * _Nullable authResponse) {
+        NSLog(@"😆accessToken:%@", authResponse.accessToken);
+        NSLog(@"😆userID:%@", authResponse.userID);
+        if (!authResponse) {
+            return ;
+        }
+//        [[YHSinaManager sharedInstance] loginWithAccessToken:authResponse.accessToken userID:authResponse.userID showHUD:YES completionBlock:^(YHSinaLoginResult * _Nullable result) {
+        //
+        //        }];
+//        [[YHSinaManager sharedInstance] shareWithAccessToken:authResponse.accessToken content:@"啦啦哈哈哈" images:nil showHUD:YES completionBlock:^(BOOL isSuccess) {
+//            NSLog(@"😆:分享结果:%d", isSuccess);
+//        }];
+        [[YHSinaManager sharedInstance] commentWeiBoWithAccessToken:authResponse.accessToken ID:@"4348583429975153" comment:@"啦啦啦啦哈哈" isCommentOriginWhenTransfer:NO showHUD:YES completionBlock:^(BOOL isSuccess) {
+
+        }];
+//        [[YHSinaManager sharedInstance] getMineWeoBoListWithAccessToken:authResponse.accessToken userID:authResponse.userID perCount:20 curPage:1 showHUD:YES completionBlock:^(NSDictionary * _Nullable responseObject) {
+//
+//        }];
+        
+    }];
+    //    //新浪登录
 //    [[YHSinaManager sharedInstance] loginWithShowHUD:YES completionBlock:^(YHSinaLoginResult * _Nullable result) {
 //        NSLog(@"😄:%@", result);
 //        [weak_self hudOnlyMessage:@"成功获取到信息" inView:nil dismissBlock:nil];
@@ -73,9 +93,9 @@
 //        NSLog(@"😄:%d", isSuccess);
 //    }];
 //
-    [[YHSinaManager sharedInstance] shareWithContent:@"哈哈哈" images:@[[UIImage imageNamed:@"1.png"],[UIImage imageNamed:@"2.png"],[UIImage imageNamed:@"4.jpg"]] showHUD:YES completionBlock:^(BOOL isSuccess) {
-        NSLog(@"😄:%d", isSuccess);
-    }];
+//    [[YHSinaManager sharedInstance] shareWithContent:@"哈哈哈" images:@[[UIImage imageNamed:@"1.png"],[UIImage imageNamed:@"2.png"],[UIImage imageNamed:@"4.jpg"]] showHUD:YES completionBlock:^(BOOL isSuccess) {
+//        NSLog(@"😄:%d", isSuccess);
+//    }];
 }
 
 /** 仅仅只有一段提示信息，一段时间后消失 */
@@ -97,7 +117,7 @@
         hud.label.numberOfLines = 0;
         hud.bezelView.style = MBProgressHUDBackgroundStyleSolidColor;
         hud.bezelView.color = [UIColor blackColor];
-        hud.removeFromSuperViewOnHide = YES;
+        hud.removeFromSuperViewOnHide = NO;
         [hud hideAnimated:YES afterDelay:2];//必须在主线程，源码规定
         hud.completionBlock = dismissBlock;
     });
