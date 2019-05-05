@@ -63,25 +63,49 @@
 //    }];
     // 新浪授权
     [[YHSinaManager sharedInstance] authWithShowHUD:YES completionBlock:^(WBAuthorizeResponse * _Nullable authResponse) {
-        NSLog(@"😆accessToken:%@", authResponse.accessToken);
-        NSLog(@"😆userID:%@", authResponse.userID);
-        if (!authResponse) {
-            return ;
-        }
-//        [[YHSinaManager sharedInstance] loginWithAccessToken:authResponse.accessToken userID:authResponse.userID showHUD:YES completionBlock:^(YHSinaLoginResult * _Nullable result) {
-        //
-        //        }];
-//        [[YHSinaManager sharedInstance] shareWithAccessToken:authResponse.accessToken content:@"啦啦哈哈哈" images:nil showHUD:YES completionBlock:^(BOOL isSuccess) {
+//        NSLog(@"😆accessToken:%@", authResponse.accessToken);
+//        NSLog(@"😆userID:%@", authResponse.userID);
+//        if (!authResponse) {
+//            return ;
+//        }
+////        [[YHSinaManager sharedInstance] loginWithAccessToken:authResponse.accessToken userID:authResponse.userID showHUD:YES completionBlock:^(YHSinaLoginResult * _Nullable result) {
+////
+////                }];
+//        [[YHSinaManager sharedInstance] shareWithAccessToken:authResponse.accessToken content:@"123456" images:@[[UIImage imageNamed:@"1.png"]] showHUD:YES completionBlock:^(BOOL isSuccess) {
 //            NSLog(@"😆:分享结果:%d", isSuccess);
 //        }];
-        [[YHSinaManager sharedInstance] commentWeiBoWithAccessToken:authResponse.accessToken ID:@"4348583429975153" comment:@"啦啦啦啦哈哈" isCommentOriginWhenTransfer:NO showHUD:YES completionBlock:^(BOOL isSuccess) {
-
-        }];
-//        [[YHSinaManager sharedInstance] getMineWeoBoListWithAccessToken:authResponse.accessToken userID:authResponse.userID perCount:20 curPage:1 showHUD:YES completionBlock:^(NSDictionary * _Nullable responseObject) {
+////        [[YHSinaManager sharedInstance] commentWeiBoWithAccessToken:authResponse.accessToken ID:@"4348583429975153" comment:@"lalalalal" isCommentOriginWhenTransfer:NO showHUD:YES completionBlock:^(BOOL isSuccess) {
+////
+////        }];
+////        [[YHSinaManager sharedInstance] getMineWeoBoListWithAccessToken:authResponse.accessToken userID:authResponse.userID perCount:20 curPage:1 showHUD:YES completionBlock:^(NSDictionary * _Nullable responseObject) {
+////
+////        }];
 //
-//        }];
-        
     }];
+    
+    
+//
+//    NSData *data1 = UIImageJPEGRepresentation([UIImage imageNamed:@"1.png"], 0.2);
+//    NSData *data2 = UIImageJPEGRepresentation([UIImage imageNamed:@"2.png"], 0.2);
+//    NSData *data3 = UIImageJPEGRepresentation([UIImage imageNamed:@"123.png"], 0.1);
+//    UIImage *image1 = [UIImage imageWithData:data1];
+//    UIImage *image2 = [UIImage imageWithData:data2];
+//    UIImage *image3 = [UIImage imageWithData:data3];
+//    [[YHSinaManager sharedInstance] shareWithContent:@"哈哈" imageData:data2 showHUD:YES completionBlock:^(BOOL isSuccess) {
+//
+//    }];
+    
+    
+    
+    
+//    [[YHSinaManager sharedInstance] commentWeiBo2WithID:@"4368567048776515" comment:@"你好啊啊"];
+    
+    //
+//    [[YHSinaManager sharedInstance] commentWeiBoWithAccessToken:@"2.00QtnqgBGdJgTB5e841d5cdcJJVruD" ID:@"4348583429975153" comment:@"啦啦啦啦哈哈" isCommentOriginWhenTransfer:NO showHUD:YES completionBlock:^(BOOL isSuccess) {
+//
+//    }];
+    
+    
     //    //新浪登录
 //    [[YHSinaManager sharedInstance] loginWithShowHUD:YES completionBlock:^(YHSinaLoginResult * _Nullable result) {
 //        NSLog(@"😄:%@", result);

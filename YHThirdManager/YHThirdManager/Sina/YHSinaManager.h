@@ -33,8 +33,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
- * 新浪登录、分享功能的封装
+ * 新浪登录、分享功能的封装（微博SDK是真心的垃圾，Android的都在持续更新，就iOS的不更新，上次更新都是2年前的了。这SDK用着真心累）
  * SDK下载下载地址:https://github.com/sinaweibosdk/weibo_ios_sdk
+ * 微博开放平台文档:https://open.weibo.com/wiki/%E9%A6%96%E9%A1%B5
  */
 @interface YHSinaManager : NSObject
 
@@ -88,28 +89,66 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
- 微博分享(需要提前获取accessToken)
+ 微博分享(目前只支持分享单图，多图分享有问题)
 
- @param accessToken accessToken
- @param content 文本内容
- @param images 图片数组
+ @param content 分享文本内容
+ @param imageData 分享的图片(多图分享有问题。最关键的是，如果用WBImageObject的addImages方法，会把分享的图片保存到相册；还有一点，addImages方法，某些图片分享失败，即sendRequest的返回值是NO)
  @param showHUD 是否显示HUD
  @param completionBlock 回调
  */
-- (void)shareWithAccessToken:(NSString *)accessToken
-                     content:(nullable NSString *)content
-                      images:(nullable NSArray<UIImage *> *)images
-                     showHUD:(BOOL)showHUD
-             completionBlock:(void(^_Nullable)(BOOL isSuccess))completionBlock;
+- (void)shareWithContent:(nullable NSString *)content
+               imageData:(nullable NSData *)imageData
+                 showHUD:(BOOL)showHUD
+         completionBlock:(void(^_Nullable)(BOOL isSuccess))completionBlock;
 
 
-- (void)commentWeiBoWithAccessToken:(NSString *)accessToken
-                                 ID:(NSString *)ID
-                            comment:(NSString *)comment
-        isCommentOriginWhenTransfer:(BOOL)isCommentOriginWhenTransfer
-                            showHUD:(BOOL)showHUD completionBlock:(void(^_Nullable)(BOOL isSuccess))completionBlock;
 
 
+/**
+ 通过API的方式评论指定微博(需要提前获取accessToken)
+ 跳转到指定微博    sinaweibo://detail/?dispMeIfNeed=1&mblogid=<MID>
+ 调起微博直接到指定的个人页面 sinaweibo://userinfo?uid=xxxx
+ 
+ @param accessToken accessToken
+ @param ID 微博ID
+ @param comment 评论的内容
+ @param isCommentOriginWhenTransfer 当评论转发微博时，是否评论给原微博
+ @param showHUD 是否显示HUD
+ @param completionBlock 回调
+ */
+- (void)commentWeiBo1WithAccessToken:(NSString *)accessToken
+                                  ID:(NSString *)ID
+                             comment:(NSString *)comment
+         isCommentOriginWhenTransfer:(BOOL)isCommentOriginWhenTransfer
+                             showHUD:(BOOL)showHUD completionBlock:(void(^_Nullable)(BOOL isSuccess))completionBlock;
+
+
+
+
+/**
+ 评论指定微博(通过scheme的方式评论指定微博，可以打开微博的评论面板，评论完成后，不能自动返回APP)
+ 微博SDK的方法 commentToWeibo: 方法不能往输入框里面添加默认的内容
+ 
+ @param ID 微博ID
+ @param comment 评论的内容
+ */
+- (void)commentWeiBo2WithID:(NSString *)ID
+                    comment:(nullable NSString *)comment;
+
+
+
+
+
+/**
+ 获取我自己发布的微博(需要提前获取accessToken)
+
+ @param accessToken accessToken
+ @param userID userID
+ @param perCount 单页返回的条数
+ @param curPage 页数
+ @param showHUD 是否显示HUD
+ @param completionBlock 回调的原始数据
+ */
 - (void)getMineWeoBoListWithAccessToken:(NSString *)accessToken
                                  userID:(NSString *)userID
                                perCount:(int)perCount

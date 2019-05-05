@@ -169,11 +169,10 @@
     [WBHttpRequest requestWithAccessToken:accessToken url:kYHSN_GetUserInfoAPI httpMethod:@"GET" params:param delegate:self withTag:kYHSN_GetUserInfoTag];
 }
 
-- (void)shareWithAccessToken:(NSString *)accessToken
-                     content:(NSString *)content
-                      images:(NSArray<UIImage *> *)images
-                     showHUD:(BOOL)showHUD
-             completionBlock:(void (^)(BOOL))completionBlock{
+- (void)shareWithContent:(NSString *)content
+               imageData:(NSData *)imageData
+                 showHUD:(BOOL)showHUD
+         completionBlock:(void (^)(BOOL))completionBlock{
     __weak typeof(self) weakSelf = self;
     if (!self.redirectURI) {
         YHSNDebugLog(@"[分享] redirectURI为空");
@@ -184,17 +183,16 @@
         [self _addObserve];
         [self getShareHUD];
     }
-    self.sdkFlag = YES;
+    self.sdkFlag = NO;
     self.shareCompletionBlock = completionBlock;
-    
     
     WBMessageObject *messageObject = [[WBMessageObject alloc] init];
     messageObject.text = content;
     
-    if (images && images.count > 0) {
+    if (imageData) {
         WBImageObject *imageObject = [WBImageObject object];
         imageObject.isShareToStory = NO;
-        [imageObject addImages:images];
+        imageObject.imageData = imageData;
         messageObject.imageObject = imageObject;
     }
     
@@ -203,39 +201,66 @@
     authorizeRequest.scope = @"all";
     authorizeRequest.redirectURI = self.redirectURI;
     
-    WBSendMessageToWeiboRequest *request = [WBSendMessageToWeiboRequest requestWithMessage:messageObject authInfo:authorizeRequest access_token:accessToken]; // access_token传nil会分享不成功，但是如果是一个空的对象，却成功，这微博SDK真怪
+    
+    WBSendMessageToWeiboRequest *request = [WBSendMessageToWeiboRequest requestWithMessage:messageObject authInfo:authorizeRequest access_token:nil];
     
     dispatch_async(dispatch_get_main_queue(), ^{
         BOOL res = [WeiboSDK sendRequest:request];
-        
         if (!res) {
             [weakSelf _hideHUD:weakSelf.shareHUD];
         }
     });
 }
 
-- (void)commentWeiBoWithAccessToken:(NSString *)accessToken
-                                 ID:(NSString *)ID
-                            comment:(NSString *)comment
-        isCommentOriginWhenTransfer:(BOOL)isCommentOriginWhenTransfer
-                            showHUD:(BOOL)showHUD completionBlock:(void (^)(BOOL))completionBlock{
-    [WeiboSDK commentToWeibo:ID];
-//    
-//        self.sdkFlag = YES;
-//        if (showHUD) {
-//            [self getCommentWeiBoHUD];
-//        }
-//        self.commentWeiBoCompletionBlock = completionBlock;
-//    
-//        NSDictionary *param = @{@"access_token" : accessToken,
-//                                @"comment" : comment,
-//                            @"id" : ID,
-//                            @"comment_ori" : isCommentOriginWhenTransfer ? @"1" : @"0"};
-//    
-//    [WBHttpRequest requestWithAccessToken:accessToken url:kYHSN_CommentWeiBoAPI httpMethod:@"POST" params:param delegate:self withTag:kYHSN_CommentWeiBoTag];
+- (void)commentWeiBo1WithAccessToken:(NSString *)accessToken
+                                  ID:(NSString *)ID
+                             comment:(NSString *)comment
+         isCommentOriginWhenTransfer:(BOOL)isCommentOriginWhenTransfer
+                             showHUD:(BOOL)showHUD
+                     completionBlock:(void (^)(BOOL))completionBlock{
+    self.sdkFlag = YES;
+    if (showHUD) {
+        [self getCommentWeiBoHUD];
+    }
+    self.commentWeiBoCompletionBlock = completionBlock;
+    
+    NSDictionary *param = @{@"access_token" : accessToken,
+                            @"comment" : comment,
+                            @"id" : ID,
+                            @"comment_ori" : isCommentOriginWhenTransfer ? @"1" : @"0"};
+    
+    [WBHttpRequest requestWithAccessToken:accessToken url:kYHSN_CommentWeiBoAPI httpMethod:@"POST" params:param delegate:self withTag:kYHSN_CommentWeiBoTag];
 }
 
-- (void)getMineWeoBoListWithAccessToken:(NSString *)accessToken userID:(NSString *)userID perCount:(int)perCount curPage:(int)curPage showHUD:(BOOL)showHUD completionBlock:(void (^)(NSDictionary * _Nullable))completionBlock{
+
+- (void)commentWeiBo2WithID:(NSString *)ID
+                    comment:(NSString *)comment{
+    NSString *url = @"";
+    if (!comment || comment.length == 0 || [comment isEqualToString:@""]) {
+        url = [NSString stringWithFormat:@"sinaweibo://comment?srcid=%@", ID];
+    } else {
+        url = [NSString stringWithFormat:@"sinaweibo://comment?srcid=%@&content=%@", ID, comment];
+    }
+    NSURL *URL = [NSURL URLWithString:[self urlEncoding:url]];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([[UIApplication sharedApplication] canOpenURL:URL]) {
+            if (@available(iOS 10.0, *)) {
+                [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
+            } else {
+                [[UIApplication sharedApplication] openURL:URL];
+            }
+        } else {
+            YHSNDebugLog(@"[评论指定微博] [用户没有安装微博客户端]");
+        }
+    });
+}
+
+- (void)getMineWeoBoListWithAccessToken:(NSString *)accessToken
+                                 userID:(NSString *)userID
+                               perCount:(int)perCount
+                                curPage:(int)curPage
+                                showHUD:(BOOL)showHUD
+                        completionBlock:(void (^)(NSDictionary * _Nullable))completionBlock{
     self.sdkFlag = YES;
     if (showHUD) {
         [self getMineWeiBoListHUD];
@@ -254,6 +279,7 @@
 - (void)applicationWillEnterForeground:(NSNotification *)noti{
     YHSNDebugLog(@"applicationWillEnterForeground");
     [self _hideHUD:self.authHUD];
+    [self _hideHUD:self.shareHUD];
 }
 
 - (void)applicationDidEnterBackground:(NSNotification *)noti{
@@ -266,6 +292,7 @@
         return;
     }
     [self _hideHUD:self.authHUD];
+    [self _hideHUD:self.shareHUD];
 }
 
 #pragma mark ------------------ <WeiboSDKDelegate> ------------------
@@ -338,23 +365,54 @@
 }
 
 // didFinishLoadingWithResult和didFinishLoadingWithDataResult只会走其中一个回调
-- (void)request:(WBHttpRequest *)request didFinishLoadingWithResult:(NSString *)result{
-    
-    YHSNDebugLog(@"[didFinishLoadingWithResult] [request.tag] %@ [result] %@", request.tag, result);
+//- (void)request:(WBHttpRequest *)request didFinishLoadingWithResult:(NSString *)result{
+//    YHSNDebugLog(@"[didFinishLoadingWithResult] [request.tag] %@ [result] %@", request.tag, result);
+//    if ([request.tag isEqualToString:kYHSN_GetUserInfoTag]) {
+//        [self parseUserInfo:result];
+//    } else if ([request.tag isEqualToString:kYHSN_CommentWeiBoTag]) {
+//
+//    } else if ([request.tag isEqualToString:kYHSN_MineWeiBoListTag]) {
+//
+//    }
+//}
+
+- (void)request:(WBHttpRequest *)request didFinishLoadingWithDataResult:(NSData *)data{
+    YHSNDebugLog(@"[didFinishLoadingWithDataResult] [request.tag] %@ [data] %@", request.tag, data);
+    NSError *error = nil;
+    id responseObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
+    if (responseObject) {
+        YHSNDebugLog(@"[didFinishLoadingWithDataResult] [JSON解析成功]\n%@", responseObject);
+    }
+    if (error) {
+        YHSNDebugLog(@"[didFinishLoadingWithDataResult] [JSON解析出错] %@", error);
+    }
+    __weak typeof(self) weakSelf = self;
     if ([request.tag isEqualToString:kYHSN_GetUserInfoTag]) {
-        [self parseUserInfo:result];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (weakSelf.loginCompletionBlock) {
+                weakSelf.loginCompletionBlock(error ? nil : (responseObject ? responseObject : nil));
+            }
+            weakSelf.loginCompletionBlock = nil;
+        });
+        [self _hideHUD:self.loginHUD];
     } else if ([request.tag isEqualToString:kYHSN_CommentWeiBoTag]) {
-        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (weakSelf.commentWeiBoCompletionBlock) {
+                weakSelf.commentWeiBoCompletionBlock(error ? NO : (responseObject ? YES : NO));
+            }
+            weakSelf.commentWeiBoCompletionBlock = nil;
+        });
+        [self _hideHUD:self.commentWeiBoHUD];
     } else if ([request.tag isEqualToString:kYHSN_MineWeiBoListTag]) {
-        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (weakSelf.mineWeiBoListCompletionBlock) {
+                weakSelf.mineWeiBoListCompletionBlock(error ? nil : (responseObject ? responseObject : nil));
+            }
+            weakSelf.mineWeiBoListCompletionBlock = nil;
+        });
+        [self _hideHUD:self.mineWeiBoListHUD];
     }
 }
-
-//- (void)request:(WBHttpRequest *)request didFinishLoadingWithDataResult:(NSData *)data{
-//    YHSNDebugLog(@"[didFinishLoadingWithDataResult] [request.tag] %@ [data] %@", request.tag, data);
-//    id responseObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
-//    YHSNDebugLog(@"😋😋%@", responseObject);
-//}
 
 - (void)request:(WBHttpRequest *)request didReciveRedirectResponseWithURI:(NSURL *)redirectUrl{
     YHSNDebugLog(@"[didReciveRedirectResponseWithURI] [request.tag] %@ [redirectUrl] %@", request.tag, redirectUrl);
@@ -474,9 +532,12 @@
 
 // 隐藏HUD
 - (void)_hideHUD:(MBProgressHUD *)hud{
+    __weak typeof(hud) weakHUD = hud;
     if (hud) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [hud hideAnimated:YES];
+            __strong typeof(weakHUD) strongHUD = weakHUD;
+            [strongHUD hideAnimated:YES];
+            strongHUD = nil;
         });
     }
 }
