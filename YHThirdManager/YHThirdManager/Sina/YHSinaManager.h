@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 // 城市    用户所在城市ID
 @property (nonatomic, copy) NSString *city;
 // 头像
-@property (nonatomic, copy) NSString *headimgURL;
+@property (nonatomic, copy) NSString *headImgURL;
 @end
 
 
@@ -89,7 +89,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
- 微博分享(目前只支持分享单图，多图分享有问题)
+ 微博分享(目前只支持分享单图，多图分享SDK有问题)
 
  @param content 分享文本内容
  @param imageData 分享的图片(多图分享有问题。最关键的是，如果用WBImageObject的addImages方法，会把分享的图片保存到相册；还有一点，addImages方法，某些图片分享失败，即sendRequest的返回值是NO)

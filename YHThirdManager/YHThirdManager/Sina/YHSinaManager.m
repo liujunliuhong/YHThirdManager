@@ -46,7 +46,7 @@
         self.sex = 0;
         self.province = @"";
         self.city = @"";
-        self.headimgURL = @"";
+        self.headImgURL = @"";
     }
     return self;
 }
@@ -453,7 +453,7 @@
         loginResult.city = [NSString stringWithFormat:@"%@", userInfo[@"city"]];
     }
     if ([userInfo.allKeys containsObject:@"avatar_large"]) {
-        loginResult.headimgURL = [NSString stringWithFormat:@"%@", userInfo[@"avatar_large"]];
+        loginResult.headImgURL = [NSString stringWithFormat:@"%@", userInfo[@"avatar_large"]];
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{
