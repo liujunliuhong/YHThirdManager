@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+#import <TencentOpenAPI/TencentOAuth.h>
+#import <TencentOpenAPI/QQApiInterface.h>
+
 // 分享类型
 typedef NS_ENUM(NSUInteger, YHQQShareType) {
     YHQQShareType_QQ,            // 分享到QQ
@@ -48,11 +51,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
- * QQ登录、分享功能的封装(SDK下载地址:http://wiki.open.qq.com/wiki/mobile/SDK%E4%B8%8B%E8%BD%BD)
+ * QQ登录、分享功能的封装(文档:http://wiki.connect.qq.com/)
  * 不包含QQ支付功能，QQ支付和分享是不同的SDK
  * 吐槽一下QQ的SDK：在sdkdef.h文件里，定义了log等级，但是并没有提供关闭日志的方法，导致每次QQ登录的时候，控制台一堆的log
  */
 @interface YHQQManager : NSObject
+
+
+@property (nonatomic, strong, readonly) TencentOAuth *oauth;
+
 
 + (instancetype)sharedInstance;
 + (instancetype)new NS_UNAVAILABLE;
@@ -74,6 +81,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)loginWithShowHUD:(BOOL)showHUD
          completionBlock:(void(^_Nullable)(YHQQLoginResult *_Nullable result))completionBlock;
+
+
+- (void)authWithShowHUD:(BOOL)showHUD completionBlock:(void(^_Nullable)(void))completionBlock;
 
 
 /**

@@ -7,8 +7,7 @@
 //
 
 #import "YHQQManager.h"
-#import <TencentOpenAPI/TencentOAuth.h>
-#import <TencentOpenAPI/QQApiInterface.h>
+
 
 #if __has_include(<MBProgressHUD/MBProgressHUD.h>)
     #import <MBProgressHUD/MBProgressHUD.h>
@@ -46,9 +45,7 @@
 @property (nonatomic, strong) TencentOAuth *oauth;
 @property (nonatomic, copy) NSString *appID;
 
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
 @property (nonatomic, strong) MBProgressHUD *hud;
-#endif
 
 @property (nonatomic, strong) YHQQLoginResult *result;
 
@@ -98,6 +95,10 @@
         [TencentOAuth HandleOpenURL:URL];
         [QQApiInterface handleOpenURL:URL delegate:self];
     }
+}
+
+- (void)authWithShowHUD:(BOOL)showHUD completionBlock:(void (^)(void))completionBlock{
+    
 }
 
 - (void)loginWithShowHUD:(BOOL)showHUD
@@ -197,7 +198,8 @@
     [self _hideHUDWithCompletionBlock:nil];
 }
 
-#pragma mark ------------------ <TencentSessionDelegate> ------------------
+
+#pragma mark ------------------ <TencentLoginDelegate> ------------------
 - (void)tencentDidLogin {
     // 登录成功后的回调.
     YHQQDebugLog(@"[登录] [TencentSessionDelegate] tencentDidLogin");
@@ -219,6 +221,7 @@
     [self _loginResult:nil];
 }
 
+#pragma mark ------------------ <TencentSessionDelegate> ------------------
 - (void)getUserInfoResponse:(APIResponse *)response{
     // 获取用户个人信息回调.
     YHQQDebugLog(@"[登录] [TencentSessionDelegate] [getUserInfoResponse] %@", response.jsonResponse);
