@@ -61,8 +61,13 @@
 //        NSLog(@"😄:%@", result);
 //        [weak_self hudOnlyMessage:@"成功获取到信息" inView:nil dismissBlock:nil];
 //    }];
+    
+    
+    
+    
+    
     // 新浪授权
-    [[YHSinaManager sharedInstance] authWithShowHUD:YES completionBlock:^(WBAuthorizeResponse * _Nullable authResponse) {
+//    [[YHSinaManager sharedInstance] authWithShowHUD:YES completionBlock:^(WBAuthorizeResponse * _Nullable authResponse) {
 //        NSLog(@"😆accessToken:%@", authResponse.accessToken);
 //        NSLog(@"😆userID:%@", authResponse.userID);
 //        if (!authResponse) {
@@ -81,10 +86,29 @@
 ////
 ////        }];
 //
+//    }];
+    
+    
+    
+    
+    
+    // 新浪微博获取我的微博列表
+    [[YHSinaManager sharedInstance] authWithShowHUD:YES completionBlock:^(WBAuthorizeResponse * _Nullable authResponse) {
+        if (!authResponse.accessToken) {
+            return ;
+        }
+        [[YHSinaManager sharedInstance] getMineWeoBoListWithAccessToken:authResponse.accessToken userID:authResponse.userID perCount:20 curPage:1 showHUD:YES completionBlock:^(NSDictionary * _Nullable responseObject) {
+            
+        }];
     }];
     
     
-//
+    
+    
+    
+    
+    
+    // 新浪分享
 //    NSData *data1 = UIImageJPEGRepresentation([UIImage imageNamed:@"1.png"], 0.2);
 //    NSData *data2 = UIImageJPEGRepresentation([UIImage imageNamed:@"2.png"], 0.2);
 //    NSData *data3 = UIImageJPEGRepresentation([UIImage imageNamed:@"123.png"], 0.1);
@@ -97,8 +121,12 @@
     
     
     
-    
+    // 新浪评论指定微博
 //    [[YHSinaManager sharedInstance] commentWeiBo2WithID:@"4368567048776515" comment:@"你好啊啊"];
+    
+    
+    
+    
     
     //
 //    [[YHSinaManager sharedInstance] commentWeiBoWithAccessToken:@"2.00QtnqgBGdJgTB5e841d5cdcJJVruD" ID:@"4348583429975153" comment:@"啦啦啦啦哈哈" isCommentOriginWhenTransfer:NO showHUD:YES completionBlock:^(BOOL isSuccess) {

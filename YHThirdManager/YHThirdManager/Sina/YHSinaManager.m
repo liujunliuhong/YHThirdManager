@@ -325,6 +325,7 @@
             weakSelf.shareCompletionBlock = nil;
         });
         [self _hideHUD:self.shareHUD];
+        [self _removeObserve];
     }
 }
 
@@ -377,14 +378,13 @@
 //}
 
 - (void)request:(WBHttpRequest *)request didFinishLoadingWithDataResult:(NSData *)data{
-    YHSNDebugLog(@"[didFinishLoadingWithDataResult] [request.tag] %@ [data] %@", request.tag, data);
     NSError *error = nil;
     id responseObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
     if (responseObject) {
-        YHSNDebugLog(@"[didFinishLoadingWithDataResult] [JSON解析成功]\n%@", responseObject);
+        YHSNDebugLog(@"[didFinishLoadingWithDataResult] [request.tag] %@ [JSON解析成功]\n%@", request.tag, responseObject);
     }
     if (error) {
-        YHSNDebugLog(@"[didFinishLoadingWithDataResult] [JSON解析出错] %@", error);
+        YHSNDebugLog(@"[didFinishLoadingWithDataResult] [request.tag] %@ [JSON解析出错] %@", request.tag, error);
     }
     __weak typeof(self) weakSelf = self;
     if ([request.tag isEqualToString:kYHSN_GetUserInfoTag]) {

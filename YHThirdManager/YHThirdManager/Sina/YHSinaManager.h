@@ -145,7 +145,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param accessToken accessToken
  @param userID userID
  @param perCount 单页返回的条数
- @param curPage 页数
+ @param curPage 页数（默认1）
  @param showHUD 是否显示HUD
  @param completionBlock 回调的原始数据
  */
