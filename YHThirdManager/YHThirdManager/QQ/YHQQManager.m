@@ -107,7 +107,7 @@
             return;
         }
         weakSelf.sdkFlag = NO;
-        if (showHUD) {
+        if (showHUD && [QQApiInterface isQQInstalled]) {
             [weakSelf _removeObserve];
             [weakSelf _addObserve];
             weakSelf.authHUD = [weakSelf getHUD];
@@ -168,7 +168,7 @@
             return;
         }
         weakSelf.sdkFlag = NO;
-        if (showHUD) {
+        if (showHUD && [QQApiInterface isQQInstalled]) {
             [weakSelf _removeObserve];
             [weakSelf _addObserve];
             weakSelf.shareHUD = [weakSelf getHUD];

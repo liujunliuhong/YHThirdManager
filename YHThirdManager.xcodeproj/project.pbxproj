@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1822B4D9228036E200E451CC /* libWeChatSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1822B4D8228036E200E451CC /* libWeChatSDK.a */; };
+		1822B4DB2280373100E451CC /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1822B4DA2280373100E451CC /* SystemConfiguration.framework */; };
+		1822B4DD2280373E00E451CC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1822B4DC2280373E00E451CC /* libz.tbd */; };
+		1822B4DF2280374900E451CC /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1822B4DE2280374900E451CC /* libsqlite3.0.tbd */; };
+		1822B4E12280375300E451CC /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1822B4E02280375300E451CC /* libc++.tbd */; };
+		1822B4E32280375B00E451CC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1822B4E22280375A00E451CC /* Security.framework */; };
+		1822B4E52280376500E451CC /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1822B4E42280376500E451CC /* CoreTelephony.framework */; };
+		1822B4E72280376D00E451CC /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1822B4E62280376D00E451CC /* CFNetwork.framework */; };
+		1822B4E92280377500E451CC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1822B4E82280377500E451CC /* CoreGraphics.framework */; };
 		1823FBBA227EAD2400202EF2 /* 123.png in Resources */ = {isa = PBXBuildFile; fileRef = 1823FBB9227EAD2400202EF2 /* 123.png */; };
 		18807C57223638CA00DE7183 /* 1.png in Resources */ = {isa = PBXBuildFile; fileRef = 18807C56223638CA00DE7183 /* 1.png */; };
 		18807C59223638D000DE7183 /* 2.png in Resources */ = {isa = PBXBuildFile; fileRef = 18807C58223638D000DE7183 /* 2.png */; };
@@ -25,6 +34,18 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1822B4D5228036E100E451CC /* WXApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXApi.h; sourceTree = "<group>"; };
+		1822B4D6228036E100E451CC /* WXApiObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXApiObject.h; sourceTree = "<group>"; };
+		1822B4D7228036E100E451CC /* WechatAuthSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WechatAuthSDK.h; sourceTree = "<group>"; };
+		1822B4D8228036E200E451CC /* libWeChatSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWeChatSDK.a; sourceTree = "<group>"; };
+		1822B4DA2280373100E451CC /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		1822B4DC2280373E00E451CC /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		1822B4DE2280374900E451CC /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
+		1822B4E02280375300E451CC /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		1822B4E22280375A00E451CC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		1822B4E42280376500E451CC /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		1822B4E62280376D00E451CC /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		1822B4E82280377500E451CC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		1823FBB9227EAD2400202EF2 /* 123.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 123.png; sourceTree = "<group>"; };
 		18807C252235EAB400DE7183 /* SDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDK.h; sourceTree = "<group>"; };
 		18807C56223638CA00DE7183 /* 1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 1.png; sourceTree = "<group>"; };
@@ -58,14 +79,34 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1822B4E92280377500E451CC /* CoreGraphics.framework in Frameworks */,
+				1822B4E72280376D00E451CC /* CFNetwork.framework in Frameworks */,
+				1822B4E52280376500E451CC /* CoreTelephony.framework in Frameworks */,
+				1822B4E32280375B00E451CC /* Security.framework in Frameworks */,
+				1822B4E12280375300E451CC /* libc++.tbd in Frameworks */,
+				1822B4DF2280374900E451CC /* libsqlite3.0.tbd in Frameworks */,
+				1822B4DD2280373E00E451CC /* libz.tbd in Frameworks */,
+				1822B4DB2280373100E451CC /* SystemConfiguration.framework in Frameworks */,
 				F52C662FD6B10D7E9ED6E687 /* libPods-YHThirdManager.a in Frameworks */,
 				EEC998DB2234D586001F16E2 /* TencentOpenAPI.framework in Frameworks */,
+				1822B4D9228036E200E451CC /* libWeChatSDK.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1822B4D4228036D100E451CC /* WeiXin */ = {
+			isa = PBXGroup;
+			children = (
+				1822B4D7228036E100E451CC /* WechatAuthSDK.h */,
+				1822B4D5228036E100E451CC /* WXApi.h */,
+				1822B4D6228036E100E451CC /* WXApiObject.h */,
+				1822B4D8228036E200E451CC /* libWeChatSDK.a */,
+			);
+			path = WeiXin;
+			sourceTree = "<group>";
+		};
 		18FD4BE522366A5B0062C2DE /* YHThirdManager */ = {
 			isa = PBXGroup;
 			children = (
@@ -116,6 +157,14 @@
 		4F2B706D636655B74EED35DD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1822B4E82280377500E451CC /* CoreGraphics.framework */,
+				1822B4E62280376D00E451CC /* CFNetwork.framework */,
+				1822B4E42280376500E451CC /* CoreTelephony.framework */,
+				1822B4E22280375A00E451CC /* Security.framework */,
+				1822B4E02280375300E451CC /* libc++.tbd */,
+				1822B4DE2280374900E451CC /* libsqlite3.0.tbd */,
+				1822B4DC2280373E00E451CC /* libz.tbd */,
+				1822B4DA2280373100E451CC /* SystemConfiguration.framework */,
 				7CF05DB0FFAAD4A83C48FB2B /* libPods-YHThirdManager.a */,
 			);
 			name = Frameworks;
@@ -173,6 +222,7 @@
 		EEC998D82234D4D1001F16E2 /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				1822B4D4228036D100E451CC /* WeiXin */,
 				EEC998D92234D578001F16E2 /* QQ */,
 			);
 			path = ThirdParty;
@@ -469,6 +519,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/YHThirdManager/ThirdParty/WeiXin",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.snto.qaq;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -491,6 +545,10 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/YHThirdManager/ThirdParty/WeiXin",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.snto.qaq;
 				PRODUCT_NAME = "$(TARGET_NAME)";

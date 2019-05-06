@@ -9,6 +9,12 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+#if __has_include(<WechatOpenSDK/WXApi.h>)
+    #import <WechatOpenSDK/WXApi.h>
+#elif __has_include("WXApi.h")
+    #import "WXApi.h"
+#endif
+
 /**
  * 分享类型
  */
@@ -54,6 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 微信登录、分享、支付封装(包含支付功能，请确保你的项目有用到微信支付，否则请导入无支付功能的模块)
  * 文档1:https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419317853&lang=zh_CN
  * 文档2:https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419317851&token=&lang=zh_CN
+ * 集成方式有pod和手动导入，pod集成的是包含支付功能的，如果你的项目不包含支付功能，请用手动的方式集成    pod 'WechatOpenSDK'
  */
 @interface YHWXManager : NSObject
 
@@ -70,6 +77,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)initWithAppID:(NSString *)appID
             appSecret:(NSString *)appSecret;
+
+
+
+- (void)authWithViewController:(UIViewController *)viewController
+                       showHUD:(BOOL)showHUD
+               completionBlock:(void(^_Nullable)(SendAuthResp *_Nullable authResp))completionBlock;
+
+
 
 /**
  微信登录

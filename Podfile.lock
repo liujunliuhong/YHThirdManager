@@ -1,17 +1,14 @@
 PODS:
   - MBProgressHUD (1.1.0)
-  - WechatOpenSDK (1.8.4)
   - Weibo_SDK (3.2.3)
 
 DEPENDENCIES:
   - MBProgressHUD
-  - WechatOpenSDK
   - Weibo_SDK (from `https://github.com/sinaweibosdk/weibo_ios_sdk.git`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - MBProgressHUD
-    - WechatOpenSDK
 
 EXTERNAL SOURCES:
   Weibo_SDK:
@@ -24,9 +21,8 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   MBProgressHUD: e7baa36a220447d8aeb12769bf0585582f3866d9
-  WechatOpenSDK: 9b721089507c895d05f997408c30bb6e6f5f9b60
   Weibo_SDK: 652ca78c2f7147a5de5e75e7cbea89838a81772a
 
-PODFILE CHECKSUM: cea8f263151ad856cde0b1b7056e32aa79e62adc
+PODFILE CHECKSUM: 6a82649756e3f76182a791083c448d56bd991dd3
 
 COCOAPODS: 1.6.0.beta.1

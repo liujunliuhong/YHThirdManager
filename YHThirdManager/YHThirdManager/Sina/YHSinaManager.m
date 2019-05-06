@@ -130,7 +130,7 @@
             return;
         }
         weakSelf.sdkFlag = NO;
-        if (showHUD) {
+        if (showHUD && [WeiboSDK isWeiboAppInstalled]) {
             [weakSelf _removeObserve];
             [weakSelf _addObserve];
             weakSelf.authHUD = [weakSelf getHUD];
@@ -171,7 +171,6 @@
                                 @"uid" : userID};
         
         [WBHttpRequest requestWithAccessToken:accessToken url:kYHSN_GetUserInfoAPI httpMethod:@"GET" params:param delegate:weakSelf withTag:kYHSN_GetUserInfoTag];
-        
     });
 }
 
@@ -185,7 +184,7 @@
             YHSNDebugLog(@"[分享] redirectURI为空");
             return;
         }
-        if (showHUD) {
+        if (showHUD && [WeiboSDK isWeiboAppInstalled]) {
             [weakSelf _removeObserve];
             [weakSelf _addObserve];
             weakSelf.shareHUD = [weakSelf getHUD];

@@ -9,11 +9,6 @@
 #import "YHWXManager.h"
 #import <CommonCrypto/CommonCrypto.h>
 
-#if __has_include(<WechatOpenSDK/WXApi.h>)
-    #import <WechatOpenSDK/WXApi.h>
-#elif __has_include("WXApi.h")
-    #import "WXApi.h"
-#endif
 
 #if __has_include(<MBProgressHUD/MBProgressHUD.h>)
     #import <MBProgressHUD/MBProgressHUD.h>
@@ -28,6 +23,8 @@
 #endif
 
 #define kYHWXError(__msg__)            [NSError errorWithDomain:@"com.yinhe.wx.nopay" code:-1 userInfo:@{NSLocalizedDescriptionKey: __msg__}]
+
+
 
 @implementation YHWXLoginResult
 - (instancetype)init
@@ -61,9 +58,17 @@
 @property (nonatomic, copy) void(^shareCompletionBlock)(BOOL isSuccess);
 @property (nonatomic, copy) void(^payCompletionBlock)(BOOL isSuccess);
 
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
-@property (nonatomic, strong) MBProgressHUD *hud;
-#endif
+
+
+@property (nonatomic, copy) void(^authCompletionBlock)(SendAuthResp *authResp);
+
+
+@property (nonatomic, strong) MBProgressHUD *authHUD;
+
+
+
+
+
 
 @property (nonatomic, assign) BOOL sdkFlag;
 
@@ -110,6 +115,47 @@
         [WXApi handleOpenURL:URL delegate:self];
     }
 }
+
+
+- (void)authWithViewController:(UIViewController *)viewController
+                       showHUD:(BOOL)showHUD
+               completionBlock:(void (^)(SendAuthResp * _Nullable))completionBlock{
+    __weak typeof(self) weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (!weakSelf.appID) {
+            YHWXDebugLog(@"[授权] appID为空");
+            return;
+        }
+        if (!weakSelf.appSecret) {
+            YHWXDebugLog(@"[授权] appSecret为空");
+            return;
+        }
+        
+        weakSelf.sdkFlag = NO;
+        
+        if (showHUD && [WXApi isWXAppInstalled]) {
+            [weakSelf _removeObserve];
+            [weakSelf _addObserve];
+            weakSelf.authHUD = [weakSelf getHUD];
+        }
+        
+        weakSelf.authCompletionBlock = completionBlock;
+        
+        SendAuthReq *rq = [[SendAuthReq alloc] init];
+        rq.scope = @"snsapi_userinfo";
+        rq.state = @"lalala";
+        BOOL res = [WXApi sendAuthReq:rq viewController:viewController delegate:weakSelf];
+        if (!res) {
+            if (completionBlock) {
+                completionBlock(nil);
+            }
+            weakSelf.authCompletionBlock = nil;
+            [weakSelf _hideHUD:weakSelf.authHUD];
+            [weakSelf _removeObserve];
+        }
+    });
+}
+
 
 - (void)loginWithViewController:(UIViewController *)viewController
                         showHUD:(BOOL)showHUD
@@ -679,51 +725,29 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
 }
 
+
 // 显示HUD
-- (void)_showHUD{
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (self.hud) {
-            self.hud = nil;
-        }
-        self.hud = [MBProgressHUD showHUDAddedTo:[UIApplication sharedApplication].keyWindow animated:YES];//必须在主线程，源码规定
-        self.hud.mode = MBProgressHUDModeIndeterminate;
-        self.hud.contentColor = [UIColor whiteColor];
-        self.hud.bezelView.style = MBProgressHUDBackgroundStyleSolidColor;
-        self.hud.bezelView.color = [UIColor blackColor];
-        self.hud.removeFromSuperViewOnHide = YES;
-    });
-#endif
+- (MBProgressHUD *)getHUD{
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:[UIApplication sharedApplication].keyWindow animated:YES];//必须在主线程，源码规定
+    hud.mode = MBProgressHUDModeIndeterminate;
+    hud.contentColor = [UIColor whiteColor];
+    hud.bezelView.style = MBProgressHUDBackgroundStyleSolidColor;
+    hud.bezelView.color = [[UIColor blackColor] colorWithAlphaComponent:0.7];
+    hud.removeFromSuperViewOnHide = YES;
+    return hud;
 }
+
 
 // 隐藏HUD
-- (void)_hideHUDWithCompletionBlock:(void(^)(void))completionBlock{
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (!self.hud) {
-            return;
-        }
-        [self.hud hideAnimated:YES];
-        self.hud.completionBlock = ^{
-            if (completionBlock) {
-                completionBlock();
-            }
-        };
-    });
-#else
-    if (completionBlock) {
-        completionBlock();
+- (void)_hideHUD:(MBProgressHUD *)hud{
+    __weak typeof(hud) weakHUD = hud;
+    if (hud) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            __strong typeof(weakHUD) strongHUD = weakHUD;
+            [strongHUD hideAnimated:YES];
+            strongHUD = nil;
+        });
     }
-#endif
-}
-
-// 把HUD置为nil
-- (void)_nilHUD{
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
-    if (self.hud) {
-        self.hud = nil;
-    }
-#endif
 }
 
 @end

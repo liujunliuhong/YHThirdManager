@@ -47,6 +47,13 @@
     return YES;
 }
 
+// 测试发现，在模拟器上，未安装微博，使用网页打开微博，点击取消，程序崩溃，加上下面这个方法g后，程序正常运行
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
+    [[YHWXManager sharedInstance] handleOpenURL:url];
+    [[YHQQManager sharedInstance] handleOpenURL:url];
+    [[YHSinaManager sharedInstance] handleOpenURL:url];
+    return YES;
+}
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
