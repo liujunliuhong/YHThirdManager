@@ -13,9 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface YHSinaLoginResult : NSObject
-// userID
-@property (nonatomic, copy) NSString *userID;
+@interface YHSinaUserInfo : NSObject
 // 昵称
 @property (nonatomic, copy) NSString *nickName;
 // 性别  0:未知  1:男  2:女
@@ -26,6 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *city;
 // 头像
 @property (nonatomic, copy) NSString *headImgURL;
+// 原始数据(如果以上信息不能满足开发要求，则可以用此属性)
+@property (nonatomic, strong, nullable) NSDictionary *originInfo;
 @end
 
 
@@ -81,10 +81,10 @@ NS_ASSUME_NONNULL_BEGIN
  @param showHUD showHUD
  @param completionBlock 回调
  */
-- (void)loginWithAccessToken:(NSString *)accessToken
-                      userID:(NSString *)userID
-                     showHUD:(BOOL)showHUD
-             completionBlock:(void(^_Nullable)(YHSinaLoginResult *_Nullable result))completionBlock;
+- (void)getUserInfoWithAccessToken:(NSString *)accessToken
+                            userID:(NSString *)userID
+                           showHUD:(BOOL)showHUD
+                   completionBlock:(void(^_Nullable)(YHSinaUserInfo *_Nullable result))completionBlock;
 
 
 
@@ -120,7 +120,7 @@ NS_ASSUME_NONNULL_BEGIN
                                   ID:(NSString *)ID
                              comment:(NSString *)comment
          isCommentOriginWhenTransfer:(BOOL)isCommentOriginWhenTransfer
-                             showHUD:(BOOL)showHUD completionBlock:(void(^_Nullable)(BOOL isSuccess))completionBlock;
+                             showHUD:(BOOL)showHUD completionBlock:(void(^_Nullable)(NSDictionary *_Nullable responseObject))completionBlock;
 
 
 

@@ -11,6 +11,9 @@
 #import <TencentOpenAPI/TencentOAuth.h>
 #import <TencentOpenAPI/QQApiInterface.h>
 
+
+NS_ASSUME_NONNULL_BEGIN
+
 // 分享类型
 typedef NS_ENUM(NSUInteger, YHQQShareType) {
     YHQQShareType_QQ,            // 分享到QQ
@@ -23,29 +26,19 @@ typedef NS_ENUM(NSUInteger, YHQQShareDestType) {
     YHQQShareDestType_TIM,       // 分享到TIM
 };
 
-NS_ASSUME_NONNULL_BEGIN
-
-
-@interface YHQQLoginResult : NSObject
-// Access Token凭证，用于后续访问各开放接口
-@property (nonatomic, copy) NSString *access_token;
-// 用户授权登录后对该用户的唯一标识
-@property (nonatomic, copy) NSString *openid;
-// Access Token的失效期
-@property (nonatomic, copy) NSString *expires_in;
+@interface YHQQUserInfo : NSObject
 // 昵称
 @property (nonatomic, copy, nullable) NSString *nickname;
-// 性别   1:男  2:女
+// 性别  0:未知   1:男  2:女
 @property (nonatomic, assign) int sex;
 // 省份
 @property (nonatomic, copy, nullable) NSString *province;
 // 城市
 @property (nonatomic, copy, nullable) NSString *city;
 // 头像
-@property (nonatomic, copy, nullable) NSString *headimgurl;
-// unionid
-// 如果开发者拥有多个移动应用、网站应用，可通过获取用户的unionid来区分用户的唯一性，因为只要是同 一个QQ互联平台帐号下的移动应用、网站应用，用户的unionid是唯一的。换句话说，同一用户，对 同一个QQ互联平台下的不同应用，unionid是相同的
-@property (nonatomic, copy) NSString *unionid;
+@property (nonatomic, copy, nullable) NSString *headImgURL;
+// 原始数据(如果以上信息不能满足开发要求，则可以用此属性)
+@property (nonatomic, strong, nullable) NSDictionary *originInfo;
 
 @end
 
@@ -58,6 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface YHQQManager : NSObject
 
 
+// 授权成功后的信息保存在此对象里面.
 @property (nonatomic, strong, readonly) TencentOAuth *oauth;
 
 
@@ -73,21 +67,40 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)initWithAppID:(NSString *)appID;
 
 
+
 /**
- QQ登录
+ handleOpenURL
+ 
+ @param URL URL
+ */
+- (void)handleOpenURL:(NSURL *)URL;
+
+
+
+/**
+ QQ授权
+
+ @param showHUD 是否显示hUD
+ @param completionBlock 回调(如果isSuccess为YES，代表授权成功，授权信息保存在oauth对象里面)
+ */
+- (void)authWithShowHUD:(BOOL)showHUD
+        completionBlock:(void(^_Nullable)(BOOL isSuccess))completionBlock;
+
+
+
+/**
+ QQ登录(需要先授权)
 
  @param showHUD 是否显示HUD
  @param completionBlock 登录完成回调。如果成功获取到用户信息，result不为nil
  */
-- (void)loginWithShowHUD:(BOOL)showHUD
-         completionBlock:(void(^_Nullable)(YHQQLoginResult *_Nullable result))completionBlock;
+- (void)getUserInfoWithShowHUD:(BOOL)showHUD
+               completionBlock:(void(^_Nullable)(YHQQUserInfo *_Nullable result))completionBlock;
 
-
-- (void)authWithShowHUD:(BOOL)showHUD completionBlock:(void(^_Nullable)(void))completionBlock;
 
 
 /**
- QQ网页分享
+ QQ网页分享(不需要授权)
 
  @param URL 分享链接
  @param title 分享标题
@@ -108,12 +121,6 @@ NS_ASSUME_NONNULL_BEGIN
         completionBlock:(void(^_Nullable)(BOOL isSuccess))completionBlock;
 
 
-/**
- handleOpenURL
-
- @param URL URL
- */
-- (void)handleOpenURL:(NSURL *)URL;
 
 @end
 
