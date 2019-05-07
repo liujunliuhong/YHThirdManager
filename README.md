@@ -7,6 +7,8 @@
 
 2、使用之前，请导入`MBProgressHUD`,`pod 'MBProgressHUD'`
 
+3、在使用过程中有任何bug，欢迎提出
+
 
 # 各个SDK的大小:
 微信:    
