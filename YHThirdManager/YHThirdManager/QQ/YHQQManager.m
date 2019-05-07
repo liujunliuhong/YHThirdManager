@@ -27,7 +27,7 @@
 {
     self = [super init];
     if (self) {
-        self.nickname = @"";
+        self.nickName = @"";
         self.sex = 0;
         self.province = @"";
         self.city = @"";
@@ -36,6 +36,17 @@
     }
     return self;
 }
+
+- (NSString *)description{
+    NSDictionary *dic = @{@"nickName": self.nickName ? self.nickName : [NSNull null],
+                          @"sex":@(self.sex),
+                          @"province":self.province ? self.province : [NSNull null],
+                          @"city":self.city ? self.city : [NSNull null],
+                          @"headImgURL":self.headImgURL ? self.headImgURL : [NSNull null],
+                          @"originInfo":self.originInfo ? self.originInfo : [NSNull null]};
+    return [NSString stringWithFormat:@"%@", dic];
+}
+
 @end
 
 
@@ -45,11 +56,11 @@
 
 @property (nonatomic, strong) MBProgressHUD *authHUD;
 @property (nonatomic, strong) MBProgressHUD *getUserInfoHUD;
-@property (nonatomic, strong) MBProgressHUD *shareHUD;
+@property (nonatomic, strong) MBProgressHUD *shareWebHUD;
 
 @property (nonatomic, copy) void(^authComplectionBlock)(BOOL isSuccess);
 @property (nonatomic, copy) void(^getUserInfoComplectionBlock)(YHQQUserInfo *result);
-@property (nonatomic, copy) void(^shareComplectionBlock)(BOOL isSuccess);
+@property (nonatomic, copy) void(^shareWebComplectionBlock)(BOOL isSuccess);
 
 @property (nonatomic, assign) BOOL sdkFlag;
 
@@ -171,9 +182,9 @@
         if (showHUD && [QQApiInterface isQQInstalled]) {
             [weakSelf _removeObserve];
             [weakSelf _addObserve];
-            weakSelf.shareHUD = [weakSelf getHUD];
+            weakSelf.shareWebHUD = [weakSelf getHUD];
         }
-        weakSelf.shareComplectionBlock = completionBlock;
+        weakSelf.shareWebComplectionBlock = completionBlock;
         
         QQApiNewsObject *object = [QQApiNewsObject objectWithURL:[NSURL URLWithString:URL] title:title description:description previewImageURL:[NSURL URLWithString:thumbImageURL]];
         ShareDestType destType = ShareDestTypeQQ;
@@ -196,8 +207,8 @@
             if (completionBlock) {
                 completionBlock(NO);
             }
-            weakSelf.shareComplectionBlock = nil;
-            [weakSelf _hideHUD:weakSelf.shareHUD];
+            weakSelf.shareWebComplectionBlock = nil;
+            [weakSelf _hideHUD:weakSelf.shareWebHUD];
             [weakSelf _removeObserve];
         }
     });
@@ -207,7 +218,7 @@
 - (void)applicationWillEnterForeground:(NSNotification *)noti{
     YHQQDebugLog(@"applicationWillEnterForeground");
     [self _hideHUD:self.authHUD];
-    [self _hideHUD:self.shareHUD];
+    [self _hideHUD:self.shareWebHUD];
 }
 
 - (void)applicationDidEnterBackground:(NSNotification *)noti{
@@ -221,7 +232,7 @@
         return;
     }
     [self _hideHUD:self.authHUD];
-    [self _hideHUD:self.shareHUD];
+    [self _hideHUD:self.shareWebHUD];
 }
 
 
@@ -259,6 +270,10 @@
     [self _removeObserve];
 }
 
+- (void)didGetUnionID{
+    YHQQDebugLog(@"[didGetUnionID] %@", self.oauth.unionid);
+}
+
 #pragma mark ------------------ <TencentSessionDelegate> ------------------
 - (void)getUserInfoResponse:(APIResponse *)response{
     // 获取用户个人信息回调.
@@ -272,7 +287,7 @@
         result.originInfo = infoDic;
         
         if ([infoDic.allKeys containsObject:@"nickname"]) {
-            result.nickname = [NSString stringWithFormat:@"%@", infoDic[@"nickname"]];
+            result.nickName = [NSString stringWithFormat:@"%@", infoDic[@"nickname"]];
         }
         if ([infoDic.allKeys containsObject:@"gender"]) {
             NSString *sex = [NSString stringWithFormat:@"%@", infoDic[@"gender"]];
@@ -334,18 +349,18 @@
         SendMessageToQQResp *response = (SendMessageToQQResp *)resp;
         YHQQDebugLog(@"[分享] [QQApiInterfaceDelegate] [onResp] [SendMessageToQQResp] [result] %@", response.result);
         if ([response.result isEqualToString:@"0"]) {
-            if (self.shareComplectionBlock) {
-                self.shareComplectionBlock(YES);
+            if (self.shareWebComplectionBlock) {
+                self.shareWebComplectionBlock(YES);
             }
-            self.shareComplectionBlock = nil;
-            [self _hideHUD:self.shareHUD];
+            self.shareWebComplectionBlock = nil;
+            [self _hideHUD:self.shareWebHUD];
             [self _removeObserve];
         } else {
-            if (self.shareComplectionBlock) {
-                self.shareComplectionBlock(NO);
+            if (self.shareWebComplectionBlock) {
+                self.shareWebComplectionBlock(NO);
             }
-            self.shareComplectionBlock = nil;
-            [self _hideHUD:self.shareHUD];
+            self.shareWebComplectionBlock = nil;
+            [self _hideHUD:self.shareWebHUD];
             [self _removeObserve];
         }
     }

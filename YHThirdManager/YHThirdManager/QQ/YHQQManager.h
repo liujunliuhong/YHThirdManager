@@ -10,6 +10,7 @@
 
 #import <TencentOpenAPI/TencentOAuth.h>
 #import <TencentOpenAPI/QQApiInterface.h>
+#import "TencentOAuth+YHQQDescription.h"
 
 
 NS_ASSUME_NONNULL_BEGIN
@@ -28,7 +29,7 @@ typedef NS_ENUM(NSUInteger, YHQQShareDestType) {
 
 @interface YHQQUserInfo : NSObject
 // 昵称
-@property (nonatomic, copy, nullable) NSString *nickname;
+@property (nonatomic, copy, nullable) NSString *nickName;
 // 性别  0:未知   1:男  2:女
 @property (nonatomic, assign) int sex;
 // 省份

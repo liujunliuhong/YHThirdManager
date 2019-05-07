@@ -10,6 +10,7 @@
 #import <UIKit/UIKit.h>
 
 #import <Weibo_SDK/WeiboSDK.h>
+#import "WBAuthorizeResponse+YHSinaDescription.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

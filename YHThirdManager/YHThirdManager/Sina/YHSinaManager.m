@@ -7,7 +7,6 @@
 //
 
 #import "YHSinaManager.h"
-#import <objc/message.h>
 
 #if __has_include(<MBProgressHUD/MBProgressHUD.h>)
 #import <MBProgressHUD/MBProgressHUD.h>
@@ -52,6 +51,16 @@
     }
     return self;
 }
+
+- (NSString *)description{
+    NSDictionary *dic = @{@"nickName":self.nickName ? self.nickName : [NSNull null],
+                          @"sex":@(self.sex),
+                          @"province":self.province ? self.province : [NSNull null],
+                          @"city":self.city ? self.city : [NSNull null],
+                          @"headImgURL":self.headImgURL ? self.headImgURL : [NSNull null],
+                          @"originInfo":self.originInfo ? self.originInfo : [NSNull null]};
+    return [NSString stringWithFormat:@"%@", dic];
+}
 @end
 
 
@@ -63,13 +72,13 @@
 
 @property (nonatomic, strong) MBProgressHUD *authHUD;
 @property (nonatomic, strong) MBProgressHUD *getUserInfoHUD;
-@property (nonatomic, strong) MBProgressHUD *shareHUD;
+@property (nonatomic, strong) MBProgressHUD *shareWebHUD;
 @property (nonatomic, strong) MBProgressHUD *commentWeiBoHUD;
 @property (nonatomic, strong) MBProgressHUD *mineWeiBoListHUD;
 
 @property (nonatomic, copy) void(^authCompletionBlock)(WBAuthorizeResponse *authResponse);
 @property (nonatomic, copy) void(^getUserInfoCompletionBlock)(YHSinaUserInfo *result);
-@property (nonatomic, copy) void(^shareCompletionBlock)(BOOL isSuccess);
+@property (nonatomic, copy) void(^shareWebCompletionBlock)(BOOL isSuccess);
 @property (nonatomic, copy) void(^commentWeiBoCompletionBlock)(NSDictionary *responseObject);
 @property (nonatomic, copy) void(^mineWeiBoListCompletionBlock)(NSDictionary *responseObject);
 
@@ -187,10 +196,10 @@
         if (showHUD && [WeiboSDK isWeiboAppInstalled]) {
             [weakSelf _removeObserve];
             [weakSelf _addObserve];
-            weakSelf.shareHUD = [weakSelf getHUD];
+            weakSelf.shareWebHUD = [weakSelf getHUD];
         }
         weakSelf.sdkFlag = NO;
-        weakSelf.shareCompletionBlock = completionBlock;
+        weakSelf.shareWebCompletionBlock = completionBlock;
         
         WBMessageObject *messageObject = [[WBMessageObject alloc] init];
         messageObject.text = content;
@@ -214,8 +223,8 @@
             if (completionBlock) {
                 completionBlock(NO);
             }
-            weakSelf.shareCompletionBlock = nil;
-            [weakSelf _hideHUD:weakSelf.shareHUD];
+            weakSelf.shareWebCompletionBlock = nil;
+            [weakSelf _hideHUD:weakSelf.shareWebHUD];
         }
     });
 }
@@ -291,7 +300,7 @@
 - (void)applicationWillEnterForeground:(NSNotification *)noti{
     YHSNDebugLog(@"applicationWillEnterForeground");
     [self _hideHUD:self.authHUD];
-    [self _hideHUD:self.shareHUD];
+    [self _hideHUD:self.shareWebHUD];
 }
 
 - (void)applicationDidEnterBackground:(NSNotification *)noti{
@@ -304,7 +313,7 @@
         return;
     }
     [self _hideHUD:self.authHUD];
-    [self _hideHUD:self.shareHUD];
+    [self _hideHUD:self.shareWebHUD];
 }
 
 #pragma mark ------------------ <WeiboSDKDelegate> ------------------
@@ -331,12 +340,12 @@
         // 分享
         WBSendMessageToWeiboResponse *sendMessageToWeiboResponse = (WBSendMessageToWeiboResponse *)response;
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (weakSelf.shareCompletionBlock) {
-                weakSelf.shareCompletionBlock(sendMessageToWeiboResponse.statusCode == WeiboSDKResponseStatusCodeSuccess ? YES : NO);
+            if (weakSelf.shareWebCompletionBlock) {
+                weakSelf.shareWebCompletionBlock(sendMessageToWeiboResponse.statusCode == WeiboSDKResponseStatusCodeSuccess ? YES : NO);
             }
-            weakSelf.shareCompletionBlock = nil;
+            weakSelf.shareWebCompletionBlock = nil;
         });
-        [self _hideHUD:self.shareHUD];
+        [self _hideHUD:self.shareWebHUD];
         [self _removeObserve];
     }
 }

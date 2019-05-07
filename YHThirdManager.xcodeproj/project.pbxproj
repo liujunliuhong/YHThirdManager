@@ -16,9 +16,10 @@
 		1822B4E52280376500E451CC /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1822B4E42280376500E451CC /* CoreTelephony.framework */; };
 		1822B4E72280376D00E451CC /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1822B4E62280376D00E451CC /* CFNetwork.framework */; };
 		1822B4E92280377500E451CC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1822B4E82280377500E451CC /* CoreGraphics.framework */; };
-		1823FBBA227EAD2400202EF2 /* 123.png in Resources */ = {isa = PBXBuildFile; fileRef = 1823FBB9227EAD2400202EF2 /* 123.png */; };
 		18807C57223638CA00DE7183 /* 1.png in Resources */ = {isa = PBXBuildFile; fileRef = 18807C56223638CA00DE7183 /* 1.png */; };
-		18807C59223638D000DE7183 /* 2.png in Resources */ = {isa = PBXBuildFile; fileRef = 18807C58223638D000DE7183 /* 2.png */; };
+		18C6F78C22815299006AF6D0 /* big_image.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 18C6F78B22815299006AF6D0 /* big_image.jpeg */; };
+		18C6F78F22815568006AF6D0 /* TencentOAuth+YHQQDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C6F78E22815568006AF6D0 /* TencentOAuth+YHQQDescription.m */; };
+		18C6F79222815A60006AF6D0 /* WBAuthorizeResponse+YHSinaDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C6F79122815A60006AF6D0 /* WBAuthorizeResponse+YHSinaDescription.m */; };
 		18FD4BF222366A5B0062C2DE /* YHWXNoPayManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18FD4BE722366A5B0062C2DE /* YHWXNoPayManager.m */; };
 		18FD4BF322366A5B0062C2DE /* YHWXManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18FD4BEA22366A5B0062C2DE /* YHWXManager.m */; };
 		18FD4BF422366A5B0062C2DE /* YHSinaManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18FD4BEE22366A5B0062C2DE /* YHSinaManager.m */; };
@@ -46,10 +47,13 @@
 		1822B4E42280376500E451CC /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		1822B4E62280376D00E451CC /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		1822B4E82280377500E451CC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		1823FBB9227EAD2400202EF2 /* 123.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 123.png; sourceTree = "<group>"; };
 		18807C252235EAB400DE7183 /* SDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDK.h; sourceTree = "<group>"; };
 		18807C56223638CA00DE7183 /* 1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 1.png; sourceTree = "<group>"; };
-		18807C58223638D000DE7183 /* 2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 2.png; sourceTree = "<group>"; };
+		18C6F78B22815299006AF6D0 /* big_image.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = big_image.jpeg; sourceTree = "<group>"; };
+		18C6F78D22815568006AF6D0 /* TencentOAuth+YHQQDescription.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TencentOAuth+YHQQDescription.h"; sourceTree = "<group>"; };
+		18C6F78E22815568006AF6D0 /* TencentOAuth+YHQQDescription.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "TencentOAuth+YHQQDescription.m"; sourceTree = "<group>"; };
+		18C6F79022815A60006AF6D0 /* WBAuthorizeResponse+YHSinaDescription.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WBAuthorizeResponse+YHSinaDescription.h"; sourceTree = "<group>"; };
+		18C6F79122815A60006AF6D0 /* WBAuthorizeResponse+YHSinaDescription.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "WBAuthorizeResponse+YHSinaDescription.m"; sourceTree = "<group>"; };
 		18FD4BE722366A5B0062C2DE /* YHWXNoPayManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YHWXNoPayManager.m; sourceTree = "<group>"; };
 		18FD4BE822366A5B0062C2DE /* YHWXNoPayManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YHWXNoPayManager.h; sourceTree = "<group>"; };
 		18FD4BEA22366A5B0062C2DE /* YHWXManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YHWXManager.m; sourceTree = "<group>"; };
@@ -107,6 +111,15 @@
 			path = WeiXin;
 			sourceTree = "<group>";
 		};
+		18C6F79322815DBE006AF6D0 /* Resource */ = {
+			isa = PBXGroup;
+			children = (
+				18807C56223638CA00DE7183 /* 1.png */,
+				18C6F78B22815299006AF6D0 /* big_image.jpeg */,
+			);
+			path = Resource;
+			sourceTree = "<group>";
+		};
 		18FD4BE522366A5B0062C2DE /* YHThirdManager */ = {
 			isa = PBXGroup;
 			children = (
@@ -121,8 +134,8 @@
 		18FD4BE622366A5B0062C2DE /* WeiXin_NoPay */ = {
 			isa = PBXGroup;
 			children = (
-				18FD4BE722366A5B0062C2DE /* YHWXNoPayManager.m */,
 				18FD4BE822366A5B0062C2DE /* YHWXNoPayManager.h */,
+				18FD4BE722366A5B0062C2DE /* YHWXNoPayManager.m */,
 			);
 			path = WeiXin_NoPay;
 			sourceTree = "<group>";
@@ -141,6 +154,8 @@
 			children = (
 				18FD4BED22366A5B0062C2DE /* YHSinaManager.h */,
 				18FD4BEE22366A5B0062C2DE /* YHSinaManager.m */,
+				18C6F79022815A60006AF6D0 /* WBAuthorizeResponse+YHSinaDescription.h */,
+				18C6F79122815A60006AF6D0 /* WBAuthorizeResponse+YHSinaDescription.m */,
 			);
 			path = Sina;
 			sourceTree = "<group>";
@@ -150,6 +165,8 @@
 			children = (
 				18FD4BF022366A5B0062C2DE /* YHQQManager.h */,
 				18FD4BF122366A5B0062C2DE /* YHQQManager.m */,
+				18C6F78D22815568006AF6D0 /* TencentOAuth+YHQQDescription.h */,
+				18C6F78E22815568006AF6D0 /* TencentOAuth+YHQQDescription.m */,
 			);
 			path = QQ;
 			sourceTree = "<group>";
@@ -203,12 +220,10 @@
 				18807C252235EAB400DE7183 /* SDK.h */,
 				EEA34C592234D25600D18F8A /* AppDelegate.h */,
 				EEA34C5A2234D25600D18F8A /* AppDelegate.m */,
-				18807C56223638CA00DE7183 /* 1.png */,
-				18807C58223638D000DE7183 /* 2.png */,
 				EEA34C5C2234D25600D18F8A /* ViewController.h */,
 				EEA34C5D2234D25600D18F8A /* ViewController.m */,
+				18C6F79322815DBE006AF6D0 /* Resource */,
 				18FD4BE522366A5B0062C2DE /* YHThirdManager */,
-				1823FBB9227EAD2400202EF2 /* 123.png */,
 				EEC998D82234D4D1001F16E2 /* ThirdParty */,
 				EEA34C5F2234D25600D18F8A /* Main.storyboard */,
 				EEA34C622234D25700D18F8A /* Assets.xcassets */,
@@ -295,12 +310,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				18807C59223638D000DE7183 /* 2.png in Resources */,
-				1823FBBA227EAD2400202EF2 /* 123.png in Resources */,
 				EEA34C662234D25700D18F8A /* LaunchScreen.storyboard in Resources */,
 				EEA34C632234D25700D18F8A /* Assets.xcassets in Resources */,
 				18807C57223638CA00DE7183 /* 1.png in Resources */,
 				EEA34C612234D25600D18F8A /* Main.storyboard in Resources */,
+				18C6F78C22815299006AF6D0 /* big_image.jpeg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -361,8 +375,10 @@
 				EEA34C5E2234D25600D18F8A /* ViewController.m in Sources */,
 				EEA34C692234D25700D18F8A /* main.m in Sources */,
 				EEA34C5B2234D25600D18F8A /* AppDelegate.m in Sources */,
+				18C6F79222815A60006AF6D0 /* WBAuthorizeResponse+YHSinaDescription.m in Sources */,
 				18FD4BF322366A5B0062C2DE /* YHWXManager.m in Sources */,
 				18FD4BF222366A5B0062C2DE /* YHWXNoPayManager.m in Sources */,
+				18C6F78F22815568006AF6D0 /* TencentOAuth+YHQQDescription.m in Sources */,
 				18FD4BF422366A5B0062C2DE /* YHSinaManager.m in Sources */,
 				18FD4BF522366A5B0062C2DE /* YHQQManager.m in Sources */,
 			);
