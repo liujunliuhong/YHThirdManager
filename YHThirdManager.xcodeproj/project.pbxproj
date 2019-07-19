@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -47,7 +47,6 @@
 		1822B4E42280376500E451CC /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		1822B4E62280376D00E451CC /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		1822B4E82280377500E451CC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		18807C252235EAB400DE7183 /* SDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDK.h; sourceTree = "<group>"; };
 		18807C56223638CA00DE7183 /* 1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 1.png; sourceTree = "<group>"; };
 		18C6F78B22815299006AF6D0 /* big_image.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = big_image.jpeg; sourceTree = "<group>"; };
 		18C6F78D22815568006AF6D0 /* TencentOAuth+YHQQDescription.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TencentOAuth+YHQQDescription.h"; sourceTree = "<group>"; };
@@ -65,6 +64,7 @@
 		76084B98757189FD3769C22E /* Pods-YHThirdManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YHThirdManager.debug.xcconfig"; path = "Target Support Files/Pods-YHThirdManager/Pods-YHThirdManager.debug.xcconfig"; sourceTree = "<group>"; };
 		7CF05DB0FFAAD4A83C48FB2B /* libPods-YHThirdManager.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-YHThirdManager.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3F94CADB77DA373228EE99A /* Pods-YHThirdManager.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YHThirdManager.release.xcconfig"; path = "Target Support Files/Pods-YHThirdManager/Pods-YHThirdManager.release.xcconfig"; sourceTree = "<group>"; };
+		EE6A435022E2260E005F7898 /* SDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDK.h; sourceTree = "<group>"; };
 		EEA34C562234D25600D18F8A /* YHThirdManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YHThirdManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEA34C592234D25600D18F8A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		EEA34C5A2234D25600D18F8A /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -217,7 +217,7 @@
 		EEA34C582234D25600D18F8A /* YHThirdManager */ = {
 			isa = PBXGroup;
 			children = (
-				18807C252235EAB400DE7183 /* SDK.h */,
+				EE6A435022E2260E005F7898 /* SDK.h */,
 				EEA34C592234D25600D18F8A /* AppDelegate.h */,
 				EEA34C5A2234D25600D18F8A /* AppDelegate.m */,
 				EEA34C5C2234D25600D18F8A /* ViewController.h */,
@@ -349,16 +349,11 @@
 			files = (
 			);
 			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-YHThirdManager/Pods-YHThirdManager-resources.sh",
-				"${PODS_ROOT}/Weibo_SDK/libWeiboSDK/WeiboSDK.bundle",
+				"${PODS_ROOT}/Target Support Files/Pods-YHThirdManager/Pods-YHThirdManager-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-			);
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/WeiboSDK.bundle",
+				"${PODS_ROOT}/Target Support Files/Pods-YHThirdManager/Pods-YHThirdManager-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

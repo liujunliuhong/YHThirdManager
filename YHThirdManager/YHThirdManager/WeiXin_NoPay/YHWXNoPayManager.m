@@ -462,7 +462,7 @@
             } else {
                 // 成功
                 YHWXNoPayAuthResult *authResult = [[YHWXNoPayAuthResult alloc] init];
-                
+                authResult.code = code;
                 authResult.originAuthInfo = infoDic;
                 
                 if ([infoDic.allKeys containsObject:@"access_token"]) {

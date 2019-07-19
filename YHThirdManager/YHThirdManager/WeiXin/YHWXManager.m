@@ -626,7 +626,7 @@
             } else {
                 // 成功
                 YHWXAuthResult *authResult = [[YHWXAuthResult alloc] init];
-                
+                authResult.code = code;
                 authResult.originAuthInfo = infoDic;
                 
                 if ([infoDic.allKeys containsObject:@"access_token"]) {

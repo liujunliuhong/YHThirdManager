@@ -52,6 +52,7 @@ typedef NS_ENUM(NSUInteger, YHWXNoPayShareType) {
 
 
 @interface YHWXNoPayAuthResult : NSObject
+@property (nonatomic, copy) NSString *code;
 @property (nonatomic, copy) NSString *openID;
 @property (nonatomic, copy) NSString *accessToken;
 @property (nonatomic, copy) NSString *expiresIn;
