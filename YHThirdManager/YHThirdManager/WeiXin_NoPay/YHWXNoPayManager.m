@@ -89,6 +89,7 @@
 @property (nonatomic, copy) void(^shareWebCompletionBlock)(BOOL isSuccess);
 @property (nonatomic, copy) void(^payCompletionBlock)(BOOL isSuccess);
 @property (nonatomic, copy) void(^authCompletionBlock)(YHWXNoPayAuthResult *authResult);
+@property (nonatomic, copy) void(^authForGetCodeCompletionBlock)(NSString *code);
 
 
 
@@ -129,10 +130,6 @@
         YHWXDebugLog(@"[初始化] appID为空");
         return;
     }
-    if (!appSecret) {
-        YHWXDebugLog(@"[初始化] appSecret为空");
-        return;
-    }
     self.appID = appID;
     self.appSecret = appSecret;
     [WXApi registerApp:appID];
@@ -152,8 +149,38 @@
             YHWXDebugLog(@"[授权] appID为空");
             return;
         }
-        if (!weakSelf.appSecret) {
-            YHWXDebugLog(@"[授权] appSecret为空");
+        
+        weakSelf.sdkFlag = NO;
+        
+        if (showHUD && [WXApi isWXAppInstalled]) {
+            [weakSelf _removeObserve];
+            [weakSelf _addObserve];
+            weakSelf.requestCodeHUD = [weakSelf getHUD];
+        }
+        
+        weakSelf.authCompletionBlock = completionBlock;
+        weakSelf.authForGetCodeCompletionBlock = nil;
+        
+        SendAuthReq *rq = [[SendAuthReq alloc] init];
+        rq.scope = @"snsapi_userinfo";
+        
+        BOOL res = [WXApi sendAuthReq:rq viewController:[UIApplication sharedApplication].keyWindow.rootViewController delegate:weakSelf];
+        if (!res) {
+            if (completionBlock) {
+                completionBlock(nil);
+            }
+            weakSelf.authCompletionBlock = nil;
+            [weakSelf _hideHUD:weakSelf.requestCodeHUD];
+            [weakSelf _removeObserve];
+        }
+    });
+}
+
+- (void)authForGetCodeWithShowHUD:(BOOL)showHUD completionBlock:(void (^)(NSString * _Nullable))completionBlock{
+    __weak typeof(self) weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (!weakSelf.appID) {
+            YHWXDebugLog(@"[授权] appID为空");
             return;
         }
         
@@ -165,7 +192,7 @@
             weakSelf.requestCodeHUD = [weakSelf getHUD];
         }
         
-        weakSelf.authCompletionBlock = completionBlock;
+        weakSelf.authForGetCodeCompletionBlock = completionBlock;
         
         SendAuthReq *rq = [[SendAuthReq alloc] init];
         rq.scope = @"snsapi_userinfo";
@@ -175,7 +202,7 @@
             if (completionBlock) {
                 completionBlock(nil);
             }
-            weakSelf.authCompletionBlock = nil;
+            weakSelf.authForGetCodeCompletionBlock = nil;
             [weakSelf _hideHUD:weakSelf.requestCodeHUD];
             [weakSelf _removeObserve];
         }
@@ -369,9 +396,16 @@
             self.sdkFlag = YES;
             [self _removeObserve];
             [self _hideHUD:self.requestCodeHUD];
-            self.requestAccessTokenHUD = [self getHUD];
+            
             NSString *responseCode = response.code; // code获取成功，接下来获取accessToken
-            [self _requestAccessTokenWithCode:responseCode];
+            
+            if (self.authForGetCodeCompletionBlock) {
+                self.authForGetCodeCompletionBlock(responseCode);
+                self.authForGetCodeCompletionBlock = nil;
+            } else {
+                self.requestAccessTokenHUD = [self getHUD];
+                [self _requestAccessTokenWithCode:responseCode];
+            }
         } else if (response.errCode == WXErrCodeCommon ||
                    response.errCode == WXErrCodeUserCancel ||
                    response.errCode == WXErrCodeSentFail ||
@@ -384,6 +418,11 @@
                 self.authCompletionBlock(nil);
             }
             self.authCompletionBlock = nil;
+            
+            if (self.authForGetCodeCompletionBlock) {
+                self.authForGetCodeCompletionBlock(nil);
+            }
+            self.authForGetCodeCompletionBlock = nil;
         }
     } else if ([resp isKindOfClass:[SendMessageToWXResp class]]) {
         // 分享
@@ -439,7 +478,7 @@
 
 // 通过code获取access_token.
 - (void)_requestAccessTokenWithCode:(NSString *)code{
-    NSString *url = [NSString stringWithFormat:@"https://api.weixin.qq.com/sns/oauth2/access_token?appid=%@&secret=%@&code=%@&grant_type=authorization_code", self.appID, self.appSecret, code];
+    NSString *url = [NSString stringWithFormat:@"https://api.weixin.qq.com/sns/oauth2/access_token?appid=%@&secret=%@&code=%@&grant_type=authorization_code", self.appID, self.appSecret ? self.appSecret : @"", code];
     __weak typeof(self) weakSelf = self;
     [YHWXNoPayManager _requestWithURL:url completionBlock:^(id  _Nullable responseObject, NSError * _Nullable error) {
         if (error) {

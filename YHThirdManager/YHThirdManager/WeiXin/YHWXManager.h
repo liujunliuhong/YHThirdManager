@@ -76,10 +76,10 @@ typedef NS_ENUM(NSUInteger, YHWXShareType) {
  SDK初始化
 
  @param appID appID
- @param appSecret appSecret
+ @param appSecret appSecret(当只需要获取code时，appSecret可以为空)
  */
 - (void)initWithAppID:(NSString *)appID
-            appSecret:(NSString *)appSecret;
+            appSecret:(nullable NSString *)appSecret;
 
 
 /**
@@ -99,7 +99,14 @@ typedef NS_ENUM(NSUInteger, YHWXShareType) {
 - (void)authWithShowHUD:(BOOL)showHUD
         completionBlock:(void(^_Nullable)(YHWXAuthResult *_Nullable authResult))completionBlock;
 
-
+/**
+ 获取code
+ 
+ @param showHUD 是否显示HUD
+ @param completionBlock 回调
+ */
+- (void)authForGetCodeWithShowHUD:(BOOL)showHUD
+                  completionBlock:(void(^_Nullable)(NSString *_Nullable code))completionBlock;
 
 /**
  获取用户信息(需要先授权)

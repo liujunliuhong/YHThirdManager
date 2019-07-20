@@ -65,7 +65,7 @@
     return YES;
 }
 
-// 测试发现，在模拟器上，未安装微博，使用网页打开微博，点击取消，程序崩溃，加上下面这个方法g后，程序正常运行
+// 测试发现，在模拟器上，未安装微博，使用网页打开微博，点击取消，程序崩溃，加上下面这个方法后，程序正常运行
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
 #ifdef kWechatNoPay
     [[YHWXNoPayManager sharedInstance] handleOpenURL:url];
