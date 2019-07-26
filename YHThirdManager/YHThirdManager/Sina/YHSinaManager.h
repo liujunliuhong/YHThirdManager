@@ -91,16 +91,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  微博分享(目前只支持分享单图，多图分享SDK有问题)
-
- @param content 分享文本内容
- @param imageData 分享的图片(多图分享有问题。最关键的是，如果用WBImageObject的addImages方法，会把分享的图片保存到相册；还有一点，addImages方法，某些图片分享失败，即sendRequest的返回值是NO)
+ 
+ @param title 标题
+ @param url 链接
+ @param description 描述
+ @param thumbImageData 缩略图(必须配置，url才有效，才能点击；不能太大，不然分享不出去)
  @param showHUD 是否显示HUD
  @param completionBlock 回调
  */
-- (void)shareWithContent:(nullable NSString *)content
-               imageData:(nullable NSData *)imageData
-                 showHUD:(BOOL)showHUD
-         completionBlock:(void(^_Nullable)(BOOL isSuccess))completionBlock;
+- (void)shareWithTitle:(NSString *)title
+                   url:(NSString *)url
+           description:(nullable NSString *)description
+        thumbImageData:(nullable NSData *)thumbImageData
+               showHUD:(BOOL)showHUD
+       completionBlock:(void(^_Nullable)(BOOL isSuccess))completionBlock;
 
 
 

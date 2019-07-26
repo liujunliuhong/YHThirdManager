@@ -183,10 +183,12 @@
     });
 }
 
-- (void)shareWithContent:(NSString *)content
-               imageData:(NSData *)imageData
-                 showHUD:(BOOL)showHUD
-         completionBlock:(void (^)(BOOL))completionBlock{
+- (void)shareWithTitle:(NSString *)title
+                   url:(NSString *)url
+           description:(NSString *)description
+        thumbImageData:(NSData *)thumbImageData
+               showHUD:(BOOL)showHUD
+       completionBlock:(void (^)(BOOL))completionBlock{
     __weak typeof(self) weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
         if (!weakSelf.redirectURI) {
@@ -201,15 +203,17 @@
         weakSelf.sdkFlag = NO;
         weakSelf.shareWebCompletionBlock = completionBlock;
         
-        WBMessageObject *messageObject = [[WBMessageObject alloc] init];
-        messageObject.text = content;
+        WBWebpageObject *webpageObject = [WBWebpageObject object];
+        webpageObject.webpageUrl = url;
+        webpageObject.title = title;
+        webpageObject.description = description;
+        webpageObject.thumbnailData = thumbImageData;
+        webpageObject.objectID = [NSUUID UUID].UUIDString;
         
-        if (imageData) {
-            WBImageObject *imageObject = [WBImageObject object];
-            imageObject.isShareToStory = NO;
-            imageObject.imageData = imageData;
-            messageObject.imageObject = imageObject;
-        }
+        
+        WBMessageObject *messageObject = [[WBMessageObject alloc] init];
+        messageObject.text = description;
+        messageObject.mediaObject = webpageObject;
         
         
         WBAuthorizeRequest *authorizeRequest = [WBAuthorizeRequest request];
