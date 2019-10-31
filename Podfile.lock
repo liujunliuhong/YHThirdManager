@@ -1,14 +1,18 @@
 PODS:
+  - AlipaySDK-iOS (15.5.9)
   - MBProgressHUD (1.1.0)
-  - Weibo_SDK (3.2.3)
+  - Weibo_SDK (3.2.5.1)
 
 DEPENDENCIES:
+  - AlipaySDK-iOS
   - MBProgressHUD
   - Weibo_SDK (from `https://github.com/sinaweibosdk/weibo_ios_sdk.git`)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - MBProgressHUD
+  trunk:
+    - AlipaySDK-iOS
 
 EXTERNAL SOURCES:
   Weibo_SDK:
@@ -16,13 +20,14 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   Weibo_SDK:
-    :commit: f5b138320aefe0ed20b76b8510521432f1a6c9ac
+    :commit: 84e46c1144e09ec99c943da249ac8f3b74a941c2
     :git: https://github.com/sinaweibosdk/weibo_ios_sdk.git
 
 SPEC CHECKSUMS:
+  AlipaySDK-iOS: 1c5283b30977a24acecc0114662697f7dc78f618
   MBProgressHUD: e7baa36a220447d8aeb12769bf0585582f3866d9
-  Weibo_SDK: 652ca78c2f7147a5de5e75e7cbea89838a81772a
+  Weibo_SDK: 76455315cb43d6a63c1990bf91483f05a98d45fd
 
-PODFILE CHECKSUM: 6a82649756e3f76182a791083c448d56bd991dd3
+PODFILE CHECKSUM: 8be855a15895f07f45c56975b71d929fb8ebd5d7
 
-COCOAPODS: 1.7.0
+COCOAPODS: 1.8.3
