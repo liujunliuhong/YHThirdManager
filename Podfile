@@ -4,4 +4,5 @@ target 'YHThirdManager' do
   pod 'Weibo_SDK', :git => 'https://github.com/sinaweibosdk/weibo_ios_sdk.git'
   pod 'AlipaySDK-iOS'
   pod 'MBProgressHUD'
+  pod 'AFNetworking'
 end

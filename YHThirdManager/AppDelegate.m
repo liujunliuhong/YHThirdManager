@@ -33,7 +33,7 @@
 #else
     [[YHWXManager sharedInstance] initWithAppID:QAQ_WECHAT_APP_ID appSecret:QAQ_WECHAT_APP_SECRET];
 #endif
-    [[YHQQManager sharedInstance] initWithAppID:QAQ_QQ_APP_ID];
+    [[YHQQManager sharedInstance] initWithAppID:QAQ_QQ_APP_ID universalLink:nil];
     
     [[YHSinaManager sharedInstance] initWithAppID:QAQ_SINA_APP_KEY redirectURI:QAQ_SINA_Redirect_URL];
     

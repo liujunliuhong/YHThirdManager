@@ -25,6 +25,9 @@
 		18FD4BF322366A5B0062C2DE /* YHWXManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18FD4BEA22366A5B0062C2DE /* YHWXManager.m */; };
 		18FD4BF422366A5B0062C2DE /* YHSinaManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18FD4BEE22366A5B0062C2DE /* YHSinaManager.m */; };
 		18FD4BF522366A5B0062C2DE /* YHQQManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18FD4BF122366A5B0062C2DE /* YHQQManager.m */; };
+		EE55CDBF236EA05D00DBA588 /* YHThirdHttpRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = EE55CDBE236EA05D00DBA588 /* YHThirdHttpRequest.m */; };
+		EE5BF7A9236EA86600606012 /* YHQQUserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = EE5BF7A8236EA86600606012 /* YHQQUserInfo.m */; };
+		EE5BF7AC236EBC9800606012 /* YHSinaUserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = EE5BF7AB236EBC9800606012 /* YHSinaUserInfo.m */; };
 		EEA34C5B2234D25600D18F8A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EEA34C5A2234D25600D18F8A /* AppDelegate.m */; };
 		EEA34C5E2234D25600D18F8A /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EEA34C5D2234D25600D18F8A /* ViewController.m */; };
 		EEA34C612234D25600D18F8A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EEA34C5F2234D25600D18F8A /* Main.storyboard */; };
@@ -65,7 +68,14 @@
 		76084B98757189FD3769C22E /* Pods-YHThirdManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YHThirdManager.debug.xcconfig"; path = "Target Support Files/Pods-YHThirdManager/Pods-YHThirdManager.debug.xcconfig"; sourceTree = "<group>"; };
 		7CF05DB0FFAAD4A83C48FB2B /* libPods-YHThirdManager.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-YHThirdManager.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3F94CADB77DA373228EE99A /* Pods-YHThirdManager.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YHThirdManager.release.xcconfig"; path = "Target Support Files/Pods-YHThirdManager/Pods-YHThirdManager.release.xcconfig"; sourceTree = "<group>"; };
-		EE6A435022E2260E005F7898 /* SDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDK.h; sourceTree = "<group>"; };
+		EE55CDBA236E930000DBA588 /* SDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDK.h; sourceTree = "<group>"; };
+		EE55CDBC236E976C00DBA588 /* YHThirdDefine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YHThirdDefine.h; sourceTree = "<group>"; };
+		EE55CDBD236EA05D00DBA588 /* YHThirdHttpRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YHThirdHttpRequest.h; sourceTree = "<group>"; };
+		EE55CDBE236EA05D00DBA588 /* YHThirdHttpRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YHThirdHttpRequest.m; sourceTree = "<group>"; };
+		EE5BF7A7236EA86600606012 /* YHQQUserInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YHQQUserInfo.h; sourceTree = "<group>"; };
+		EE5BF7A8236EA86600606012 /* YHQQUserInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YHQQUserInfo.m; sourceTree = "<group>"; };
+		EE5BF7AA236EBC9800606012 /* YHSinaUserInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YHSinaUserInfo.h; sourceTree = "<group>"; };
+		EE5BF7AB236EBC9800606012 /* YHSinaUserInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YHSinaUserInfo.m; sourceTree = "<group>"; };
 		EEA34C562234D25600D18F8A /* YHThirdManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YHThirdManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEA34C592234D25600D18F8A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		EEA34C5A2234D25600D18F8A /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -120,15 +130,16 @@
 			path = Resource;
 			sourceTree = "<group>";
 		};
-		18FD4BE522366A5B0062C2DE /* YHThirdManager */ = {
+		18FD4BE522366A5B0062C2DE /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				EE55CDBB236E93BD00DBA588 /* Core */,
 				18FD4BE622366A5B0062C2DE /* WeiXin_NoPay */,
 				18FD4BE922366A5B0062C2DE /* WeiXin */,
 				18FD4BEC22366A5B0062C2DE /* Sina */,
 				18FD4BEF22366A5B0062C2DE /* QQ */,
 			);
-			path = YHThirdManager;
+			path = Sources;
 			sourceTree = "<group>";
 		};
 		18FD4BE622366A5B0062C2DE /* WeiXin_NoPay */ = {
@@ -154,6 +165,8 @@
 			children = (
 				18FD4BED22366A5B0062C2DE /* YHSinaManager.h */,
 				18FD4BEE22366A5B0062C2DE /* YHSinaManager.m */,
+				EE5BF7AA236EBC9800606012 /* YHSinaUserInfo.h */,
+				EE5BF7AB236EBC9800606012 /* YHSinaUserInfo.m */,
 				18C6F79022815A60006AF6D0 /* WBAuthorizeResponse+YHSinaDescription.h */,
 				18C6F79122815A60006AF6D0 /* WBAuthorizeResponse+YHSinaDescription.m */,
 			);
@@ -165,6 +178,8 @@
 			children = (
 				18FD4BF022366A5B0062C2DE /* YHQQManager.h */,
 				18FD4BF122366A5B0062C2DE /* YHQQManager.m */,
+				EE5BF7A7236EA86600606012 /* YHQQUserInfo.h */,
+				EE5BF7A8236EA86600606012 /* YHQQUserInfo.m */,
 				18C6F78D22815568006AF6D0 /* TencentOAuth+YHQQDescription.h */,
 				18C6F78E22815568006AF6D0 /* TencentOAuth+YHQQDescription.m */,
 			);
@@ -196,6 +211,16 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		EE55CDBB236E93BD00DBA588 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				EE55CDBC236E976C00DBA588 /* YHThirdDefine.h */,
+				EE55CDBD236EA05D00DBA588 /* YHThirdHttpRequest.h */,
+				EE55CDBE236EA05D00DBA588 /* YHThirdHttpRequest.m */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
 		EEA34C4D2234D25600D18F8A = {
 			isa = PBXGroup;
 			children = (
@@ -217,13 +242,13 @@
 		EEA34C582234D25600D18F8A /* YHThirdManager */ = {
 			isa = PBXGroup;
 			children = (
-				EE6A435022E2260E005F7898 /* SDK.h */,
+				EE55CDBA236E930000DBA588 /* SDK.h */,
 				EEA34C592234D25600D18F8A /* AppDelegate.h */,
 				EEA34C5A2234D25600D18F8A /* AppDelegate.m */,
 				EEA34C5C2234D25600D18F8A /* ViewController.h */,
 				EEA34C5D2234D25600D18F8A /* ViewController.m */,
 				18C6F79322815DBE006AF6D0 /* Resource */,
-				18FD4BE522366A5B0062C2DE /* YHThirdManager */,
+				18FD4BE522366A5B0062C2DE /* Sources */,
 				EEC998D82234D4D1001F16E2 /* ThirdParty */,
 				EEA34C5F2234D25600D18F8A /* Main.storyboard */,
 				EEA34C622234D25700D18F8A /* Assets.xcassets */,
@@ -367,13 +392,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE55CDBF236EA05D00DBA588 /* YHThirdHttpRequest.m in Sources */,
 				EEA34C5E2234D25600D18F8A /* ViewController.m in Sources */,
 				EEA34C692234D25700D18F8A /* main.m in Sources */,
 				EEA34C5B2234D25600D18F8A /* AppDelegate.m in Sources */,
 				18C6F79222815A60006AF6D0 /* WBAuthorizeResponse+YHSinaDescription.m in Sources */,
 				18FD4BF322366A5B0062C2DE /* YHWXManager.m in Sources */,
+				EE5BF7AC236EBC9800606012 /* YHSinaUserInfo.m in Sources */,
 				18FD4BF222366A5B0062C2DE /* YHWXNoPayManager.m in Sources */,
 				18C6F78F22815568006AF6D0 /* TencentOAuth+YHQQDescription.m in Sources */,
+				EE5BF7A9236EA86600606012 /* YHQQUserInfo.m in Sources */,
 				18FD4BF422366A5B0062C2DE /* YHSinaManager.m in Sources */,
 				18FD4BF522366A5B0062C2DE /* YHQQManager.m in Sources */,
 			);
