@@ -9,14 +9,15 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-#import <Weibo_SDK/WeiboSDK.h>
-#import "WBAuthorizeResponse+YHSinaDescription.h"
+
+#if __has_include(<Weibo_SDK/WeiboSDK.h>)
+    #import <Weibo_SDK/WeiboSDK.h>
+    #import "WBAuthorizeResponse+YHSinaDescription.h"
+#endif
 
 #import "YHSinaUserInfo.h"
 
-
 NS_ASSUME_NONNULL_BEGIN
-
 
 /**
  * SDK版本：3.2.5.1
@@ -27,6 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 调起微博直接到指定的个人页面：sinaweibo://userinfo?uid=xxxx
  */
 @interface YHSinaManager : NSObject
+#if __has_include(<Weibo_SDK/WeiboSDK.h>)
 /// 初始化SDK的appID
 @property (nonatomic, copy, readonly) NSString *appID;
 
@@ -39,11 +41,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// 微博登录获取的个人信息
 @property (nonatomic, strong, readonly, nullable) YHSinaUserInfo *userInfo;
 
+#endif
 
 + (instancetype)sharedInstance;
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
+#if __has_include(<Weibo_SDK/WeiboSDK.h>)
 #pragma mark Init
 /// SDK初始化
 /// @param appID appID
@@ -63,18 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)authWithShowHUD:(BOOL)showHUD
         completionBlock:(void(^_Nullable)(BOOL isSuccess))completionBlock;
 
-#pragma mark Get User Info
-/// 获取用户信息
-/// @param accessToken accessToken
-/// @param userID userID
-/// @param showHUD 是否显示HUD
-/// @param completionBlock 回调
-- (void)getUserInfoWithAccessToken:(NSString *)accessToken
-                            userID:(NSString *)userID
-                           showHUD:(BOOL)showHUD
-                   completionBlock:(void(^_Nullable)(void))completionBlock;
-
-#pragma mark Share
+#pragma mark Share(分享这儿还需要再次处理下)
 /// 微博分享(目前只支持分享单图，多图分享SDK有问题)
 /// @param title 标题
 /// @param url 链接
@@ -88,6 +81,18 @@ NS_ASSUME_NONNULL_BEGIN
         thumbImageData:(nullable NSData *)thumbImageData
                showHUD:(BOOL)showHUD
        completionBlock:(void(^_Nullable)(BOOL isSuccess))completionBlock;
+#endif
+
+#pragma mark Get User Info
+/// 获取用户信息
+/// @param accessToken accessToken
+/// @param userID userID
+/// @param showHUD 是否显示HUD
+/// @param completionBlock 回调
+- (void)getUserInfoWithAccessToken:(NSString *)accessToken
+                            userID:(NSString *)userID
+                           showHUD:(BOOL)showHUD
+                   completionBlock:(void(^_Nullable)(void))completionBlock;
 
 #pragma mark Comment WeiBo
 /// 评论指定微博(通过API的方式评论指定微博)
@@ -124,8 +129,6 @@ NS_ASSUME_NONNULL_BEGIN
                                 curPage:(int)curPage
                                 showHUD:(BOOL)showHUD
                         completionBlock:(void(^_Nullable)(NSDictionary *_Nullable responseObject))completionBlock;
-
-
 @end
 
 NS_ASSUME_NONNULL_END
