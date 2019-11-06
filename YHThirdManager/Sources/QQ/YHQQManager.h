@@ -128,7 +128,7 @@ typedef NS_ENUM(NSUInteger, YHQQShareDestType) {
 
 /// 图片分享(根据QQ SDK，只能分享到QQ好友)
 /// @param data 图片数据(根据QQ SDK，预览图像最大为5M)
-/// @param thumbImageData 缩略图片NSData(根据QQ SDK，预览图像最大为1M
+/// @param thumbImageData 缩略图片NSData(根据QQ SDK，预览图像最大为1M)
 /// @param title 标题
 /// @param description 描述
 /// @param shareDestType 分享到哪儿

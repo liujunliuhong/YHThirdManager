@@ -60,34 +60,69 @@ typedef NS_ENUM(NSUInteger, YHWXShareType) {
 
 
 /**
+ * SDK版本:1.8.6.1
  * 微信登录、分享、支付封装(包含支付功能，请确保你的项目有用到微信支付，否则请导入无支付功能的模块)
  * 文档1:https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419317853&lang=zh_CN
- * 文档2:https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419317851&token=&lang=zh_CN
- * 集成方式有pod和手动导入，pod集成的是包含支付功能的，如果你的项目不包含支付功能，请用手动的方式集成    pod 'WechatOpenSDK'
  */
 @interface YHWXManager : NSObject
+/// 初始化SDK的appID
+@property (nonatomic, copy, nullable, readonly) NSString *appID;
+
+/// 初始化SDK的appSecret
+@property (nonatomic, copy, nullable, readonly) NSString *appSecret;
+
+/// 授权获取的code
+@property (nonatomic, copy, nullable, readonly) NSString *code;
+
+/// 通过code获取的accessToken
+@property (nonatomic, copy, nullable, readonly) NSString *accessToken;
+
+
+
 
 + (instancetype)sharedInstance;
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
 
-/**
- SDK初始化
-
- @param appID appID
- @param appSecret appSecret(当只需要获取code时，appSecret可以为空)
- */
+#pragma mark Init
+/// SDK初始化
+/// @param appID appID
+/// @param appSecret appSecret(当只需要获取code时，appSecret可以为空)
+/// @param universalLink Universal Link(根据最新微信SDK，需要`Universal Link`参数)
 - (void)initWithAppID:(NSString *)appID
-            appSecret:(nullable NSString *)appSecret;
+            appSecret:(nullable NSString *)appSecret
+        universalLink:(NSString *)universalLink;
 
-
-/**
- openURL
- 
- @param URL URL
- */
+/// 处理微信通过URL启动App时传递的数据
+/// @param URL URL
 - (void)handleOpenURL:(NSURL *)URL;
+
+/// 处理微信通过`Universal Link`启动App时传递的数据
+/// @param userActivity 微信启动第三方应用时系统API传递过来的userActivity
+- (void)handleOpenUniversalLink:(NSUserActivity *)userActivity;
+
+
+#pragma mark Auth
+/// 获取code
+/// @param showHUD 是否显示HUD
+/// @param completionBlock 回调(是否获取成功，code保存在属性`code`里面)
+- (void)authForGetCodeWithShowHUD:(BOOL)showHUD
+                  completionBlock:(void(^_Nullable)(BOOL isGetCodeSuccess))completionBlock;
+
+/// 通过code获取AccessToken
+/// @param appID appID
+/// @param appSecret appSecret
+/// @param code code
+/// @param completionBlock 回调(是否获取成功，accessToken保存在属性`accessToken`里面)
+- (void)authForGetAccessTokenWithAppID:(NSString *)appID
+                             appSecret:(NSString *)appSecret
+                                  code:(NSString *)code
+                       completionBlock:(void(^_Nullable)(BOOL isGetAccessTokenSuccess))completionBlock;
+
+
+
+
 
 
 /**
@@ -99,14 +134,7 @@ typedef NS_ENUM(NSUInteger, YHWXShareType) {
 - (void)authWithShowHUD:(BOOL)showHUD
         completionBlock:(void(^_Nullable)(YHWXAuthResult *_Nullable authResult))completionBlock;
 
-/**
- 获取code
- 
- @param showHUD 是否显示HUD
- @param completionBlock 回调
- */
-- (void)authForGetCodeWithShowHUD:(BOOL)showHUD
-                  completionBlock:(void(^_Nullable)(NSString *_Nullable code))completionBlock;
+
 
 /**
  获取用户信息(需要先授权)

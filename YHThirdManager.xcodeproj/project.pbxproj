@@ -57,6 +57,7 @@
 		18C6F78E22815568006AF6D0 /* TencentOAuth+YHQQDescription.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "TencentOAuth+YHQQDescription.m"; sourceTree = "<group>"; };
 		18C6F79022815A60006AF6D0 /* WBAuthorizeResponse+YHSinaDescription.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WBAuthorizeResponse+YHSinaDescription.h"; sourceTree = "<group>"; };
 		18C6F79122815A60006AF6D0 /* WBAuthorizeResponse+YHSinaDescription.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "WBAuthorizeResponse+YHSinaDescription.m"; sourceTree = "<group>"; };
+		18DBCC17237253AD002C8743 /* SDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDK.h; sourceTree = "<group>"; };
 		18FD4BE722366A5B0062C2DE /* YHWXNoPayManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YHWXNoPayManager.m; sourceTree = "<group>"; };
 		18FD4BE822366A5B0062C2DE /* YHWXNoPayManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YHWXNoPayManager.h; sourceTree = "<group>"; };
 		18FD4BEA22366A5B0062C2DE /* YHWXManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YHWXManager.m; sourceTree = "<group>"; };
@@ -68,7 +69,6 @@
 		76084B98757189FD3769C22E /* Pods-YHThirdManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YHThirdManager.debug.xcconfig"; path = "Target Support Files/Pods-YHThirdManager/Pods-YHThirdManager.debug.xcconfig"; sourceTree = "<group>"; };
 		7CF05DB0FFAAD4A83C48FB2B /* libPods-YHThirdManager.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-YHThirdManager.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3F94CADB77DA373228EE99A /* Pods-YHThirdManager.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YHThirdManager.release.xcconfig"; path = "Target Support Files/Pods-YHThirdManager/Pods-YHThirdManager.release.xcconfig"; sourceTree = "<group>"; };
-		EE55CDBA236E930000DBA588 /* SDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDK.h; sourceTree = "<group>"; };
 		EE55CDBC236E976C00DBA588 /* YHThirdDefine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YHThirdDefine.h; sourceTree = "<group>"; };
 		EE55CDBD236EA05D00DBA588 /* YHThirdHttpRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YHThirdHttpRequest.h; sourceTree = "<group>"; };
 		EE55CDBE236EA05D00DBA588 /* YHThirdHttpRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YHThirdHttpRequest.m; sourceTree = "<group>"; };
@@ -242,7 +242,7 @@
 		EEA34C582234D25600D18F8A /* YHThirdManager */ = {
 			isa = PBXGroup;
 			children = (
-				EE55CDBA236E930000DBA588 /* SDK.h */,
+				18DBCC17237253AD002C8743 /* SDK.h */,
 				EEA34C592234D25600D18F8A /* AppDelegate.h */,
 				EEA34C5A2234D25600D18F8A /* AppDelegate.m */,
 				EEA34C5C2234D25600D18F8A /* ViewController.h */,

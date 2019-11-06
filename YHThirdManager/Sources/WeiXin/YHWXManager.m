@@ -9,6 +9,8 @@
 #import "YHWXManager.h"
 #import <CommonCrypto/CommonCrypto.h>
 
+#import "YHThirdDefine.h"
+#import "YHThirdHttpRequest.h"
 
 #if __has_include(<MBProgressHUD/MBProgressHUD.h>)
     #import <MBProgressHUD/MBProgressHUD.h>
@@ -16,14 +18,8 @@
     #import "MBProgressHUD.h"
 #endif
 
-#ifdef DEBUG
-    #define YHWXDebugLog(format, ...)  printf("👉👉👉👉👉[WX] %s\n", [[NSString stringWithFormat:format, ##__VA_ARGS__] UTF8String])
-#else
-    #define YHWXDebugLog(format, ...)
-#endif
 
-#define kYHWXError(__msg__)            [NSError errorWithDomain:@"com.yinhe.wx.nopay" code:-1 userInfo:@{NSLocalizedDescriptionKey: __msg__}]
-
+#define kGetAccessTokenAPI   @"https://api.weixin.qq.com/sns/oauth2/access_token"
 
 
 @implementation YHWXUserInfoResult
@@ -31,6 +27,7 @@
 {
     self = [super init];
     if (self) {
+        
         self.nickName = @"";
         self.sex = 0;
         self.province = @"";
@@ -91,15 +88,25 @@
 @property (nonatomic, copy) NSString *appID;
 @property (nonatomic, copy) NSString *appSecret;
 
+@property (nonatomic, copy) NSString *code;
+@property (nonatomic, copy) NSString *accessToken;
+
+
+
+
+
+@property (nonatomic, copy) void(^getCodeCompletionBlock)(BOOL isSuccess);
+
 
 @property (nonatomic, copy) void(^shareWebCompletionBlock)(BOOL isSuccess);
 @property (nonatomic, copy) void(^payCompletionBlock)(BOOL isSuccess);
 @property (nonatomic, copy) void(^authCompletionBlock)(YHWXAuthResult *authResult);
-@property (nonatomic, copy) void(^authForGetCodeCompletionBlock)(NSString *code);
+
 
 
 @property (nonatomic, strong) MBProgressHUD *requestCodeHUD;
 @property (nonatomic, strong) MBProgressHUD *requestAccessTokenHUD;
+
 
 @property (nonatomic, strong) MBProgressHUD *getUserInfoHUD;
 @property (nonatomic, strong) MBProgressHUD *shareWebHUD;
@@ -134,22 +141,87 @@
     return self;
 }
 
-- (void)initWithAppID:(NSString *)appID appSecret:(NSString *)appSecret{
+- (void)initWithAppID:(NSString *)appID
+            appSecret:(NSString *)appSecret
+        universalLink:(NSString *)universalLink{
     if (!appID) {
-        YHWXDebugLog(@"[初始化] appID为空");
+        YHThirdDebugLog(@"[微信] [初始化] appID为空");
         return;
     }
     self.appID = appID;
     self.appSecret = appSecret;
-    [WXApi registerApp:appID];
+    [WXApi registerApp:appID universalLink:universalLink];
 }
 
 - (void)handleOpenURL:(NSURL *)URL{
-    if ([URL.scheme hasPrefix:@"wx"]) {
-        YHWXDebugLog(@"[handleOpenURL] [URL] %@", URL);
-        [WXApi handleOpenURL:URL delegate:self];
-    }
+    YHThirdDebugLog(@"[微信] [handleOpenURL] [URL] %@", URL);
+    [WXApi handleOpenURL:URL delegate:self];
 }
+
+- (void)handleOpenUniversalLink:(NSUserActivity *)userActivity{
+    YHThirdDebugLog(@"[微信] [handleOpenUniversalLink] [userActivity] %@", userActivity);
+    [WXApi handleOpenUniversalLink:userActivity delegate:self];
+}
+
+
+#pragma mark Auth
+- (void)authForGetCodeWithShowHUD:(BOOL)showHUD completionBlock:(void (^)(BOOL))completionBlock{
+    YHThird_WeakSelf
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (!self.appID) {
+            YHThirdDebugLog(@"[微信] [获取code] appID为空");
+            return;
+        }
+        self.sdkFlag = NO;
+        
+        if (showHUD && [WXApi isWXAppInstalled]) {
+            [self _removeObserve];
+            [self _addObserve];
+            self.requestCodeHUD = [self getHUD];
+        }
+        
+        self.getCodeCompletionBlock = completionBlock;
+        
+        SendAuthReq *rq = [[SendAuthReq alloc] init];
+        rq.scope = @"snsapi_userinfo";
+        
+        [WXApi sendAuthReq:rq viewController:[UIApplication sharedApplication].keyWindow.rootViewController delegate:self completion:^(BOOL success) {
+            if (!success) {
+                if (completionBlock) {
+                    completionBlock(NO);
+                }
+                weakSelf.getCodeCompletionBlock = nil;
+                [weakSelf _hideHUD:weakSelf.requestCodeHUD];
+                [weakSelf _removeObserve];
+            }
+        }];
+    });
+}
+- (void)authForGetAccessTokenWithAppID:(NSString *)appID
+                             appSecret:(NSString *)appSecret
+                                  code:(NSString *)code
+                       completionBlock:(void (^)(BOOL))completionBlock{
+    
+    NSDictionary *param = @{@"appid": appID ? appID : @"",
+                            @"secret": appSecret ? appSecret : @"",
+                            @"code": code ? code : @"",
+                            @"grant_type": @"authorization_code"};
+    
+    YHThirdDebugLog(@"[微信] [获取accessToken参数] %@", param);
+    
+    [[YHThirdHttpRequest sharedInstance] requestWithURL:kGetAccessTokenAPI method:YHThirdHttpRequestMethodGET parameter:param successBlock:^(id  _Nonnull responseObject) {
+        
+    } failureBlock:^(NSError * _Nonnull error) {
+        
+    }];
+}
+- (void)authForGetAccessTokenWithCode:(NSString *)code
+                      completionBlock:(void (^)(BOOL))completionBlock{
+    
+    
+    
+}
+
 
 - (void)authWithShowHUD:(BOOL)showHUD completionBlock:(void (^)(YHWXAuthResult * _Nullable))completionBlock{
     __weak typeof(self) weakSelf = self;
@@ -185,38 +257,6 @@
     });
 }
 
-- (void)authForGetCodeWithShowHUD:(BOOL)showHUD completionBlock:(void (^)(NSString * _Nullable))completionBlock{
-    __weak typeof(self) weakSelf = self;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (!weakSelf.appID) {
-            YHWXDebugLog(@"[授权] appID为空");
-            return;
-        }
-        
-        weakSelf.sdkFlag = NO;
-        
-        if (showHUD && [WXApi isWXAppInstalled]) {
-            [weakSelf _removeObserve];
-            [weakSelf _addObserve];
-            weakSelf.requestCodeHUD = [weakSelf getHUD];
-        }
-        
-        weakSelf.authForGetCodeCompletionBlock = completionBlock;
-        
-        SendAuthReq *rq = [[SendAuthReq alloc] init];
-        rq.scope = @"snsapi_userinfo";
-        
-        BOOL res = [WXApi sendAuthReq:rq viewController:[UIApplication sharedApplication].keyWindow.rootViewController delegate:weakSelf];
-        if (!res) {
-            if (completionBlock) {
-                completionBlock(nil);
-            }
-            weakSelf.authForGetCodeCompletionBlock = nil;
-            [weakSelf _hideHUD:weakSelf.requestCodeHUD];
-            [weakSelf _removeObserve];
-        }
-    });
-}
 
 - (void)getUserInfoWithOpenID:(NSString *)openID accessToken:(NSString *)accessToken showHUD:(BOOL)showHUD completionBlock:(void (^)(YHWXUserInfoResult * _Nullable))completionBlock{
     __weak typeof(self) weakSelf = self;
