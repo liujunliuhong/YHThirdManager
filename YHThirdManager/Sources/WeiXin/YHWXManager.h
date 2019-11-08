@@ -15,6 +15,8 @@
     #import "WXApi.h"
 #endif
 
+#import "YHWXAuthResult.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -47,17 +49,6 @@ typedef NS_ENUM(NSUInteger, YHWXShareType) {
 
 
 
-@interface YHWXAuthResult : NSObject
-@property (nonatomic, copy) NSString *code;
-@property (nonatomic, copy) NSString *openID;
-@property (nonatomic, copy) NSString *accessToken;
-@property (nonatomic, copy) NSString *expiresIn;
-@property (nonatomic, copy) NSString *refreshToken;
-@property (nonatomic, copy) NSString *scope;
-// 原始数据(如果以上信息不能满足开发要求，则可以用此属性)
-@property (nonatomic, strong, nullable) NSDictionary *originAuthInfo;
-@end
-
 
 /**
  * SDK版本:1.8.6.1
@@ -74,10 +65,8 @@ typedef NS_ENUM(NSUInteger, YHWXShareType) {
 /// 授权获取的code
 @property (nonatomic, copy, nullable, readonly) NSString *code;
 
-/// 通过code获取的accessToken
-@property (nonatomic, copy, nullable, readonly) NSString *accessToken;
 
-
+@property (nonatomic, strong, nullable, readonly) YHWXAuthResult *authResult;
 
 
 + (instancetype)sharedInstance;
@@ -114,11 +103,24 @@ typedef NS_ENUM(NSUInteger, YHWXShareType) {
 /// @param appID appID
 /// @param appSecret appSecret
 /// @param code code
-/// @param completionBlock 回调(是否获取成功，accessToken保存在属性`accessToken`里面)
+/// @param completionBlock 回调(是否获取成功，授权信息保存在`authResult`里面)
 - (void)authForGetAccessTokenWithAppID:(NSString *)appID
                              appSecret:(NSString *)appSecret
                                   code:(NSString *)code
+                               showHUD:(BOOL)showHUD
                        completionBlock:(void(^_Nullable)(BOOL isGetAccessTokenSuccess))completionBlock;
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

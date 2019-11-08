@@ -56,40 +56,14 @@
 
 
 
-@implementation YHWXAuthResult
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        self.openID = @"";
-        self.accessToken = @"";
-        self.refreshToken = @"";
-        self.scope = @"";
-        self.expiresIn = @"";
-        self.originAuthInfo = nil;
-    }
-    return self;
-}
-
-- (NSString *)description{
-    NSDictionary *dic = @{@"openID":self.openID ? self.openID : [NSNull null],
-                          @"accessToken":self.accessToken ? self.accessToken : [NSNull null],
-                          @"expiresIn":self.expiresIn ? self.expiresIn : [NSNull null],
-                          @"refreshToken":self.refreshToken ? self.refreshToken : [NSNull null],
-                          @"scope":self.scope ? self.scope : [NSNull null],
-                          @"originAuthInfo":self.originAuthInfo ? self.originAuthInfo : [NSNull null]};
-    return [NSString stringWithFormat:@"%@", dic];
-}
-
-@end
-
 
 @interface YHWXManager() <WXApiDelegate>
 @property (nonatomic, copy) NSString *appID;
 @property (nonatomic, copy) NSString *appSecret;
 
 @property (nonatomic, copy) NSString *code;
-@property (nonatomic, copy) NSString *accessToken;
+
+@property (nonatomic, strong) YHWXAuthResult *authResult;
 
 
 
@@ -200,21 +174,81 @@
 - (void)authForGetAccessTokenWithAppID:(NSString *)appID
                              appSecret:(NSString *)appSecret
                                   code:(NSString *)code
+                               showHUD:(BOOL)showHUD
                        completionBlock:(void (^)(BOOL))completionBlock{
-    
-    NSDictionary *param = @{@"appid": appID ? appID : @"",
-                            @"secret": appSecret ? appSecret : @"",
-                            @"code": code ? code : @"",
-                            @"grant_type": @"authorization_code"};
-    
-    YHThirdDebugLog(@"[微信] [获取accessToken参数] %@", param);
-    
-    [[YHThirdHttpRequest sharedInstance] requestWithURL:kGetAccessTokenAPI method:YHThirdHttpRequestMethodGET parameter:param successBlock:^(id  _Nonnull responseObject) {
+    YHThird_WeakSelf
+    dispatch_async(dispatch_get_main_queue(), ^{
+        weakSelf.sdkFlag = YES;
         
-    } failureBlock:^(NSError * _Nonnull error) {
+        if (showHUD) {
+            weakSelf.requestCodeHUD = [weakSelf getHUD];
+        }
         
-    }];
+        NSDictionary *param = @{@"appid": appID ? appID : @"",
+                                @"secret": appSecret ? appSecret : @"",
+                                @"code": code ? code : @"",
+                                @"grant_type": @"authorization_code"};
+        
+        YHThirdDebugLog(@"[微信] [获取accessToken参数] %@", param);
+        
+        [[YHThirdHttpRequest sharedInstance] requestWithURL:kGetAccessTokenAPI method:YHThirdHttpRequestMethodGET parameter:param successBlock:^(id  _Nonnull responseObject) {
+            if (![responseObject isKindOfClass:[NSDictionary class]]) {
+                YHThirdDebugLog(@"[微信] [获取accessToken失败] [数据格式不正确] %@", responseObject);
+#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
+                [weakSelf _hideHUD:weakSelf.requestCodeHUD];
+#endif
+                
+                weakSelf.authResult = nil;
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (completionBlock) {
+                        completionBlock(NO);
+                    }
+                });
+                return ;
+            }
+            
+            YHThirdDebugLog(@"[微信] [获取accessToken成功] %@", responseObject);
+            
+#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
+            [weakSelf _hideHUD:weakSelf.requestCodeHUD];
+#endif
+            
+            
+            
+            
+            
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (completionBlock) {
+                    completionBlock(YES);
+                }
+            });
+            
+            
+            
+            
+        } failureBlock:^(NSError * _Nonnull error) {
+            YHThirdDebugLog(@"[微信] [获取accessToken失败] %@", error);
+#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
+            [weakSelf _hideHUD:weakSelf.requestCodeHUD];
+#endif
+            
+            weakSelf.authResult = nil;
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (completionBlock) {
+                    completionBlock(NO);
+                }
+            });
+        }];
+    });
 }
+
+
+
+
+
 - (void)authForGetAccessTokenWithCode:(NSString *)code
                       completionBlock:(void (^)(BOOL))completionBlock{
     

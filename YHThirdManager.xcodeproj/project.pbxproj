@@ -17,6 +17,7 @@
 		1822B4E52280376500E451CC /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1822B4E42280376500E451CC /* CoreTelephony.framework */; };
 		1822B4E72280376D00E451CC /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1822B4E62280376D00E451CC /* CFNetwork.framework */; };
 		1822B4E92280377500E451CC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1822B4E82280377500E451CC /* CoreGraphics.framework */; };
+		186BCF002375011F00F09EBC /* YHWXAuthResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 186BCEFF2375011F00F09EBC /* YHWXAuthResult.m */; };
 		18807C57223638CA00DE7183 /* 1.png in Resources */ = {isa = PBXBuildFile; fileRef = 18807C56223638CA00DE7183 /* 1.png */; };
 		18C6F78C22815299006AF6D0 /* big_image.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 18C6F78B22815299006AF6D0 /* big_image.jpeg */; };
 		18C6F78F22815568006AF6D0 /* TencentOAuth+YHQQDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C6F78E22815568006AF6D0 /* TencentOAuth+YHQQDescription.m */; };
@@ -51,6 +52,8 @@
 		1822B4E42280376500E451CC /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		1822B4E62280376D00E451CC /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		1822B4E82280377500E451CC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		186BCEFE2375011F00F09EBC /* YHWXAuthResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YHWXAuthResult.h; sourceTree = "<group>"; };
+		186BCEFF2375011F00F09EBC /* YHWXAuthResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YHWXAuthResult.m; sourceTree = "<group>"; };
 		18807C56223638CA00DE7183 /* 1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 1.png; sourceTree = "<group>"; };
 		18C6F78B22815299006AF6D0 /* big_image.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = big_image.jpeg; sourceTree = "<group>"; };
 		18C6F78D22815568006AF6D0 /* TencentOAuth+YHQQDescription.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TencentOAuth+YHQQDescription.h"; sourceTree = "<group>"; };
@@ -156,6 +159,8 @@
 			children = (
 				18FD4BEB22366A5B0062C2DE /* YHWXManager.h */,
 				18FD4BEA22366A5B0062C2DE /* YHWXManager.m */,
+				186BCEFE2375011F00F09EBC /* YHWXAuthResult.h */,
+				186BCEFF2375011F00F09EBC /* YHWXAuthResult.m */,
 			);
 			path = WeiXin;
 			sourceTree = "<group>";
@@ -395,6 +400,7 @@
 				EE55CDBF236EA05D00DBA588 /* YHThirdHttpRequest.m in Sources */,
 				EEA34C5E2234D25600D18F8A /* ViewController.m in Sources */,
 				EEA34C692234D25700D18F8A /* main.m in Sources */,
+				186BCF002375011F00F09EBC /* YHWXAuthResult.m in Sources */,
 				EEA34C5B2234D25600D18F8A /* AppDelegate.m in Sources */,
 				18C6F79222815A60006AF6D0 /* WBAuthorizeResponse+YHSinaDescription.m in Sources */,
 				18FD4BF322366A5B0062C2DE /* YHWXManager.m in Sources */,
