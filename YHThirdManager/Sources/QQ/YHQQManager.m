@@ -11,9 +11,9 @@
 #import "YHThirdHttpRequest.h"
 
 #if __has_include(<MBProgressHUD/MBProgressHUD.h>)
-#import <MBProgressHUD/MBProgressHUD.h>
+    #import <MBProgressHUD/MBProgressHUD.h>
 #elif __has_include("MBProgressHUD.h")
-#import "MBProgressHUD.h"
+    #import "MBProgressHUD.h"
 #endif
 
 #define kGetUserInfoAPI    @"https://graph.qq.com/user/get_user_info"
@@ -27,11 +27,9 @@
 @property (nonatomic, strong) TencentOAuth *oauth;
 @property (nonatomic, strong) YHQQUserInfo *userInfo;
 
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
 @property (nonatomic, strong) MBProgressHUD *authHUD;
 @property (nonatomic, strong) MBProgressHUD *getUserInfoHUD;
 @property (nonatomic, strong) MBProgressHUD *shareHUD;
-#endif
 
 @property (nonatomic, copy) void(^authComplectionBlock)(BOOL isSuccess);
 @property (nonatomic, copy) void(^shareComplectionBlock)(BOOL isSuccess);
@@ -100,9 +98,7 @@
         if (showHUD && [QQApiInterface isQQInstalled]) { // 此处做了个判断：只有安装了QQ,才会显示HUD，否则不显示
             [self _removeObserve];
             [self _addObserve];
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             self.authHUD = [self getHUD];
-#endif
         }
         self.authComplectionBlock = completionBlock;
         
@@ -116,9 +112,7 @@
                 completionBlock(NO);
             }
             self.authComplectionBlock = nil;
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             [self _hideHUD:self.authHUD];
-#endif
             [self _removeObserve];
         }
     });
@@ -138,18 +132,14 @@
         YHThirdDebugLog(@"[QQ] [获取个人信息参数] %@", param);
         weakSelf.sdkFlag = YES;
         if (showHUD) {
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             weakSelf.getUserInfoHUD = [weakSelf getHUD];
-#endif
         }
         
         [[YHThirdHttpRequest sharedInstance] requestWithURL:kGetUserInfoAPI method:YHThirdHttpRequestMethodGET parameter:param successBlock:^(id  _Nonnull responseObject) {
             if (![responseObject isKindOfClass:[NSDictionary class]]) {
                 YHThirdDebugLog(@"[QQ] [获取个人信息失败] [数据格式不正确] %@", responseObject);
                 weakSelf.userInfo = nil;
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
                 [weakSelf _hideHUD:weakSelf.getUserInfoHUD];
-#endif
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (completionBlock) {
                         completionBlock();
@@ -200,12 +190,8 @@
             } else if ([infoDic.allKeys containsObject:@"figureurl_qq_1"]) {
                 result.headImgURL = [NSString stringWithFormat:@"%@", infoDic[@"figureurl_qq_1"]];
             }
-            
             weakSelf.userInfo = result;
-            
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             [weakSelf _hideHUD:weakSelf.getUserInfoHUD];
-#endif
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionBlock) {
                     completionBlock();
@@ -213,9 +199,7 @@
             });
         } failureBlock:^(NSError * _Nonnull error) {
             YHThirdDebugLog(@"[QQ] [获取个人信息失败] %@", error);
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             [weakSelf _hideHUD:weakSelf.getUserInfoHUD];
-#endif
             weakSelf.userInfo = nil;
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionBlock) {
@@ -245,9 +229,7 @@
         if (showHUD && [QQApiInterface isQQInstalled]) {
             [self _removeObserve];
             [self _addObserve];
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             self.shareHUD = [self getHUD];
-#endif
         }
         self.shareComplectionBlock = completionBlock;
         
@@ -275,9 +257,7 @@
                 completionBlock(NO);
             }
             self.shareComplectionBlock = nil;
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             [self _hideHUD:self.shareHUD];
-#endif
             [self _removeObserve];
         }
     });
@@ -300,9 +280,7 @@
         if (showHUD && [QQApiInterface isQQInstalled]) {
             [self _removeObserve];
             [self _addObserve];
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             self.shareHUD = [self getHUD];
-#endif
         }
         self.shareComplectionBlock = completionBlock;
         
@@ -330,9 +308,7 @@
                 completionBlock(NO);
             }
             self.shareComplectionBlock = nil;
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             [self _hideHUD:self.shareHUD];
-#endif
             [self _removeObserve];
         }
     });
@@ -354,9 +330,7 @@
         if (showHUD && [QQApiInterface isQQInstalled]) {
             [self _removeObserve];
             [self _addObserve];
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             self.shareHUD = [self getHUD];
-#endif
         }
         self.shareComplectionBlock = completionBlock;
         
@@ -379,9 +353,7 @@
                 completionBlock(NO);
             }
             self.shareComplectionBlock = nil;
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             [self _hideHUD:self.shareHUD];
-#endif
             [self _removeObserve];
         }
     });
@@ -395,9 +367,7 @@
         self.authComplectionBlock(YES);
     }
     self.authComplectionBlock = nil;
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
     [self _hideHUD:self.authHUD];
-#endif
     [self _removeObserve];
 }
 
@@ -408,9 +378,7 @@
         self.authComplectionBlock(NO);
     }
     self.authComplectionBlock = nil;
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
     [self _hideHUD:self.authHUD];
-#endif
     [self _removeObserve];
 }
 
@@ -421,9 +389,7 @@
         self.authComplectionBlock(NO);
     }
     self.authComplectionBlock = nil;
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
     [self _hideHUD:self.authHUD];
-#endif
     [self _removeObserve];
 }
 
@@ -448,18 +414,14 @@
                 self.shareComplectionBlock(YES);
             }
             self.shareComplectionBlock = nil;
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             [self _hideHUD:self.shareHUD];
-#endif
             [self _removeObserve];
         } else {
             if (self.shareComplectionBlock) {
                 self.shareComplectionBlock(NO);
             }
             self.shareComplectionBlock = nil;
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             [self _hideHUD:self.shareHUD];
-#endif
             [self _removeObserve];
         }
     }
@@ -473,10 +435,8 @@
 #pragma mark Notification
 - (void)applicationWillEnterForeground:(NSNotification *)noti{
     YHThirdDebugLog(@"applicationWillEnterForeground");
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
     [self _hideHUD:self.authHUD];
     [self _hideHUD:self.shareHUD];
-#endif
 }
 
 - (void)applicationDidEnterBackground:(NSNotification *)noti{
@@ -489,13 +449,15 @@
     if (self.sdkFlag) {
         return;
     }
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
     [self _hideHUD:self.authHUD];
     [self _hideHUD:self.shareHUD];
-#endif
 }
+#endif
+@end
 
-#pragma mark 私有方法
+
+
+@implementation YHQQManager (Private)
 // 添加观察者
 - (void)_addObserve{
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
@@ -511,7 +473,6 @@
 }
 
 // 显示HUD
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
 - (MBProgressHUD *)getHUD{
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:[UIApplication sharedApplication].keyWindow animated:YES];//必须在主线程，源码规定
     hud.mode = MBProgressHUDModeIndeterminate;
@@ -521,102 +482,12 @@
     hud.removeFromSuperViewOnHide = YES;
     return hud;
 }
-#endif
 
 // 隐藏HUD
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
 - (void)_hideHUD:(MBProgressHUD *)hud{
     if (!hud) { return; }
     dispatch_async(dispatch_get_main_queue(), ^{
         [hud hideAnimated:YES];
     });
 }
-#endif
-
-#endif
 @end
-
-
-
-
-
-
-//__weak typeof(self) weakSelf = self;
-//dispatch_async(dispatch_get_main_queue(), ^{
-//    weakSelf.sdkFlag = YES;
-//    if (showHUD) {
-//        weakSelf.getUserInfoHUD = [weakSelf getHUD];
-//    }
-//    weakSelf.getUserInfoComplectionBlock = completionBlock;
-//
-//    BOOL res = [weakSelf.oauth getUserInfo];
-//    if (!res) {
-//        if (completionBlock) {
-//            completionBlock(nil);
-//        }
-//        weakSelf.getUserInfoComplectionBlock = nil;
-//        [weakSelf _hideHUD:weakSelf.getUserInfoHUD];
-//    }
-//});
-
-//#pragma mark ------------------ <TencentSessionDelegate> ------------------
-//- (void)getUserInfoResponse:(APIResponse *)response{
-//    // 获取用户个人信息回调.
-//    YHQQDebugLog(@"[获取用户信息] [TencentSessionDelegate] [getUserInfoResponse] %@", response.jsonResponse);
-//    if (response.detailRetCode == kOpenSDKErrorSuccess && response.retCode == URLREQUEST_SUCCEED && response.jsonResponse && [response.jsonResponse isKindOfClass:[NSDictionary class]]) {
-//
-//        YHQQUserInfo *result = [[YHQQUserInfo alloc] init];
-//
-//        NSDictionary *infoDic = (NSDictionary *)response.jsonResponse;
-//
-//        result.originInfo = infoDic;
-//
-//        if ([infoDic.allKeys containsObject:@"nickname"]) {
-//            result.nickName = [NSString stringWithFormat:@"%@", infoDic[@"nickname"]];
-//        }
-//        if ([infoDic.allKeys containsObject:@"gender"]) {
-//            NSString *sex = [NSString stringWithFormat:@"%@", infoDic[@"gender"]];
-//            if ([sex isEqualToString:@"男"]) {
-//                result.sex = 1;
-//            } else if ([sex isEqualToString:@"女"]) {
-//                result.sex = 2;
-//            } else {
-//                result.sex = 0;
-//            }
-//        }
-//        if ([infoDic.allKeys containsObject:@"province"]) {
-//            result.province = [NSString stringWithFormat:@"%@", infoDic[@"province"]];
-//        }
-//        if ([infoDic.allKeys containsObject:@"city"]) {
-//            result.city = [NSString stringWithFormat:@"%@", infoDic[@"city"]];
-//        }
-//
-//        // 依次取头像，保证一定有头像返回
-//        if ([infoDic.allKeys containsObject:@"figureurl_qq"]) {
-//            result.headImgURL = [NSString stringWithFormat:@"%@", infoDic[@"figureurl_qq"]];
-//        } else if ([infoDic.allKeys containsObject:@"figureurl_qq_2"]) {
-//            result.headImgURL = [NSString stringWithFormat:@"%@", infoDic[@"figureurl_qq_2"]];
-//        } else if ([infoDic.allKeys containsObject:@"figureurl_2"]) {
-//            result.headImgURL = [NSString stringWithFormat:@"%@", infoDic[@"figureurl_2"]];
-//        } else if ([infoDic.allKeys containsObject:@"figureurl_1"]) {
-//            result.headImgURL = [NSString stringWithFormat:@"%@", infoDic[@"figureurl_1"]];
-//        } else if ([infoDic.allKeys containsObject:@"figureurl"]) {
-//            result.headImgURL = [NSString stringWithFormat:@"%@", infoDic[@"figureurl"]];
-//        } else if ([infoDic.allKeys containsObject:@"figureurl_qq_1"]) {
-//            result.headImgURL = [NSString stringWithFormat:@"%@", infoDic[@"figureurl_qq_1"]];
-//        }
-//
-//        if (self.getUserInfoComplectionBlock) {
-//            self.getUserInfoComplectionBlock(result);
-//        }
-//        self.getUserInfoComplectionBlock = nil;
-//        [self _hideHUD:self.getUserInfoHUD];
-//    } else {
-//        if (self.getUserInfoComplectionBlock) {
-//            self.getUserInfoComplectionBlock(nil);
-//        }
-//        self.getUserInfoComplectionBlock = nil;
-//        [self _hideHUD:self.getUserInfoHUD];
-//    }
-//}
-

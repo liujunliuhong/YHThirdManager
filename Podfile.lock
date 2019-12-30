@@ -1,10 +1,4 @@
 PODS:
-  - AFNetworking (3.2.1):
-    - AFNetworking/NSURLSession (= 3.2.1)
-    - AFNetworking/Reachability (= 3.2.1)
-    - AFNetworking/Security (= 3.2.1)
-    - AFNetworking/Serialization (= 3.2.1)
-    - AFNetworking/UIKit (= 3.2.1)
   - AFNetworking/NSURLSession (3.2.1):
     - AFNetworking/Reachability
     - AFNetworking/Security
@@ -12,14 +6,15 @@ PODS:
   - AFNetworking/Reachability (3.2.1)
   - AFNetworking/Security (3.2.1)
   - AFNetworking/Serialization (3.2.1)
-  - AFNetworking/UIKit (3.2.1):
-    - AFNetworking/NSURLSession
   - AlipaySDK-iOS (15.5.9)
   - MBProgressHUD (1.1.0)
   - Weibo_SDK (3.2.5.1)
 
 DEPENDENCIES:
-  - AFNetworking
+  - AFNetworking/NSURLSession
+  - AFNetworking/Reachability
+  - AFNetworking/Security
+  - AFNetworking/Serialization
   - AlipaySDK-iOS
   - MBProgressHUD
   - Weibo_SDK (from `https://github.com/sinaweibosdk/weibo_ios_sdk.git`)
@@ -45,6 +40,6 @@ SPEC CHECKSUMS:
   MBProgressHUD: e7baa36a220447d8aeb12769bf0585582f3866d9
   Weibo_SDK: 76455315cb43d6a63c1990bf91483f05a98d45fd
 
-PODFILE CHECKSUM: 63e233a891271b06608816f1f24cefd4185dd862
+PODFILE CHECKSUM: 2cc18dcd43b3563bc8ab15c65a0631b120835c12
 
-COCOAPODS: 1.8.3
+COCOAPODS: 1.8.4

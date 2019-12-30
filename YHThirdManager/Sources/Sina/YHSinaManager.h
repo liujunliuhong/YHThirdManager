@@ -8,14 +8,11 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-
-
 #if __has_include(<Weibo_SDK/WeiboSDK.h>)
     #import <Weibo_SDK/WeiboSDK.h>
-    #import "WBAuthorizeResponse+YHSinaDescription.h"
 #endif
-
 #import "YHSinaUserInfo.h"
+
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 跳转到指定微博：sinaweibo://detail/?dispMeIfNeed=1&mblogid=<MID>
  * 调起微博直接到指定的个人页面：sinaweibo://userinfo?uid=xxxx
  */
+@class MBProgressHUD;
 @interface YHSinaManager : NSObject
 #if __has_include(<Weibo_SDK/WeiboSDK.h>)
 /// 初始化SDK的appID
@@ -129,6 +127,14 @@ NS_ASSUME_NONNULL_BEGIN
                                 curPage:(int)curPage
                                 showHUD:(BOOL)showHUD
                         completionBlock:(void(^_Nullable)(NSDictionary *_Nullable responseObject))completionBlock;
+@end
+
+
+@interface YHSinaManager (Private)
+- (void)_addObserve;
+- (void)_removeObserve;
+- (MBProgressHUD *)getHUD;
+- (void)_hideHUD:(MBProgressHUD *)hud;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -23,14 +23,4 @@
     return self;
 }
 
-- (NSString *)description{
-    NSDictionary *dic = @{@"openID":self.openID ? self.openID : [NSNull null],
-                          @"accessToken":self.accessToken ? self.accessToken : [NSNull null],
-                          @"expiresIn":self.expiresIn ? self.expiresIn : [NSNull null],
-                          @"refreshToken":self.refreshToken ? self.refreshToken : [NSNull null],
-                          @"scope":self.scope ? self.scope : [NSNull null],
-                          @"originAuthInfo":self.originAuthInfo ? self.originAuthInfo : [NSNull null]};
-    return [NSString stringWithFormat:@"%@", dic];
-}
-
 @end

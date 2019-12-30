@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		181014DE23B9DD7C00909173 /* YHWXUserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 181014DD23B9DD7C00909173 /* YHWXUserInfo.m */; };
+		181014E223B9E51800909173 /* YHWXManager+Pay.m in Sources */ = {isa = PBXBuildFile; fileRef = 181014E123B9E51800909173 /* YHWXManager+Pay.m */; };
 		181C17DD236B0C3E00B6968E /* libWeChatSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 181C17DA236B0C3E00B6968E /* libWeChatSDK.a */; };
 		181C17DF236B0F5300B6968E /* TencentOpenAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 181C17DE236B0F5300B6968E /* TencentOpenAPI.framework */; };
 		1822B4DB2280373100E451CC /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1822B4DA2280373100E451CC /* SystemConfiguration.framework */; };
@@ -20,12 +22,10 @@
 		186BCF002375011F00F09EBC /* YHWXAuthResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 186BCEFF2375011F00F09EBC /* YHWXAuthResult.m */; };
 		18807C57223638CA00DE7183 /* 1.png in Resources */ = {isa = PBXBuildFile; fileRef = 18807C56223638CA00DE7183 /* 1.png */; };
 		18C6F78C22815299006AF6D0 /* big_image.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 18C6F78B22815299006AF6D0 /* big_image.jpeg */; };
-		18C6F78F22815568006AF6D0 /* TencentOAuth+YHQQDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C6F78E22815568006AF6D0 /* TencentOAuth+YHQQDescription.m */; };
-		18C6F79222815A60006AF6D0 /* WBAuthorizeResponse+YHSinaDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C6F79122815A60006AF6D0 /* WBAuthorizeResponse+YHSinaDescription.m */; };
-		18FD4BF222366A5B0062C2DE /* YHWXNoPayManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18FD4BE722366A5B0062C2DE /* YHWXNoPayManager.m */; };
 		18FD4BF322366A5B0062C2DE /* YHWXManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18FD4BEA22366A5B0062C2DE /* YHWXManager.m */; };
 		18FD4BF422366A5B0062C2DE /* YHSinaManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18FD4BEE22366A5B0062C2DE /* YHSinaManager.m */; };
 		18FD4BF522366A5B0062C2DE /* YHQQManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18FD4BF122366A5B0062C2DE /* YHQQManager.m */; };
+		D85678B553091898BC3E622C /* Pods_YHThirdManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 957F85C74D9E3673735BB4E2 /* Pods_YHThirdManager.framework */; };
 		EE55CDBF236EA05D00DBA588 /* YHThirdHttpRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = EE55CDBE236EA05D00DBA588 /* YHThirdHttpRequest.m */; };
 		EE5BF7A9236EA86600606012 /* YHQQUserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = EE5BF7A8236EA86600606012 /* YHQQUserInfo.m */; };
 		EE5BF7AC236EBC9800606012 /* YHSinaUserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = EE5BF7AB236EBC9800606012 /* YHSinaUserInfo.m */; };
@@ -35,10 +35,13 @@
 		EEA34C632234D25700D18F8A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EEA34C622234D25700D18F8A /* Assets.xcassets */; };
 		EEA34C662234D25700D18F8A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EEA34C642234D25700D18F8A /* LaunchScreen.storyboard */; };
 		EEA34C692234D25700D18F8A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = EEA34C682234D25700D18F8A /* main.m */; };
-		F52C662FD6B10D7E9ED6E687 /* libPods-YHThirdManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7CF05DB0FFAAD4A83C48FB2B /* libPods-YHThirdManager.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		181014DC23B9DD7C00909173 /* YHWXUserInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YHWXUserInfo.h; sourceTree = "<group>"; };
+		181014DD23B9DD7C00909173 /* YHWXUserInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YHWXUserInfo.m; sourceTree = "<group>"; };
+		181014E023B9E51800909173 /* YHWXManager+Pay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "YHWXManager+Pay.h"; sourceTree = "<group>"; };
+		181014E123B9E51800909173 /* YHWXManager+Pay.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "YHWXManager+Pay.m"; sourceTree = "<group>"; };
 		181C17D9236B0C3E00B6968E /* WXApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXApi.h; sourceTree = "<group>"; };
 		181C17DA236B0C3E00B6968E /* libWeChatSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWeChatSDK.a; sourceTree = "<group>"; };
 		181C17DB236B0C3E00B6968E /* WechatAuthSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WechatAuthSDK.h; sourceTree = "<group>"; };
@@ -56,13 +59,7 @@
 		186BCEFF2375011F00F09EBC /* YHWXAuthResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YHWXAuthResult.m; sourceTree = "<group>"; };
 		18807C56223638CA00DE7183 /* 1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 1.png; sourceTree = "<group>"; };
 		18C6F78B22815299006AF6D0 /* big_image.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = big_image.jpeg; sourceTree = "<group>"; };
-		18C6F78D22815568006AF6D0 /* TencentOAuth+YHQQDescription.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TencentOAuth+YHQQDescription.h"; sourceTree = "<group>"; };
-		18C6F78E22815568006AF6D0 /* TencentOAuth+YHQQDescription.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "TencentOAuth+YHQQDescription.m"; sourceTree = "<group>"; };
-		18C6F79022815A60006AF6D0 /* WBAuthorizeResponse+YHSinaDescription.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WBAuthorizeResponse+YHSinaDescription.h"; sourceTree = "<group>"; };
-		18C6F79122815A60006AF6D0 /* WBAuthorizeResponse+YHSinaDescription.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "WBAuthorizeResponse+YHSinaDescription.m"; sourceTree = "<group>"; };
 		18DBCC17237253AD002C8743 /* SDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDK.h; sourceTree = "<group>"; };
-		18FD4BE722366A5B0062C2DE /* YHWXNoPayManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YHWXNoPayManager.m; sourceTree = "<group>"; };
-		18FD4BE822366A5B0062C2DE /* YHWXNoPayManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YHWXNoPayManager.h; sourceTree = "<group>"; };
 		18FD4BEA22366A5B0062C2DE /* YHWXManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YHWXManager.m; sourceTree = "<group>"; };
 		18FD4BEB22366A5B0062C2DE /* YHWXManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YHWXManager.h; sourceTree = "<group>"; };
 		18FD4BED22366A5B0062C2DE /* YHSinaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YHSinaManager.h; sourceTree = "<group>"; };
@@ -70,7 +67,7 @@
 		18FD4BF022366A5B0062C2DE /* YHQQManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YHQQManager.h; sourceTree = "<group>"; };
 		18FD4BF122366A5B0062C2DE /* YHQQManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YHQQManager.m; sourceTree = "<group>"; };
 		76084B98757189FD3769C22E /* Pods-YHThirdManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YHThirdManager.debug.xcconfig"; path = "Target Support Files/Pods-YHThirdManager/Pods-YHThirdManager.debug.xcconfig"; sourceTree = "<group>"; };
-		7CF05DB0FFAAD4A83C48FB2B /* libPods-YHThirdManager.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-YHThirdManager.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		957F85C74D9E3673735BB4E2 /* Pods_YHThirdManager.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_YHThirdManager.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3F94CADB77DA373228EE99A /* Pods-YHThirdManager.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YHThirdManager.release.xcconfig"; path = "Target Support Files/Pods-YHThirdManager/Pods-YHThirdManager.release.xcconfig"; sourceTree = "<group>"; };
 		EE55CDBC236E976C00DBA588 /* YHThirdDefine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YHThirdDefine.h; sourceTree = "<group>"; };
 		EE55CDBD236EA05D00DBA588 /* YHThirdHttpRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YHThirdHttpRequest.h; sourceTree = "<group>"; };
@@ -106,13 +103,22 @@
 				1822B4DD2280373E00E451CC /* libz.tbd in Frameworks */,
 				181C17DF236B0F5300B6968E /* TencentOpenAPI.framework in Frameworks */,
 				1822B4DB2280373100E451CC /* SystemConfiguration.framework in Frameworks */,
-				F52C662FD6B10D7E9ED6E687 /* libPods-YHThirdManager.a in Frameworks */,
+				D85678B553091898BC3E622C /* Pods_YHThirdManager.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		181014DF23B9E31D00909173 /* WeiXin Pay */ = {
+			isa = PBXGroup;
+			children = (
+				181014E023B9E51800909173 /* YHWXManager+Pay.h */,
+				181014E123B9E51800909173 /* YHWXManager+Pay.m */,
+			);
+			path = "WeiXin Pay";
+			sourceTree = "<group>";
+		};
 		1822B4D4228036D100E451CC /* WeiXin */ = {
 			isa = PBXGroup;
 			children = (
@@ -136,22 +142,13 @@
 		18FD4BE522366A5B0062C2DE /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				181014DF23B9E31D00909173 /* WeiXin Pay */,
 				EE55CDBB236E93BD00DBA588 /* Core */,
-				18FD4BE622366A5B0062C2DE /* WeiXin_NoPay */,
 				18FD4BE922366A5B0062C2DE /* WeiXin */,
 				18FD4BEC22366A5B0062C2DE /* Sina */,
 				18FD4BEF22366A5B0062C2DE /* QQ */,
 			);
 			path = Sources;
-			sourceTree = "<group>";
-		};
-		18FD4BE622366A5B0062C2DE /* WeiXin_NoPay */ = {
-			isa = PBXGroup;
-			children = (
-				18FD4BE822366A5B0062C2DE /* YHWXNoPayManager.h */,
-				18FD4BE722366A5B0062C2DE /* YHWXNoPayManager.m */,
-			);
-			path = WeiXin_NoPay;
 			sourceTree = "<group>";
 		};
 		18FD4BE922366A5B0062C2DE /* WeiXin */ = {
@@ -161,6 +158,8 @@
 				18FD4BEA22366A5B0062C2DE /* YHWXManager.m */,
 				186BCEFE2375011F00F09EBC /* YHWXAuthResult.h */,
 				186BCEFF2375011F00F09EBC /* YHWXAuthResult.m */,
+				181014DC23B9DD7C00909173 /* YHWXUserInfo.h */,
+				181014DD23B9DD7C00909173 /* YHWXUserInfo.m */,
 			);
 			path = WeiXin;
 			sourceTree = "<group>";
@@ -172,8 +171,6 @@
 				18FD4BEE22366A5B0062C2DE /* YHSinaManager.m */,
 				EE5BF7AA236EBC9800606012 /* YHSinaUserInfo.h */,
 				EE5BF7AB236EBC9800606012 /* YHSinaUserInfo.m */,
-				18C6F79022815A60006AF6D0 /* WBAuthorizeResponse+YHSinaDescription.h */,
-				18C6F79122815A60006AF6D0 /* WBAuthorizeResponse+YHSinaDescription.m */,
 			);
 			path = Sina;
 			sourceTree = "<group>";
@@ -185,8 +182,6 @@
 				18FD4BF122366A5B0062C2DE /* YHQQManager.m */,
 				EE5BF7A7236EA86600606012 /* YHQQUserInfo.h */,
 				EE5BF7A8236EA86600606012 /* YHQQUserInfo.m */,
-				18C6F78D22815568006AF6D0 /* TencentOAuth+YHQQDescription.h */,
-				18C6F78E22815568006AF6D0 /* TencentOAuth+YHQQDescription.m */,
 			);
 			path = QQ;
 			sourceTree = "<group>";
@@ -202,7 +197,7 @@
 				1822B4DE2280374900E451CC /* libsqlite3.0.tbd */,
 				1822B4DC2280373E00E451CC /* libz.tbd */,
 				1822B4DA2280373100E451CC /* SystemConfiguration.framework */,
-				7CF05DB0FFAAD4A83C48FB2B /* libPods-YHThirdManager.a */,
+				957F85C74D9E3673735BB4E2 /* Pods_YHThirdManager.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -293,6 +288,7 @@
 				EEA34C532234D25600D18F8A /* Frameworks */,
 				EEA34C542234D25600D18F8A /* Resources */,
 				661D2B2B3DA36A9EDBF37407 /* [CP] Copy Pods Resources */,
+				D21A39B42C62C3413D8D3A59 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -390,6 +386,23 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-YHThirdManager/Pods-YHThirdManager-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		D21A39B42C62C3413D8D3A59 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-YHThirdManager/Pods-YHThirdManager-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-YHThirdManager/Pods-YHThirdManager-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-YHThirdManager/Pods-YHThirdManager-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -401,12 +414,11 @@
 				EEA34C5E2234D25600D18F8A /* ViewController.m in Sources */,
 				EEA34C692234D25700D18F8A /* main.m in Sources */,
 				186BCF002375011F00F09EBC /* YHWXAuthResult.m in Sources */,
+				181014DE23B9DD7C00909173 /* YHWXUserInfo.m in Sources */,
 				EEA34C5B2234D25600D18F8A /* AppDelegate.m in Sources */,
-				18C6F79222815A60006AF6D0 /* WBAuthorizeResponse+YHSinaDescription.m in Sources */,
 				18FD4BF322366A5B0062C2DE /* YHWXManager.m in Sources */,
 				EE5BF7AC236EBC9800606012 /* YHSinaUserInfo.m in Sources */,
-				18FD4BF222366A5B0062C2DE /* YHWXNoPayManager.m in Sources */,
-				18C6F78F22815568006AF6D0 /* TencentOAuth+YHQQDescription.m in Sources */,
+				181014E223B9E51800909173 /* YHWXManager+Pay.m in Sources */,
 				EE5BF7A9236EA86600606012 /* YHQQUserInfo.m in Sources */,
 				18FD4BF422366A5B0062C2DE /* YHSinaManager.m in Sources */,
 				18FD4BF522366A5B0062C2DE /* YHQQManager.m in Sources */,

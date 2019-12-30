@@ -9,9 +9,9 @@
 #import "YHSinaManager.h"
 
 #if __has_include(<MBProgressHUD/MBProgressHUD.h>)
-#import <MBProgressHUD/MBProgressHUD.h>
+    #import <MBProgressHUD/MBProgressHUD.h>
 #elif __has_include("MBProgressHUD.h")
-#import "MBProgressHUD.h"
+    #import "MBProgressHUD.h"
 #endif
 
 #import "YHThirdDefine.h"
@@ -34,13 +34,11 @@
 @property (nonatomic, strong) YHSinaUserInfo *userInfo;
 #endif
 
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
 @property (nonatomic, strong) MBProgressHUD *authHUD;
 @property (nonatomic, strong) MBProgressHUD *getUserInfoHUD;
 @property (nonatomic, strong) MBProgressHUD *shareWebHUD;
 @property (nonatomic, strong) MBProgressHUD *commentWeiBoHUD;
 @property (nonatomic, strong) MBProgressHUD *mineWeiBoListHUD;
-#endif
 
 @property (nonatomic, copy) void(^authCompletionBlock)(BOOL);
 @property (nonatomic, copy) void(^shareWebCompletionBlock)(BOOL isSuccess);
@@ -106,9 +104,7 @@
         if (showHUD && [WeiboSDK isWeiboAppInstalled]) {
             [self _removeObserve];
             [self _addObserve];
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             self.authHUD = [self getHUD];
-#endif
         }
         self.authCompletionBlock = completionBlock;
         
@@ -126,9 +122,7 @@
                 }
                 self.authCompletionBlock = nil;
             });
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             [self _hideHUD:self.authHUD];
-#endif
             [self _removeObserve];
         }
     });
@@ -149,9 +143,7 @@
         if (showHUD && [WeiboSDK isWeiboAppInstalled]) {
             [self _removeObserve];
             [self _addObserve];
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             self.shareWebHUD = [self getHUD];
-#endif
         }
         self.sdkFlag = NO;
         self.shareWebCompletionBlock = completionBlock;
@@ -179,9 +171,7 @@
                 completionBlock(NO);
             }
             self.shareWebCompletionBlock = nil;
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             [self _hideHUD:self.shareWebHUD];
-#endif
         }
     });
 }
@@ -207,9 +197,7 @@
             if (![responseObject isKindOfClass:[NSDictionary class]]) {
                 YHThirdDebugLog(@"[Sina] [获取个人信息失败] [数据格式不正确] %@", responseObject);
                 weakSelf.userInfo = nil;
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
                 [weakSelf _hideHUD:weakSelf.getUserInfoHUD];
-#endif
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (completionBlock) {
                         completionBlock();
@@ -248,12 +236,8 @@
             if ([infoDic.allKeys containsObject:@"avatar_large"]) {
                 userInfo.headImgURL = [NSString stringWithFormat:@"%@", infoDic[@"avatar_large"]];
             }
-            
             weakSelf.userInfo = userInfo;
-            
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             [weakSelf _hideHUD:weakSelf.getUserInfoHUD];
-#endif
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionBlock) {
                     completionBlock();
@@ -262,9 +246,7 @@
             
         } failureBlock:^(NSError * _Nonnull error) {
             YHThirdDebugLog(@"[Sina] [获取个人信息失败] %@", error);
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             [weakSelf _hideHUD:weakSelf.getUserInfoHUD];
-#endif
             weakSelf.userInfo = nil;
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionBlock) {
@@ -286,9 +268,7 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         weakSelf.sdkFlag = YES;
         if (showHUD) {
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             weakSelf.commentWeiBoHUD = [weakSelf getHUD];
-#endif
         }
         NSDictionary *param = @{@"access_token" : accessToken ? accessToken : @"",
                                 @"comment" : comment ? comment : @"",
@@ -296,11 +276,9 @@
                                 @"comment_ori" : isCommentOriginWhenTransfer ? @"1" : @"0"};
         YHThirdDebugLog(@"[Sina] [评论指定微博参数] %@", param);
         [[YHThirdHttpRequest sharedInstance] requestWithURL:kCommentWeiBoAPI method:YHThirdHttpRequestMethodPOST parameter:param successBlock:^(id  _Nonnull responseObject) {
+            [weakSelf _hideHUD:weakSelf.commentWeiBoHUD];
             if (![responseObject isKindOfClass:[NSDictionary class]]) {
                 YHThirdDebugLog(@"[Sina] [评论指定微博失败] 数据格式错误 %@", responseObject);
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
-                [weakSelf _hideHUD:weakSelf.commentWeiBoHUD];
-#endif
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (completionBlock) {
                         completionBlock(nil);
@@ -308,10 +286,6 @@
                 });
                 return ;
             }
-            
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
-            [weakSelf _hideHUD:weakSelf.commentWeiBoHUD];
-#endif
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionBlock) {
                     completionBlock(responseObject);
@@ -319,9 +293,7 @@
             });
         } failureBlock:^(NSError * _Nonnull error) {
             YHThirdDebugLog(@"[Sina] [评论指定微博失败] %@", error);
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             [weakSelf _hideHUD:weakSelf.commentWeiBoHUD];
-#endif
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionBlock) {
                     completionBlock(nil);
@@ -365,9 +337,7 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         weakSelf.sdkFlag = YES;
         if (showHUD) {
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             weakSelf.mineWeiBoListHUD = [weakSelf getHUD];
-#endif
         }
         
         NSDictionary *param = @{@"access_token" : accessToken,
@@ -377,11 +347,9 @@
         YHThirdDebugLog(@"[Sina] [获取我的微博参数] %@", param);
         
         [[YHThirdHttpRequest sharedInstance] requestWithURL:kMineWeiBoListAPI method:YHThirdHttpRequestMethodGET parameter:param successBlock:^(id  _Nonnull responseObject) {
+            [weakSelf _hideHUD:weakSelf.mineWeiBoListHUD];
             if (![responseObject isKindOfClass:[NSDictionary class]]) {
                 YHThirdDebugLog(@"[Sina] [获取我的微博失败] [数据格式不正确] %@", responseObject);
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
-                [weakSelf _hideHUD:weakSelf.mineWeiBoListHUD];
-#endif
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (completionBlock) {
                         completionBlock(nil);
@@ -390,9 +358,6 @@
                 return ;
             }
             YHThirdDebugLog(@"[Sina] [获取我的微博成功] %@", responseObject);
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
-            [weakSelf _hideHUD:weakSelf.mineWeiBoListHUD];
-#endif
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionBlock) {
                     completionBlock(responseObject);
@@ -401,9 +366,7 @@
             
         } failureBlock:^(NSError * _Nonnull error) {
             YHThirdDebugLog(@"[Sina] [获取我的微博失败] %@", error);
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
             [weakSelf _hideHUD:weakSelf.mineWeiBoListHUD];
-#endif
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionBlock) {
                     completionBlock(nil);
@@ -417,10 +380,8 @@
 #pragma mark ------------------ Notification ------------------
 - (void)applicationWillEnterForeground:(NSNotification *)noti{
     YHThirdDebugLog(@"[Sina] applicationWillEnterForeground");
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
     [self _hideHUD:self.authHUD];
     [self _hideHUD:self.shareWebHUD];
-#endif
 }
 
 - (void)applicationDidEnterBackground:(NSNotification *)noti{
@@ -432,10 +393,8 @@
     if (self.sdkFlag) {
         return;
     }
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
     [self _hideHUD:self.authHUD];
     [self _hideHUD:self.shareWebHUD];
-#endif
 }
 
 #pragma mark <WeiboSDKDelegate>
@@ -456,9 +415,7 @@
             }
             self.authCompletionBlock = nil;
         });
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
         [self _hideHUD:self.authHUD];
-#endif
         [self _removeObserve];
     } else if ([response isKindOfClass:[WBSendMessageToWeiboResponse class]]) {
         // 分享
@@ -469,15 +426,14 @@
             }
             self.shareWebCompletionBlock = nil;
         });
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
         [self _hideHUD:self.shareWebHUD];
-#endif
         [self _removeObserve];
     }
 }
+@end
 
 
-#pragma mark ------------------ 私有方法 ------------------
+@implementation YHSinaManager (Private)
 // 添加观察者
 - (void)_addObserve{
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
@@ -493,7 +449,6 @@
 }
 
 // 显示HUD
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
 - (MBProgressHUD *)getHUD{
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:[UIApplication sharedApplication].keyWindow animated:YES];//必须在主线程，源码规定
     hud.mode = MBProgressHUDModeIndeterminate;
@@ -503,16 +458,12 @@
     hud.removeFromSuperViewOnHide = YES;
     return hud;
 }
-#endif
 
 // 隐藏HUD
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
 - (void)_hideHUD:(MBProgressHUD *)hud{
     if (!hud) { return; }
     dispatch_async(dispatch_get_main_queue(), ^{
         [hud hideAnimated:YES];
     });
 }
-#endif
 @end
-

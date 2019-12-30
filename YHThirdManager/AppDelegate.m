@@ -10,7 +10,6 @@
 #import "YHQQManager.h"
 #import "YHWXManager.h"
 #import "YHSinaManager.h"
-#import "YHWXNoPayManager.h"
 #import "SDK.h"
 
 @interface AppDelegate ()
@@ -27,14 +26,9 @@
  */
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
-#ifdef kWechatNoPay
-    [[YHWXNoPayManager sharedInstance] initWithAppID:QAQ_WECHAT_APP_ID appSecret:QAQ_WECHAT_APP_SECRET];
-#else
-    [[YHWXManager sharedInstance] initWithAppID:QAQ_WECHAT_APP_ID appSecret:QAQ_WECHAT_APP_SECRET];
-#endif
+
+    [[YHWXManager sharedInstance] initWithAppID:QAQ_WECHAT_APP_ID appSecret:QAQ_WECHAT_APP_SECRET universalLink:@""];
     [[YHQQManager sharedInstance] initWithAppID:QAQ_QQ_APP_ID universalLink:nil];
-    
     [[YHSinaManager sharedInstance] initWithAppID:QAQ_SINA_APP_KEY redirectURI:QAQ_SINA_Redirect_URL];
     
     return YES;
@@ -42,12 +36,7 @@
 
 // 9.0之后
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options{
-#ifdef kWechatNoPay
-    [[YHWXNoPayManager sharedInstance] handleOpenURL:url];
-#else
     [[YHWXManager sharedInstance] handleOpenURL:url];
-#endif
-    
     [[YHQQManager sharedInstance] handleOpenURL:url];
     [[YHSinaManager sharedInstance] handleOpenURL:url];
     return YES;
@@ -55,11 +44,7 @@
 
 // 9.0之前
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url{
-#ifdef kWechatNoPay
-    [[YHWXNoPayManager sharedInstance] handleOpenURL:url];
-#else
     [[YHWXManager sharedInstance] handleOpenURL:url];
-#endif
     [[YHQQManager sharedInstance] handleOpenURL:url];
     [[YHSinaManager sharedInstance] handleOpenURL:url];
     return YES;
@@ -67,11 +52,7 @@
 
 // 测试发现，在模拟器上，未安装微博，使用网页打开微博，点击取消，程序崩溃，加上下面这个方法后，程序正常运行
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
-#ifdef kWechatNoPay
-    [[YHWXNoPayManager sharedInstance] handleOpenURL:url];
-#else
     [[YHWXManager sharedInstance] handleOpenURL:url];
-#endif
     [[YHQQManager sharedInstance] handleOpenURL:url];
     [[YHSinaManager sharedInstance] handleOpenURL:url];
     return YES;

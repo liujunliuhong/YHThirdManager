@@ -7,21 +7,17 @@
 //
 
 #import "YHThirdHttpRequest.h"
-
-#if __has_include(<AFNetworking/AFNetworking.h>)
-    #import <AFNetworking/AFNetworking.h>
-#elif __has_include("AFNetworking.h")
-    #import "AFNetworking.h"
-#endif
+@import AFNetworking;
 
 #define kTimeOutInterval        60
 
 @interface YHThirdHttpRequest ()
-#if __has_include(<AFNetworking/AFNetworking.h>) || __has_include("AFNetworking.h")
+
 @property (nonatomic, strong) AFHTTPSessionManager *sessionManager;
+
 @property (nonatomic, strong) AFJSONRequestSerializer *requestSerializerForJSON;
 @property (nonatomic, strong) AFJSONResponseSerializer *responseSerializerForJSON;
-#endif
+
 @end
 
 @implementation YHThirdHttpRequest
@@ -39,7 +35,6 @@
 {
     self = [super init];
     if (self) {
-#if __has_include(<AFNetworking/AFNetworking.h>) || __has_include("AFNetworking.h")
         // sessionManager
         self.sessionManager = [AFHTTPSessionManager manager];
         // requestSerializerForJSON
@@ -59,13 +54,15 @@
                                                                  @"application/javascript",
                                                                  @"image/*",
                                                                  nil];
-#endif
     }
     return self;
 }
 
-- (void)requestWithURL:(NSString *)url method:(YHThirdHttpRequestMethod)method parameter:(NSDictionary *)parameter successBlock:(void (^)(id _Nonnull))successBlock failureBlock:(void (^)(NSError * _Nonnull))failureBlock{
-#if __has_include(<AFNetworking/AFNetworking.h>) || __has_include("AFNetworking.h")
+- (void)requestWithURL:(NSString *)url
+                method:(YHThirdHttpRequestMethod)method
+             parameter:(NSDictionary *)parameter
+          successBlock:(void (^)(id _Nonnull))successBlock
+          failureBlock:(void (^)(NSError * _Nonnull))failureBlock{
     NSString *newURL = [self urlTranscoding:url];
     switch (method) {
         case YHThirdHttpRequestMethodPOST:
@@ -81,10 +78,8 @@
         default:
             break;
     }
-#endif
 }
 
-#if __has_include(<AFNetworking/AFNetworking.h>) || __has_include("AFNetworking.h")
 - (NSURLSessionDataTask *)POST_WithURL:(NSString *)url
                                  param:(NSDictionary *)param
                           successBlock:(void(^)(id responseObject))successBlock
@@ -116,7 +111,6 @@
     }];
     return task;
 }
-#endif
 
 - (NSString *)urlTranscoding:(NSString *)url{
     NSString *transcodingString = @"";

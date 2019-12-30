@@ -11,7 +11,6 @@
 #if __has_include(<TencentOpenAPI/TencentOAuth.h>) && __has_include(<TencentOpenAPI/QQApiInterface.h>)
     #import <TencentOpenAPI/TencentOAuth.h>
     #import <TencentOpenAPI/QQApiInterface.h>
-    #import "TencentOAuth+YHQQDescription.h"
 #endif
 
 #import "YHQQUserInfo.h"
@@ -37,14 +36,13 @@ typedef NS_ENUM(NSUInteger, YHQQShareDestType) {
  * 不包含QQ支付功能，QQ支付和分享是不同的SDK
  * 吐槽一下QQ的SDK：在sdkdef.h文件里，定义了log等级，但是并没有提供关闭日志的方法，导致每次QQ登录的时候，控制台一堆的log
  */
+@class MBProgressHUD;
 @interface YHQQManager : NSObject
 #if __has_include(<TencentOpenAPI/TencentOAuth.h>) && __has_include(<TencentOpenAPI/QQApiInterface.h>)
 /// 初始化SDK的appID
 @property (nonatomic, copy, readonly) NSString *appID;
-
 /// 授权成功后的信息保存在此对象里面，需要什么信息自己去拿
 @property (nonatomic, strong, readonly) TencentOAuth *oauth;
-
 /// QQ登录获取的个人信息
 @property (nonatomic, strong, readonly, nullable) YHQQUserInfo *userInfo;
 #endif
@@ -144,4 +142,13 @@ typedef NS_ENUM(NSUInteger, YHQQShareDestType) {
 #endif
 @end
 
+
+
+
+@interface YHQQManager (Private)
+- (void)_addObserve;
+- (void)_removeObserve;
+- (MBProgressHUD *)getHUD;
+- (void)_hideHUD:(MBProgressHUD *)hud;
+@end
 NS_ASSUME_NONNULL_END

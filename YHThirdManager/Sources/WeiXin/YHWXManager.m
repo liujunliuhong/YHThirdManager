@@ -8,90 +8,37 @@
 
 #import "YHWXManager.h"
 #import <CommonCrypto/CommonCrypto.h>
-
-#import "YHThirdDefine.h"
-#import "YHThirdHttpRequest.h"
-
+#import <objc/message.h>
 #if __has_include(<MBProgressHUD/MBProgressHUD.h>)
     #import <MBProgressHUD/MBProgressHUD.h>
 #elif __has_include("MBProgressHUD.h")
     #import "MBProgressHUD.h"
 #endif
+#import "YHThirdDefine.h"
+#import "YHThirdHttpRequest.h"
 
 
 #define kGetAccessTokenAPI   @"https://api.weixin.qq.com/sns/oauth2/access_token"
-
-
-@implementation YHWXUserInfoResult
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        
-        self.nickName = @"";
-        self.sex = 0;
-        self.province = @"";
-        self.city = @"";
-        self.country = @"";
-        self.headImgURL = @"";
-        self.unionID = @"";
-        self.originUserInfo = nil;
-    }
-    return self;
-}
-
-- (NSString *)description{
-    NSDictionary *dic = @{@"nickName":self.nickName ? self.nickName : [NSNull null],
-                          @"sex":@(self.sex),
-                          @"province":self.province ? self.province : [NSNull null],
-                          @"city":self.city ? self.city : [NSNull null],
-                          @"country":self.country ? self.country : [NSNull null],
-                          @"headImgURL":self.headImgURL ? self.headImgURL : [NSNull null],
-                          @"unionID":self.unionID ? self.unionID : [NSNull null],
-                          @"originUserInfo":self.originUserInfo ? self.originUserInfo : [NSNull null]};
-    return [NSString stringWithFormat:@"%@", dic];
-}
-
-@end
-
+#define kGetUserInfoAPI      @"https://api.weixin.qq.com/sns/userinfo"
 
 
 
 @interface YHWXManager() <WXApiDelegate>
 @property (nonatomic, copy) NSString *appID;
 @property (nonatomic, copy) NSString *appSecret;
-
 @property (nonatomic, copy) NSString *code;
-
 @property (nonatomic, strong) YHWXAuthResult *authResult;
-
-
-
-
-
-@property (nonatomic, copy) void(^getCodeCompletionBlock)(BOOL isSuccess);
-
-
-@property (nonatomic, copy) void(^shareWebCompletionBlock)(BOOL isSuccess);
-@property (nonatomic, copy) void(^payCompletionBlock)(BOOL isSuccess);
-@property (nonatomic, copy) void(^authCompletionBlock)(YHWXAuthResult *authResult);
-
+@property (nonatomic, strong) YHWXUserInfo *userInfo;
 
 
 @property (nonatomic, strong) MBProgressHUD *requestCodeHUD;
 @property (nonatomic, strong) MBProgressHUD *requestAccessTokenHUD;
-
-
 @property (nonatomic, strong) MBProgressHUD *getUserInfoHUD;
 @property (nonatomic, strong) MBProgressHUD *shareWebHUD;
-@property (nonatomic, strong) MBProgressHUD *payHUD;
 
 
-
-
-
-@property (nonatomic, assign) BOOL sdkFlag;
-
+@property (nonatomic, copy) void(^getCodeCompletionBlock)(BOOL isSuccess);
+@property (nonatomic, copy) void(^shareWebCompletionBlock)(BOOL isSuccess);
 @end
 
 
@@ -161,16 +108,24 @@
         
         [WXApi sendAuthReq:rq viewController:[UIApplication sharedApplication].keyWindow.rootViewController delegate:self completion:^(BOOL success) {
             if (!success) {
-                if (completionBlock) {
-                    completionBlock(NO);
-                }
-                weakSelf.getCodeCompletionBlock = nil;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (completionBlock) {
+                        completionBlock(NO);
+                    }
+                    weakSelf.getCodeCompletionBlock = nil;
+                });
                 [weakSelf _hideHUD:weakSelf.requestCodeHUD];
                 [weakSelf _removeObserve];
             }
         }];
     });
 }
+
+/// 通过code获取AccessToken（获取AccessToken其实是个普通的网络请求）
+/// @param appID appID
+/// @param appSecret appSecret
+/// @param code code
+/// @param completionBlock 回调(是否获取成功，授权信息保存在`authResult`里面)
 - (void)authForGetAccessTokenWithAppID:(NSString *)appID
                              appSecret:(NSString *)appSecret
                                   code:(NSString *)code
@@ -181,7 +136,7 @@
         weakSelf.sdkFlag = YES;
         
         if (showHUD) {
-            weakSelf.requestCodeHUD = [weakSelf getHUD];
+            weakSelf.requestAccessTokenHUD = [weakSelf getHUD];
         }
         
         NSDictionary *param = @{@"appid": appID ? appID : @"",
@@ -192,14 +147,10 @@
         YHThirdDebugLog(@"[微信] [获取accessToken参数] %@", param);
         
         [[YHThirdHttpRequest sharedInstance] requestWithURL:kGetAccessTokenAPI method:YHThirdHttpRequestMethodGET parameter:param successBlock:^(id  _Nonnull responseObject) {
+            [weakSelf _hideHUD:weakSelf.requestAccessTokenHUD];
             if (![responseObject isKindOfClass:[NSDictionary class]]) {
                 YHThirdDebugLog(@"[微信] [获取accessToken失败] [数据格式不正确] %@", responseObject);
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
-                [weakSelf _hideHUD:weakSelf.requestCodeHUD];
-#endif
-                
-                weakSelf.authResult = nil;
-                
+                weakSelf.authResult = nil; // 置为nil
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (completionBlock) {
                         completionBlock(NO);
@@ -207,35 +158,125 @@
                 });
                 return ;
             }
-            
             YHThirdDebugLog(@"[微信] [获取accessToken成功] %@", responseObject);
-            
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
-            [weakSelf _hideHUD:weakSelf.requestCodeHUD];
-#endif
-            
-            
-            
-            
-            
+            NSDictionary *infoDic = (NSDictionary *)responseObject;
+            YHWXAuthResult *authResult = [[YHWXAuthResult alloc] init];
+            authResult.code = code;
+            authResult.originAuthInfo = infoDic;
+            if ([infoDic.allKeys containsObject:@"access_token"]) {
+                authResult.accessToken = [NSString stringWithFormat:@"%@",infoDic[@"access_token"]];
+            }
+            if ([infoDic.allKeys containsObject:@"expires_in"]) {
+                authResult.expiresIn = [NSString stringWithFormat:@"%@",infoDic[@"expires_in"]];
+            }
+            if ([infoDic.allKeys containsObject:@"refresh_token"]) {
+                authResult.refreshToken = [NSString stringWithFormat:@"%@",infoDic[@"refresh_token"]];
+            }
+            if ([infoDic.allKeys containsObject:@"openid"]) {
+                authResult.openID = [NSString stringWithFormat:@"%@",infoDic[@"openid"]];
+            }
+            if ([infoDic.allKeys containsObject:@"scope"]) {
+                authResult.scope = [NSString stringWithFormat:@"%@",infoDic[@"scope"]];
+            }
+            weakSelf.authResult = authResult;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (completionBlock) {
+                    completionBlock(YES);
+                }
+            });
+        } failureBlock:^(NSError * _Nonnull error) {
+            YHThirdDebugLog(@"[微信] [获取accessToken失败] %@", error);
+            [weakSelf _hideHUD:weakSelf.requestAccessTokenHUD];
+            weakSelf.authResult = nil; // 置为nil
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (completionBlock) {
+                    completionBlock(NO);
+                }
+            });
+        }];
+    });
+}
+
+
+#pragma mark Get User Info
+/// 获取用户信息（本质上是一个普通的网络请求）
+/// @param openID 授权成功后获取到的openID
+/// @param accessToken 授权成功后获取到的accessToken
+/// @param showHUD 是否显示HUD
+/// @param completionBlock 回调（如果获取成功，那么用户信息保存在`userInfo`里面）
+- (void)getUserInfoWithOpenID:(NSString *)openID
+                  accessToken:(NSString *)accessToken
+                      showHUD:(BOOL)showHUD
+              completionBlock:(void (^)(BOOL))completionBlock{
+    YHThird_WeakSelf
+    dispatch_async(dispatch_get_main_queue(), ^{
+        weakSelf.sdkFlag = YES;
+        
+        if (showHUD) {
+            weakSelf.getUserInfoHUD = [weakSelf getHUD];
+        }
+        
+        NSDictionary *param = @{@"access_token": accessToken ? accessToken : @"",
+                                @"openid": openID ? openID : @""};
+        
+        YHThirdDebugLog(@"[微信] [获取用户信息参数] %@", param);
+        
+        [[YHThirdHttpRequest sharedInstance] requestWithURL:kGetUserInfoAPI method:YHThirdHttpRequestMethodGET parameter:param successBlock:^(id  _Nonnull responseObject) {
+            [weakSelf _hideHUD:weakSelf.getUserInfoHUD];
+            if (![responseObject isKindOfClass:[NSDictionary class]]) {
+                YHThirdDebugLog(@"[微信] [获取用户信息失败] [数据格式不正确] %@", responseObject);
+                weakSelf.userInfo = nil; // 置为nil
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (completionBlock) {
+                        completionBlock(NO);
+                    }
+                });
+                return ;
+            }
+            YHThirdDebugLog(@"[微信] [获取用户信息成功] %@", responseObject);
+            NSDictionary *infoDic = (NSDictionary *)responseObject;
+            YHWXUserInfo *userInfo = [[YHWXUserInfo alloc] init];
+            userInfo.originInfo = infoDic;
+            if ([infoDic.allKeys containsObject:@"nickname"]) {
+                userInfo.nickName = [NSString stringWithFormat:@"%@",infoDic[@"nickname"]];
+            }
+            if ([infoDic.allKeys containsObject:@"sex"]) {
+                NSString *sex = [NSString stringWithFormat:@"%@",infoDic[@"sex"]];
+                NSString *regex = @"[0-9]*";
+                NSPredicate *pred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",regex];
+                BOOL res = [pred evaluateWithObject:sex];
+                if (res) {
+                    userInfo.sex = [sex intValue];
+                } else {
+                    userInfo.sex = 0;
+                }
+            }
+            if ([infoDic.allKeys containsObject:@"province"]) {
+                userInfo.province = [NSString stringWithFormat:@"%@",infoDic[@"province"]];
+            }
+            if ([infoDic.allKeys containsObject:@"city"]) {
+                userInfo.city = [NSString stringWithFormat:@"%@",infoDic[@"city"]];
+            }
+            if ([infoDic.allKeys containsObject:@"country"]) {
+                userInfo.country = [NSString stringWithFormat:@"%@",infoDic[@"country"]];
+            }
+            if ([infoDic.allKeys containsObject:@"headimgurl"]) {
+                userInfo.headImgURL = [NSString stringWithFormat:@"%@",infoDic[@"headimgurl"]];
+            }
+            if ([infoDic.allKeys containsObject:@"unionid"]) {
+                userInfo.unionID = [NSString stringWithFormat:@"%@",infoDic[@"unionid"]];
+            }
+            weakSelf.userInfo = userInfo;
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionBlock) {
                     completionBlock(YES);
                 }
             });
-            
-            
-            
-            
         } failureBlock:^(NSError * _Nonnull error) {
-            YHThirdDebugLog(@"[微信] [获取accessToken失败] %@", error);
-#if __has_include(<MBProgressHUD/MBProgressHUD.h>) || __has_include("MBProgressHUD.h")
-            [weakSelf _hideHUD:weakSelf.requestCodeHUD];
-#endif
-            
-            weakSelf.authResult = nil;
-            
+            YHThirdDebugLog(@"[微信] [获取用户信息失败] %@", error);
+            [weakSelf _hideHUD:weakSelf.getUserInfoHUD];
+            weakSelf.userInfo = nil; // 置为nil
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionBlock) {
                     completionBlock(NO);
@@ -249,131 +290,23 @@
 
 
 
-- (void)authForGetAccessTokenWithCode:(NSString *)code
-                      completionBlock:(void (^)(BOOL))completionBlock{
-    
-    
-    
-}
 
 
-- (void)authWithShowHUD:(BOOL)showHUD completionBlock:(void (^)(YHWXAuthResult * _Nullable))completionBlock{
-    __weak typeof(self) weakSelf = self;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (!weakSelf.appID) {
-            YHWXDebugLog(@"[授权] appID为空");
-            return;
-        }
-        
-        weakSelf.sdkFlag = NO;
-        
-        if (showHUD && [WXApi isWXAppInstalled]) {
-            [weakSelf _removeObserve];
-            [weakSelf _addObserve];
-            weakSelf.requestCodeHUD = [weakSelf getHUD];
-        }
-        
-        weakSelf.authCompletionBlock = completionBlock;
-        weakSelf.authForGetCodeCompletionBlock = nil;
-        
-        SendAuthReq *rq = [[SendAuthReq alloc] init];
-        rq.scope = @"snsapi_userinfo";
-        
-        BOOL res = [WXApi sendAuthReq:rq viewController:[UIApplication sharedApplication].keyWindow.rootViewController delegate:weakSelf];
-        if (!res) {
-            if (completionBlock) {
-                completionBlock(nil);
-            }
-            weakSelf.authCompletionBlock = nil;
-            [weakSelf _hideHUD:weakSelf.requestCodeHUD];
-            [weakSelf _removeObserve];
-        }
-    });
-}
 
-
-- (void)getUserInfoWithOpenID:(NSString *)openID accessToken:(NSString *)accessToken showHUD:(BOOL)showHUD completionBlock:(void (^)(YHWXUserInfoResult * _Nullable))completionBlock{
-    __weak typeof(self) weakSelf = self;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (!accessToken || accessToken.length <= 0) {
-            YHWXDebugLog(@"[获取用户信息] [accessToken为空]");
-            return;
-        }
-        if (!openID || openID.length <= 0) {
-            YHWXDebugLog(@"[获取用户信息] [openID为空]");
-            return;
-        }
-        if (showHUD) {
-            weakSelf.getUserInfoHUD = [weakSelf getHUD];
-        }
-        NSString *url = [NSString stringWithFormat:@"https://api.weixin.qq.com/sns/userinfo?access_token=%@&openid=%@", accessToken, openID];
-        [YHWXManager _requestWithURL:url completionBlock:^(id  _Nullable responseObject, NSError * _Nullable error) {
-            if (error) {
-                YHWXDebugLog(@"[获取用户信息] [error] %@", error);
-            }
-            if (responseObject) {
-                YHWXDebugLog(@"[获取用户信息] [responseObject] %@", responseObject);
-            }
-            if (!error && responseObject && [responseObject isKindOfClass:[NSDictionary class]]) {
-                NSDictionary *infoDic = (NSDictionary *)responseObject;
-                if ([infoDic.allKeys containsObject:@"errcode"]) {
-                    // 失败
-                    if (completionBlock) {
-                        completionBlock(nil);
-                    }
-                    [weakSelf _hideHUD:weakSelf.getUserInfoHUD];
-                } else {
-                    // 成功
-                    YHWXUserInfoResult *userInfoResult = [[YHWXUserInfoResult alloc] init];
-                    
-                    userInfoResult.originUserInfo = infoDic;
-                    
-                    if ([infoDic.allKeys containsObject:@"nickname"]) {
-                        userInfoResult.nickName = [NSString stringWithFormat:@"%@",infoDic[@"nickname"]];
-                    }
-                    if ([infoDic.allKeys containsObject:@"sex"]) {
-                        NSString *sex = [NSString stringWithFormat:@"%@",infoDic[@"sex"]];
-                        NSString *regex = @"[0-9]*";
-                        NSPredicate *pred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",regex];
-                        BOOL res = [pred evaluateWithObject:sex];
-                        if (res) {
-                            userInfoResult.sex = [sex intValue];
-                        } else {
-                            userInfoResult.sex = 0;
-                        }
-                    }
-                    if ([infoDic.allKeys containsObject:@"province"]) {
-                        userInfoResult.province = [NSString stringWithFormat:@"%@",infoDic[@"province"]];
-                    }
-                    if ([infoDic.allKeys containsObject:@"city"]) {
-                        userInfoResult.city = [NSString stringWithFormat:@"%@",infoDic[@"city"]];
-                    }
-                    if ([infoDic.allKeys containsObject:@"country"]) {
-                        userInfoResult.country = [NSString stringWithFormat:@"%@",infoDic[@"country"]];
-                    }
-                    if ([infoDic.allKeys containsObject:@"headimgurl"]) {
-                        userInfoResult.headImgURL = [NSString stringWithFormat:@"%@",infoDic[@"headimgurl"]];
-                    }
-                    if ([infoDic.allKeys containsObject:@"unionid"]) {
-                        userInfoResult.unionID = [NSString stringWithFormat:@"%@",infoDic[@"unionid"]];
-                    }
-                    if (completionBlock) {
-                        completionBlock(userInfoResult);
-                    }
-                    [weakSelf _hideHUD:weakSelf.getUserInfoHUD];
-                }
-            } else {
-                // 失败
-                if (completionBlock) {
-                    completionBlock(nil);
-                }
-                [weakSelf _hideHUD:weakSelf.getUserInfoHUD];
-            }
-        }];
-    });
-}
-
-
+#pragma mark Share
+/*
+ 注意：
+ 新版本微信SDK分享的时候，即使点击微信分享页面的取消按钮时，也是回调的分享成功。
+ 具体请看:https://mp.weixin.qq.com/s?__biz=MjM5NDAwMTA2MA==&mid=2695730124&idx=1&sn=666a448b047d657350de7684798f48d3&chksm=83d74a07b4a0c311569a748f4d11a5ebcce3ba8f6bd5a4b3183a4fea0b3442634a1c71d3cdd0&scene=21#wechat_redirect
+ */
+/// 微信分享网页
+/// @param URL 链接
+/// @param title 标题
+/// @param description 描述
+/// @param thumbImage 缩略图
+/// @param shareType 分享类型（目前只能分享到朋友圈和聊天界面）
+/// @param showHUD 是否显示HUD
+/// @param completionBlock 分享完成后的回调
 - (void)shareWebWithURL:(NSString *)URL
                   title:(NSString *)title
             description:(NSString *)description
@@ -381,10 +314,10 @@
               shareType:(YHWXShareType)shareType
                 showHUD:(BOOL)showHUD
         completionBlock:(void (^)(BOOL))completionBlock{
-    __weak typeof(self) weakSelf = self;
+    YHThird_WeakSelf
     dispatch_async(dispatch_get_main_queue(), ^{
         if (!weakSelf.appID) {
-            YHWXDebugLog(@"[分享] appID为空");
+            YHThirdDebugLog(@"[微信] [分享] appID为空");
             return;
         }
         if (showHUD && [WXApi isWXAppInstalled]) {
@@ -417,174 +350,47 @@
         }
         req.scene = scene;
         
-        BOOL res = [WXApi sendReq:req];
-        if (!res) {
-            if (completionBlock) {
-                completionBlock(NO);
+        [WXApi sendReq:req completion:^(BOOL success) {
+            if (!success) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (completionBlock) {
+                        completionBlock(NO);
+                    }
+                    weakSelf.shareWebCompletionBlock = nil;
+                });
+                [weakSelf _removeObserve];
+                [weakSelf _hideHUD:weakSelf.shareWebHUD];
             }
-            weakSelf.shareWebCompletionBlock = nil;
-            [weakSelf _removeObserve];
-            [weakSelf _hideHUD:weakSelf.shareWebHUD];
-        }
-    });
-}
-
-- (void)pay1WithPartnerID:(NSString *)partnerID
-                secretKey:(NSString *)secretKey
-                 prepayID:(NSString *)prepayID
-                  showHUD:(BOOL)showHUD
-           comletionBlock:(void (^)(BOOL))completionBlock{
-    __weak typeof(self) weakSelf = self;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (!weakSelf.appID && weakSelf.appID.length <= 0) {
-            YHWXDebugLog(@"[支付1] appID为空");
-            return;
-        }
-        if (!partnerID && partnerID.length <= 0) {
-            YHWXDebugLog(@"[支付1] partnerID为空");
-            return;
-        }
-        if (!secretKey && secretKey.length <= 0) {
-            YHWXDebugLog(@"[支付1] secretKey为空");
-            return;
-        }
-        if (!prepayID && prepayID.length <= 0) {
-            YHWXDebugLog(@"[支付1] prepayID为空");
-            return;
-        }
-        
-        if (showHUD && [WXApi isWXAppInstalled]) {
-            [weakSelf _removeObserve];
-            [weakSelf _addObserve];
-            weakSelf.payHUD = [weakSelf getHUD];
-        }
-        weakSelf.sdkFlag = NO;
-        
-        weakSelf.payCompletionBlock = completionBlock;
-        
-        int timestamp = [[weakSelf _currentTimestamp] intValue];
-        NSString *package = @"Sign=WXPay";
-        NSString *noncestr = [weakSelf _gen32NonceString];
-        
-        NSDictionary *param = @{@"appid":weakSelf.appID,
-                                @"partnerid":partnerID,
-                                @"prepayid":prepayID,
-                                @"package":package,
-                                @"noncestr":noncestr,
-                                @"timestamp":[NSString stringWithFormat:@"%d",(int)timestamp]};
-        
-        NSString *sign = [weakSelf _genSignWithSecretKey:secretKey param:param];
-        
-        PayReq *request = [[PayReq alloc] init];
-        request.partnerId = partnerID;
-        request.prepayId = prepayID;
-        request.package = package;
-        request.nonceStr = noncestr;
-        request.timeStamp = timestamp;
-        request.sign = sign;
-        
-        BOOL res = [WXApi sendReq:request];
-        if (!res) {
-            if (completionBlock) {
-                completionBlock(NO);
-            }
-            weakSelf.payCompletionBlock = nil;
-            [weakSelf _removeObserve];
-            [weakSelf _hideHUD:weakSelf.payHUD];
-        }
-    });
-}
-
-
-- (void)pay2WithPartnerID:(NSString *)partnerID
-                 prepayID:(NSString *)prepayID
-                     sign:(NSString *)sign
-                 nonceStr:(NSString *)nonceStr
-                timeStamp:(NSString *)timeStamp
-                  showHUD:(BOOL)showHUD
-           comletionBlock:(void (^)(BOOL))completionBlock{
-    __weak typeof(self) weakSelf = self;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (!weakSelf.appID && weakSelf.appID.length <= 0) {
-            YHWXDebugLog(@"[支付2] appID为空");
-            return;
-        }
-        if (!partnerID && partnerID.length <= 0) {
-            YHWXDebugLog(@"[支付2] partnerID为空");
-            return;
-        }
-        if (!prepayID && prepayID.length <= 0) {
-            YHWXDebugLog(@"[支付2] prepayID为空");
-            return;
-        }
-        if (!sign && sign.length <= 0) {
-            YHWXDebugLog(@"[支付2] sign为空");
-            return;
-        }
-        if (!nonceStr && nonceStr.length <= 0) {
-            YHWXDebugLog(@"[支付2] nonceStr为空");
-            return;
-        }
-        if (!timeStamp && timeStamp.length <= 0) {
-            YHWXDebugLog(@"[支付2] timeStamp为空");
-            return;
-        }
-        
-        if (showHUD && [WXApi isWXAppInstalled]) {
-            [weakSelf _removeObserve];
-            [weakSelf _addObserve];
-            weakSelf.payHUD = [weakSelf getHUD];
-        }
-        weakSelf.sdkFlag = NO;
-        
-        weakSelf.payCompletionBlock = completionBlock;
-        
-        PayReq *request = [[PayReq alloc] init];
-        request.partnerId = partnerID;
-        request.prepayId = prepayID;
-        request.package = @"Sign=WXPay";
-        request.nonceStr = nonceStr;
-        request.timeStamp = [timeStamp intValue];
-        request.sign = sign;
-        
-        BOOL res = [WXApi sendReq:request];
-        if (!res) {
-            if (completionBlock) {
-                completionBlock(NO);
-            }
-            weakSelf.payCompletionBlock = nil;
-            [weakSelf _removeObserve];
-            [weakSelf _hideHUD:weakSelf.payHUD];
-        }
+        }];
     });
 }
 
 #pragma mark ------------------ Notification ------------------
 - (void)applicationWillEnterForeground:(NSNotification *)noti{
-    YHWXDebugLog(@"applicationWillEnterForeground");
+    YHThirdDebugLog(@"[微信] applicationWillEnterForeground");
     [self _hideHUD:self.requestCodeHUD];
     [self _hideHUD:self.shareWebHUD];
-    [self _hideHUD:self.payHUD];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"yh_wx_hide_hud_ppp_aaa_yyy_notification" object:nil userInfo:nil];
 }
 
 - (void)applicationDidEnterBackground:(NSNotification *)noti{
-    YHWXDebugLog(@"applicationDidEnterBackground");
+    YHThirdDebugLog(@"[微信] applicationDidEnterBackground");
 }
 
 - (void)applicationDidBecomeActive:(NSNotification *)noti{
-    YHWXDebugLog(@"applicationDidBecomeActive");
+    YHThirdDebugLog(@"[微信] applicationDidBecomeActive");
     if (self.sdkFlag) {
         return;
     }
     [self _hideHUD:self.requestCodeHUD];
     [self _hideHUD:self.shareWebHUD];
-    [self _hideHUD:self.payHUD];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"yh_wx_hide_hud_ppp_aaa_yyy_notification" object:nil userInfo:nil];
 }
 
 
 #pragma mark ------------------ <WXApiDelegate> ------------------
 - (void)onReq:(BaseReq *)req{
-    YHWXDebugLog(@"[onReq] [req] %@ [type] %d", req, req.type);
+    YHThirdDebugLog(@"[微信] [onReq] [req] %@ [type] %d", req, req.type);
 }
 
 
@@ -601,24 +407,26 @@
     if ([resp isKindOfClass:[SendAuthResp class]]) {
         // 授权
         SendAuthResp *response = (SendAuthResp *)resp;
-        YHWXDebugLog(@"[onResp] [SendAuthResp] [errCode] %d", response.errCode);
-        YHWXDebugLog(@"[onResp] [SendAuthResp] [code] %@", response.code);
-        YHWXDebugLog(@"[onResp] [SendAuthResp] [state] %@", response.state);
-        YHWXDebugLog(@"[onResp] [SendAuthResp] [lang] %@", response.lang);
-        YHWXDebugLog(@"[onResp] [SendAuthResp] [country] %@", response.country);
+        YHThirdDebugLog(@"[微信] [onResp] [SendAuthResp] [errCode] %d", response.errCode);
+        YHThirdDebugLog(@"[微信] [onResp] [SendAuthResp] [code] %@", response.code);
+        YHThirdDebugLog(@"[微信] [onResp] [SendAuthResp] [state] %@", response.state);
+        YHThirdDebugLog(@"[微信] [onResp] [SendAuthResp] [lang] %@", response.lang);
+        YHThirdDebugLog(@"[微信] [onResp] [SendAuthResp] [country] %@", response.country);
+        
         if (response.errCode == WXSuccess) {
             self.sdkFlag = YES;
             [self _removeObserve];
             [self _hideHUD:self.requestCodeHUD];
-            NSString *responseCode = response.code; // code获取成功，接下来获取accessToken
             
-            if (self.authForGetCodeCompletionBlock) {
-                self.authForGetCodeCompletionBlock(responseCode);
-                self.authForGetCodeCompletionBlock = nil;
-            } else {
-                self.requestAccessTokenHUD = [self getHUD];
-                [self _requestAccessTokenWithCode:responseCode];
-            }
+            NSString *code = response.code; // code
+            self.code = code;
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (self.getCodeCompletionBlock) {
+                    self.getCodeCompletionBlock(YES);
+                }
+                self.getCodeCompletionBlock = nil;
+            });
         } else if (response.errCode == WXErrCodeCommon ||
                    response.errCode == WXErrCodeUserCancel ||
                    response.errCode == WXErrCodeSentFail ||
@@ -626,26 +434,25 @@
                    response.errCode == WXErrCodeUnsupport) {
             [self _removeObserve];
             [self _hideHUD:self.requestCodeHUD];
-            [self _hideHUD:self.requestAccessTokenHUD]; // 保险起见，也隐藏这个
-            if (self.authCompletionBlock) {
-                self.authCompletionBlock(nil);
-            }
-            self.authCompletionBlock = nil;
-            
-            if (self.authForGetCodeCompletionBlock) {
-                self.authForGetCodeCompletionBlock(nil);
-            }
-            self.authForGetCodeCompletionBlock = nil;
+            self.code = nil;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (self.getCodeCompletionBlock) {
+                    self.getCodeCompletionBlock(NO);
+                }
+                self.getCodeCompletionBlock = nil;
+            });
         }
     } else if ([resp isKindOfClass:[SendMessageToWXResp class]]) {
         // 分享
         SendMessageToWXResp *response = (SendMessageToWXResp *)resp;
-        YHWXDebugLog(@"[onResp] [SendMessageToWXResp] [errCode] %d", response.errCode);
+        YHThirdDebugLog(@"[微信] [onResp] [SendMessageToWXResp] [errCode] %d", response.errCode);
         if (response.errCode == WXSuccess) {
-            if (self.shareWebCompletionBlock) {
-                self.shareWebCompletionBlock(YES);
-            }
-            self.shareWebCompletionBlock = nil;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (self.shareWebCompletionBlock) {
+                    self.shareWebCompletionBlock(YES);
+                }
+                self.shareWebCompletionBlock = nil;
+            });
             [self _removeObserve];
             [self _hideHUD:self.shareWebHUD];
         } else if (response.errCode == WXErrCodeCommon ||
@@ -653,199 +460,30 @@
                    response.errCode == WXErrCodeSentFail ||
                    response.errCode == WXErrCodeAuthDeny ||
                    response.errCode == WXErrCodeUnsupport) {
-            if (self.shareWebCompletionBlock) {
-                self.shareWebCompletionBlock(NO);
-            }
-            self.shareWebCompletionBlock = nil;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (self.shareWebCompletionBlock) {
+                    self.shareWebCompletionBlock(NO);
+                }
+                self.shareWebCompletionBlock = nil;
+            });
             [self _removeObserve];
             [self _hideHUD:self.shareWebHUD];
         }
-    } else if ([resp isKindOfClass:[PayResp class]]) {
-        // 支付
-        PayResp *response = (PayResp *)resp;
-        YHWXDebugLog(@"[onResp] [PayResp] [errCode] %d", response.errCode);
-        if (response.errCode == WXSuccess) {
-            if (self.payCompletionBlock) {
-                self.payCompletionBlock(YES);
-            }
-            self.payCompletionBlock = nil;
-            [self _removeObserve];
-            [self _hideHUD:self.payHUD];
-        } else if (response.errCode == WXErrCodeCommon ||
-                   response.errCode == WXErrCodeUserCancel ||
-                   response.errCode == WXErrCodeSentFail ||
-                   response.errCode == WXErrCodeAuthDeny ||
-                   response.errCode == WXErrCodeUnsupport) {
-            if (self.payCompletionBlock) {
-                self.payCompletionBlock(NO);
-            }
-            self.payCompletionBlock = nil;
-            [self _removeObserve];
-            [self _hideHUD:self.payHUD];
-        }
+    } else {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"yh_wx_ppp_aaa_yyy_notification" object:nil userInfo:@{@"resp": resp}];
     }
 }
+@end
 
-#pragma mark ------------------ 私有方法 ------------------
-+ (void)_requestWithURL:(NSString *)URL completionBlock:(void (^)(id _Nullable responseObject, NSError * _Nullable error))completionBlock{
-    NSURL *url = [NSURL URLWithString:URL];
-    NSURLRequest *request = [NSURLRequest requestWithURL:url];
-    NSURLSession *session = [NSURLSession sharedSession];
-    NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        if (data) {
-            id responseObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
-            if (responseObject) {
-                if (completionBlock) {
-                    completionBlock(responseObject, nil);
-                }
-            } else {
-                if (completionBlock) {
-                    completionBlock(nil, kYHWXError(@"请求失败"));
-                }
-            }
-        } else {
-            if (completionBlock) {
-                completionBlock(nil, error);
-            }
-        }
-    }];
-    [task resume];
+
+
+@implementation YHWXManager (Private)
+- (BOOL)sdkFlag{
+    return [objc_getAssociatedObject(self, @selector(sdkFlag)) boolValue];
 }
-
-// 通过code获取access_token.
-- (void)_requestAccessTokenWithCode:(NSString *)code{
-    NSString *url = [NSString stringWithFormat:@"https://api.weixin.qq.com/sns/oauth2/access_token?appid=%@&secret=%@&code=%@&grant_type=authorization_code", self.appID, self.appSecret ? self.appSecret : @"", code];
-    __weak typeof(self) weakSelf = self;
-    [YHWXManager _requestWithURL:url completionBlock:^(id  _Nullable responseObject, NSError * _Nullable error) {
-        if (error) {
-            YHWXDebugLog(@"[获取accessToken等信息失败] [error] %@", error);
-        }
-        if (responseObject) {
-            YHWXDebugLog(@"[获取accessToken等信息成功] [responseObject] %@", responseObject);
-        }
-        if (!error && responseObject && [responseObject isKindOfClass:[NSDictionary class]]) {
-            NSDictionary *infoDic = (NSDictionary *)responseObject;
-            if ([infoDic.allKeys containsObject:@"errcode"]) {
-                // 失败
-                [weakSelf _removeObserve];
-                [weakSelf _hideHUD:weakSelf.requestCodeHUD];
-                [weakSelf _hideHUD:weakSelf.requestAccessTokenHUD];
-                if (weakSelf.authCompletionBlock) {
-                    weakSelf.authCompletionBlock(nil);
-                }
-                weakSelf.authCompletionBlock = nil;
-            } else {
-                // 成功
-                YHWXAuthResult *authResult = [[YHWXAuthResult alloc] init];
-                authResult.code = code;
-                authResult.originAuthInfo = infoDic;
-                
-                if ([infoDic.allKeys containsObject:@"access_token"]) {
-                    authResult.accessToken = [NSString stringWithFormat:@"%@",infoDic[@"access_token"]];
-                }
-                if ([infoDic.allKeys containsObject:@"expires_in"]) {
-                    authResult.expiresIn = [NSString stringWithFormat:@"%@",infoDic[@"expires_in"]];
-                }
-                if ([infoDic.allKeys containsObject:@"refresh_token"]) {
-                    authResult.refreshToken = [NSString stringWithFormat:@"%@",infoDic[@"refresh_token"]];
-                }
-                if ([infoDic.allKeys containsObject:@"openid"]) {
-                    authResult.openID = [NSString stringWithFormat:@"%@",infoDic[@"openid"]];
-                }
-                if ([infoDic.allKeys containsObject:@"scope"]) {
-                    authResult.scope = [NSString stringWithFormat:@"%@",infoDic[@"scope"]];
-                }
-                [weakSelf _removeObserve];
-                [weakSelf _hideHUD:weakSelf.requestCodeHUD];
-                [weakSelf _hideHUD:weakSelf.requestAccessTokenHUD];
-                if (weakSelf.authCompletionBlock) {
-                    weakSelf.authCompletionBlock(authResult);
-                }
-                weakSelf.authCompletionBlock = nil;
-            }
-        } else {
-            // 失败
-            [weakSelf _removeObserve];
-            [weakSelf _hideHUD:weakSelf.requestCodeHUD];
-            [weakSelf _hideHUD:weakSelf.requestAccessTokenHUD];
-            if (weakSelf.authCompletionBlock) {
-                weakSelf.authCompletionBlock(nil);
-            }
-            weakSelf.authCompletionBlock = nil;
-        }
-    }];
+- (void)setSdkFlag:(BOOL)sdkFlag{
+    objc_setAssociatedObject(self, @selector(sdkFlag), @(sdkFlag), OBJC_ASSOCIATION_ASSIGN);
 }
-
-
-
-// 生成32位随机字符串
-- (NSString *)_gen32NonceString {
-    NSArray *sampleArray = @[@"0", @"1", @"2", @"3", @"4", @"5", @"6", @"7", @"8", @"9",
-                             @"A", @"B", @"C", @"D", @"E", @"F", @"G", @"H", @"I", @"J",
-                             @"K", @"L", @"M", @"N", @"O", @"P", @"Q", @"R", @"S", @"T",
-                             @"U", @"V", @"W", @"X", @"Y", @"Z"];
-    NSMutableString *randomString = [NSMutableString string];
-    for (NSInteger i = 0; i < 32; ++i) {
-        [randomString appendString:sampleArray[random() % 32]];
-    }
-    return randomString;
-}
-
-// 生成签名    secretKey:商户平台设置的密钥key(不是appSecret)
-- (NSString *)_genSignWithSecretKey:(NSString *)secretKey param:(NSDictionary *)param{
-    NSMutableString *stringA = [NSMutableString string];
-    // 按字典key升序排序
-    NSArray *sortKeys = [[param allKeys] sortedArrayUsingSelector:@selector(compare:)];
-    // 拼接格式 “key0=value0&key1=value1&key2=value2”
-    for (NSString *key in sortKeys) {
-        [stringA appendString:[NSString stringWithFormat:@"%@=%@&", key, param[key]]];
-    }
-    // 拼接商户签名,,,,kShopSign 要和微信平台上填写的密钥一样，（密钥就是签名）
-    [stringA appendString:[NSString stringWithFormat:@"key=%@", secretKey]];
-    // MD5加密
-    NSString *stringB = [self _MD5:stringA];
-    // 返回大写字母
-    return stringB.uppercaseString;
-}
-
-// MD5
-- (NSString *)_MD5:(NSString *)string{
-    if (!string) {
-        return @"";
-    }
-    const char *value = [string UTF8String];
-    unsigned char outputBuffer[CC_MD5_DIGEST_LENGTH];
-    CC_MD5(value, (CC_LONG)strlen(value), outputBuffer);
-    NSMutableString *outputString = [[NSMutableString alloc] initWithCapacity:CC_MD5_DIGEST_LENGTH];
-    for(NSInteger count = 0; count < CC_MD5_DIGEST_LENGTH; count++){
-        [outputString appendFormat:@"%02x", outputBuffer[count]];
-    }
-    return outputString;
-}
-
-// 获取当前时间戳
-- (NSString *)_currentTimestamp{
-    NSTimeInterval interval = [[NSDate date] timeIntervalSince1970];
-    return [NSString stringWithFormat:@"%ld", (long)interval];
-}
-
-
-
-// 添加观察者
-- (void)_addObserve{
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
-}
-
-// 移除观察者
-- (void)_removeObserve{
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
-}
-
-
 // 显示HUD
 - (MBProgressHUD *)getHUD{
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:[UIApplication sharedApplication].keyWindow animated:YES];//必须在主线程，源码规定
@@ -869,5 +507,17 @@
         });
     }
 }
+// 添加观察者
+- (void)_addObserve{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
+}
 
+// 移除观察者
+- (void)_removeObserve{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
+}
 @end

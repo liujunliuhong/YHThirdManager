@@ -23,7 +23,11 @@ typedef NS_ENUM(NSUInteger, YHThirdHttpRequestMethod) {
 
 - (NSString *)urlTranscoding:(NSString *)url;
 
-- (void)requestWithURL:(NSString *)url method:(YHThirdHttpRequestMethod)method parameter:(nullable NSDictionary *)parameter successBlock:(void(^)(id responseObject))successBlock failureBlock:(void(^)(NSError *error))failureBlock;
+- (void)requestWithURL:(NSString *)url
+                method:(YHThirdHttpRequestMethod)method
+             parameter:(nullable NSDictionary *)parameter
+          successBlock:(void(^)(id responseObject))successBlock
+          failureBlock:(void(^)(NSError *error))failureBlock;
 @end
 
 NS_ASSUME_NONNULL_END
