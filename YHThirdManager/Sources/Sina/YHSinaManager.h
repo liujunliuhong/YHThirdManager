@@ -29,13 +29,10 @@ NS_ASSUME_NONNULL_BEGIN
 #if __has_include(<Weibo_SDK/WeiboSDK.h>)
 /// 初始化SDK的appID
 @property (nonatomic, copy, readonly) NSString *appID;
-
 /// 初始化SDK的redirectURI
 @property (nonatomic, copy, readonly) NSString *redirectURI;
-
 /// 授权成功后的信息保存在此对象里面，需要什么信息自己去拿
 @property (nonatomic, strong, readonly, nullable) WBAuthorizeResponse *authorizeResponse;
-
 /// 微博登录获取的个人信息
 @property (nonatomic, strong, readonly, nullable) YHSinaUserInfo *userInfo;
 
