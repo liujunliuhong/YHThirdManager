@@ -42,7 +42,7 @@ typedef NS_ENUM(NSUInteger, YHQQShareDestType) {
 /// 初始化SDK的appID
 @property (nonatomic, copy, readonly) NSString *appID;
 /// 授权成功后的信息保存在此对象里面，需要什么信息自己去拿
-@property (nonatomic, strong, readonly) TencentOAuth *oauth;
+@property (nonatomic, strong, readonly, nullable) TencentOAuth *oauth;
 /// QQ登录获取的个人信息
 @property (nonatomic, strong, readonly, nullable) YHQQUserInfo *userInfo;
 #endif
@@ -85,7 +85,7 @@ typedef NS_ENUM(NSUInteger, YHQQShareDestType) {
                              appID:(NSString *)appID
                             openId:(NSString *)openId
                          isShowHUD:(BOOL)showHUD
-                   completionBlock:(void(^_Nullable)(void))completionBlock;
+                   completionBlock:(void(^_Nullable)(BOOL isSuccess))completionBlock;
 
 #pragma mark Share
 /// 网页分享(缩略图为URL)
@@ -100,7 +100,7 @@ typedef NS_ENUM(NSUInteger, YHQQShareDestType) {
 - (void)shareWebWithURL:(NSString *)URL
                   title:(NSString *)title
             description:(NSString *)description
-          thumbImageURL:(NSString *)thumbImageURL
+          thumbImageURL:(nullable NSString *)thumbImageURL
               shareType:(YHQQShareType)shareTye
           shareDestType:(YHQQShareDestType)shareDestType
                 showHUD:(BOOL)showHUD
@@ -118,7 +118,7 @@ typedef NS_ENUM(NSUInteger, YHQQShareDestType) {
 - (void)shareWebWithURL:(NSString *)URL
                   title:(NSString *)title
             description:(NSString *)description
-         thumbImageData:(NSData *)thumbImageData
+         thumbImageData:(nullable NSData *)thumbImageData
               shareType:(YHQQShareType)shareTye
           shareDestType:(YHQQShareDestType)shareDestType
                 showHUD:(BOOL)showHUD

@@ -38,12 +38,12 @@
         // sessionManager
         self.sessionManager = [AFHTTPSessionManager manager];
         // requestSerializerForJSON
-        self.requestSerializerForJSON = [AFJSONRequestSerializer serializerWithWritingOptions:NSJSONReadingAllowFragments | NSJSONReadingMutableLeaves | NSJSONReadingMutableContainers];
-        self.requestSerializerForJSON.timeoutInterval = kTimeOutInterval;
-        [self.requestSerializerForJSON setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        AFJSONRequestSerializer *requestSerializerForJSON = [AFJSONRequestSerializer serializerWithWritingOptions:NSJSONReadingAllowFragments | NSJSONReadingMutableLeaves | NSJSONReadingMutableContainers];
+        requestSerializerForJSON.timeoutInterval = kTimeOutInterval;
+        [requestSerializerForJSON setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
         // responseSerializerForJSON
-        self.responseSerializerForJSON = [AFJSONResponseSerializer serializer];
-        self.responseSerializerForJSON.acceptableContentTypes = [NSSet setWithObjects:
+        AFJSONResponseSerializer *responseSerializerForJSON = [AFJSONResponseSerializer serializer];
+        responseSerializerForJSON.acceptableContentTypes = [NSSet setWithObjects:
                                                                  @"application/json",
                                                                  @"text/json",
                                                                  @"text/javascript",
@@ -54,6 +54,9 @@
                                                                  @"application/javascript",
                                                                  @"image/*",
                                                                  nil];
+        //
+        self.sessionManager.requestSerializer = requestSerializerForJSON;
+        self.sessionManager.responseSerializer = responseSerializerForJSON;
     }
     return self;
 }

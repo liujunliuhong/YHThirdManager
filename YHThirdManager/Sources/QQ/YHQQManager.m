@@ -123,7 +123,7 @@
                              appID:(NSString *)appID
                             openId:(NSString *)openId
                          isShowHUD:(BOOL)showHUD
-                   completionBlock:(void (^)(void))completionBlock{
+                   completionBlock:(void (^)(BOOL))completionBlock{
     YHThird_WeakSelf
     dispatch_async(dispatch_get_main_queue(), ^{
         NSDictionary *param = @{@"access_token": accessToken ? accessToken : @"",
@@ -142,7 +142,7 @@
                 [weakSelf _hideHUD:weakSelf.getUserInfoHUD];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (completionBlock) {
-                        completionBlock();
+                        completionBlock(NO);
                     }
                 });
                 return ;
@@ -194,7 +194,7 @@
             [weakSelf _hideHUD:weakSelf.getUserInfoHUD];
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionBlock) {
-                    completionBlock();
+                    completionBlock(YES);
                 }
             });
         } failureBlock:^(NSError * _Nonnull error) {
@@ -203,7 +203,7 @@
             weakSelf.userInfo = nil;
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (completionBlock) {
-                    completionBlock();
+                    completionBlock(NO);
                 }
             });
         }];

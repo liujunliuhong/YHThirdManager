@@ -27,9 +27,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
-    [[YHWXManager sharedInstance] initWithAppID:QAQ_WECHAT_APP_ID appSecret:QAQ_WECHAT_APP_SECRET universalLink:@""];
-    [[YHQQManager sharedInstance] initWithAppID:QAQ_QQ_APP_ID universalLink:nil];
-    [[YHSinaManager sharedInstance] initWithAppID:QAQ_SINA_APP_KEY redirectURI:QAQ_SINA_Redirect_URL];
+    [[YHQQManager sharedInstance] initWithAppID:QQ_APP_ID universalLink:@"https:///apple-app-site-association"];
+    [[YHWXManager sharedInstance] initWithAppID:WECHAT_APP_ID appSecret:WECHAT_APP_SECRET universalLink:@""];
+    [[YHSinaManager sharedInstance] initWithAppID:SINA_APP_KEY redirectURI:SINA_Redirect_URL];
     
     return YES;
 }
