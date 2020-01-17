@@ -11,9 +11,9 @@
 #import "YHThirdHttpRequest.h"
 
 #if __has_include(<MBProgressHUD/MBProgressHUD.h>)
-    #import <MBProgressHUD/MBProgressHUD.h>
+#import <MBProgressHUD/MBProgressHUD.h>
 #elif __has_include("MBProgressHUD.h")
-    #import "MBProgressHUD.h"
+#import "MBProgressHUD.h"
 #endif
 
 #define kGetUserInfoAPI    @"https://graph.qq.com/user/get_user_info"
@@ -314,13 +314,13 @@
     });
 }
 
-- (void)shareImageWithData:(NSData *)data
-            thumbImageData:(NSData *)thumbImageData
-                     title:(NSString *)title
-               description:(NSString *)description
-             shareDestType:(YHQQShareDestType)shareDestType
-                   showHUD:(BOOL)showHUD
-           completionBlock:(void (^)(BOOL))completionBlock{
+- (void)shareImageWithImageData:(NSData *)imageData
+                 thumbImageData:(NSData *)thumbImageData
+                          title:(NSString *)title
+                    description:(NSString *)description
+                  shareDestType:(YHQQShareDestType)shareDestType
+                        showHUD:(BOOL)showHUD
+                completionBlock:(void (^)(BOOL))completionBlock{
     dispatch_async(dispatch_get_main_queue(), ^{
         if (!self.appID) {
             YHThirdDebugLog(@"[QQ] [分享] appID为空");
@@ -334,7 +334,7 @@
         }
         self.shareComplectionBlock = completionBlock;
         
-        QQApiImageObject *imageObject = [QQApiImageObject objectWithData:data previewImageData:thumbImageData title:title description:description];
+        QQApiImageObject *imageObject = [QQApiImageObject objectWithData:imageData previewImageData:thumbImageData title:title description:description];
         
         ShareDestType destType = ShareDestTypeQQ;
         if (shareDestType == YHQQShareDestType_QQ) {

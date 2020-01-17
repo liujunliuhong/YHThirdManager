@@ -55,7 +55,7 @@ typedef NS_ENUM(NSUInteger, YHQQShareDestType) {
 #pragma mark Init
 /// QQ SDK初始化
 /// @param appID appID
-/// @param universalLink 可以为空，根据目前QQ SDK里面提供的初始化方法，universalLink是可选的
+/// @param universalLink 可以为空，根据目前QQ SDK里面提供的初始化方法，`universalLink`是可选的。测试发现`universalLink`为空或者填写不正确，分享会失败
 - (void)initWithAppID:(NSString *)appID
         universalLink:(nullable NSString *)universalLink;
 
@@ -125,14 +125,14 @@ typedef NS_ENUM(NSUInteger, YHQQShareDestType) {
         completionBlock:(void(^_Nullable)(BOOL isSuccess))completionBlock;
 
 /// 图片分享(根据QQ SDK，只能分享到QQ好友)
-/// @param data 图片数据(根据QQ SDK，预览图像最大为5M)
+/// @param imageData 图片数据(根据QQ SDK，预览图像最大为5M)
 /// @param thumbImageData 缩略图片NSData(根据QQ SDK，预览图像最大为1M)
 /// @param title 标题
 /// @param description 描述
 /// @param shareDestType 分享到哪儿
 /// @param showHUD 是否显示HUD
 /// @param completionBlock 分享完成回调（是否分享成功）
-- (void)shareImageWithData:(NSData *)data
+- (void)shareImageWithImageData:(NSData *)imageData
             thumbImageData:(nullable NSData *)thumbImageData
                      title:(nullable NSString *)title
                description:(nullable NSString *)description

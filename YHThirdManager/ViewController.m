@@ -88,6 +88,7 @@
     return cell;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     SEL action = self.dataSource[indexPath.section][indexPath.row].action;
     if ([self respondsToSelector:action]) {
 #pragma clang diagnostic push
@@ -149,18 +150,17 @@
         }
         NSLog(@"😋分享成功");
     }];
-//    [[YHQQManager sharedInstance] shareWebWithURL:@"https://www.baidu.com" title:@"标题" description:@"内容内容内容内容内容内容" thumbImageData:nil shareType:YHQQShareType_QQ shareDestType:YHQQShareDestType_QQ showHUD:YES completionBlock:^(BOOL isSuccess) {
-//        if (!isSuccess) {
-//            NSLog(@"😋分享失败");
-//            return;
-//        }
-//        NSLog(@"😋分享成功");
-//    }];
 }
 
 // QQ图片分享
 - (void)qq_picShare{
-    
+    [[YHQQManager sharedInstance] shareImageWithImageData:UIImageJPEGRepresentation([UIImage imageNamed:@"1.png"], 1) thumbImageData:nil title:@"标题" description:@"内容内容内容内容内容内容" shareDestType:YHQQShareDestType_QQ showHUD:YES completionBlock:^(BOOL isSuccess) {
+        if (!isSuccess) {
+            NSLog(@"😋分享失败");
+            return;
+        }
+        NSLog(@"😋分享成功");
+    }];
 }
 
 

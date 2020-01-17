@@ -22,6 +22,7 @@
 		186BCF002375011F00F09EBC /* YHWXAuthResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 186BCEFF2375011F00F09EBC /* YHWXAuthResult.m */; };
 		18807C57223638CA00DE7183 /* 1.png in Resources */ = {isa = PBXBuildFile; fileRef = 18807C56223638CA00DE7183 /* 1.png */; };
 		18C6F78C22815299006AF6D0 /* big_image.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 18C6F78B22815299006AF6D0 /* big_image.jpeg */; };
+		18C9F74F23D17C5E0025CDCB /* YHAlipayManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C9F74E23D17C5E0025CDCB /* YHAlipayManager.m */; };
 		18FD4BF322366A5B0062C2DE /* YHWXManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18FD4BEA22366A5B0062C2DE /* YHWXManager.m */; };
 		18FD4BF422366A5B0062C2DE /* YHSinaManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18FD4BEE22366A5B0062C2DE /* YHSinaManager.m */; };
 		18FD4BF522366A5B0062C2DE /* YHQQManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18FD4BF122366A5B0062C2DE /* YHQQManager.m */; };
@@ -59,6 +60,8 @@
 		186BCEFF2375011F00F09EBC /* YHWXAuthResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YHWXAuthResult.m; sourceTree = "<group>"; };
 		18807C56223638CA00DE7183 /* 1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 1.png; sourceTree = "<group>"; };
 		18C6F78B22815299006AF6D0 /* big_image.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = big_image.jpeg; sourceTree = "<group>"; };
+		18C9F74D23D17C5E0025CDCB /* YHAlipayManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YHAlipayManager.h; sourceTree = "<group>"; };
+		18C9F74E23D17C5E0025CDCB /* YHAlipayManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YHAlipayManager.m; sourceTree = "<group>"; };
 		18FD4BEA22366A5B0062C2DE /* YHWXManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YHWXManager.m; sourceTree = "<group>"; };
 		18FD4BEB22366A5B0062C2DE /* YHWXManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YHWXManager.h; sourceTree = "<group>"; };
 		18FD4BED22366A5B0062C2DE /* YHSinaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YHSinaManager.h; sourceTree = "<group>"; };
@@ -139,9 +142,19 @@
 			path = Resource;
 			sourceTree = "<group>";
 		};
+		18C9F74C23D17C390025CDCB /* Alipay */ = {
+			isa = PBXGroup;
+			children = (
+				18C9F74D23D17C5E0025CDCB /* YHAlipayManager.h */,
+				18C9F74E23D17C5E0025CDCB /* YHAlipayManager.m */,
+			);
+			path = Alipay;
+			sourceTree = "<group>";
+		};
 		18FD4BE522366A5B0062C2DE /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				18C9F74C23D17C390025CDCB /* Alipay */,
 				181014DF23B9E31D00909173 /* WeiXin Pay */,
 				EE55CDBB236E93BD00DBA588 /* Core */,
 				18FD4BE922366A5B0062C2DE /* WeiXin */,
@@ -410,6 +423,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				18C9F74F23D17C5E0025CDCB /* YHAlipayManager.m in Sources */,
 				EE55CDBF236EA05D00DBA588 /* YHThirdHttpRequest.m in Sources */,
 				EEA34C5E2234D25600D18F8A /* ViewController.m in Sources */,
 				EEA34C692234D25700D18F8A /* main.m in Sources */,
