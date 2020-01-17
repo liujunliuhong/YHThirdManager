@@ -16,6 +16,13 @@
 <br>
 
 # 下载下来之后，请`pod install`，之后运行会提示缺少`SDK.h`文件，请自己新建一个同名文件。该文件是保存的APPID，key等各种常量的
+```
+#define WECHAT_APP_ID       @""
+#define WECHAT_APP_SECRET   @""
+#define QQ_APP_ID           @""
+#define SINA_APP_KEY        @""
+#define SINA_Redirect_URL   @""
+```
 <br>
 <br>
 
