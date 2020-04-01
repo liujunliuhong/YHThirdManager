@@ -11,6 +11,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+
+/// 微信支付模块，如果你的项目中没有使用到微信支付，请不要导入此模块
 @interface YHWXManager (Pay)
 
 /// 微信支付方式一：服务端只需要提供prepayID，其余的secretKey、partnerID、appID在APP里面写死（客户端做签名，不安全）

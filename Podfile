@@ -7,9 +7,6 @@ target 'YHThirdManager' do
   pod 'AlipaySDK-iOS'
   pod 'MBProgressHUD'
   
-  pod 'AFNetworking/Serialization'
-  pod 'AFNetworking/Security'
-  pod 'AFNetworking/Reachability'
-  pod 'AFNetworking/NSURLSession'
+  pod 'AFNetworking'
   
 end

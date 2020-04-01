@@ -3,6 +3,7 @@
 <br>
 
 # SDK的核心封装已完成，Demo未完成
+# 目前遇到个问题，`universalLink`本人暂时无法配置，因此微信和QQ的相关功能暂时无法进行测试，之后会完善
 
 <br>
 
@@ -36,10 +37,7 @@
 
 ```
 pod 'MBProgressHUD'
-pod 'AFNetworking/Serialization'
-pod 'AFNetworking/Security'
-pod 'AFNetworking/Reachability'
-pod 'AFNetworking/NSURLSession'
+pod 'AFNetworking' # 请导入最新版本的AFNetworking
 ```
 
 ### 2、`Podfile`文件里加上`use_frameworks!`

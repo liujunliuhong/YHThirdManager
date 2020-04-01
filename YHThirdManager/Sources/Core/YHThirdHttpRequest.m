@@ -87,7 +87,7 @@
                                  param:(NSDictionary *)param
                           successBlock:(void(^)(id responseObject))successBlock
                             errorBlock:(void(^)(NSError *error))errorBlock{
-    NSURLSessionDataTask *task = [self.sessionManager POST:url parameters:param progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+    NSURLSessionDataTask *task = [self.sessionManager POST:url parameters:param headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (successBlock) {
             successBlock(responseObject);
         }
@@ -103,7 +103,7 @@
                                 param:(NSDictionary *)param
                          successBlock:(void(^)(id responseObject))successBlock
                            errorBlock:(void(^)(NSError *error))errorBlock{
-    NSURLSessionDataTask *task = [self.sessionManager GET:url parameters:param progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+    NSURLSessionDataTask *task = [self.sessionManager GET:url parameters:param headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (successBlock) {
             successBlock(responseObject);
         }

@@ -30,7 +30,7 @@ typedef NS_ENUM(NSUInteger, YHWXShareType) {
 
 /**
  * SDK版本:1.8.6.1
- * 微信登录、分享、支付封装(包含支付功能，请确保你的项目有用到微信支付，否则请导入无支付功能的模块)
+ * 微信授权、登录、分享封装(该模块不包含支付功能)
  * 文档1:https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419317853&lang=zh_CN
  */
 @class MBProgressHUD;
