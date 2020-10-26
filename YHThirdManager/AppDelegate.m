@@ -19,17 +19,12 @@
 @implementation AppDelegate
 
 
-/**
- 
- kWechatNoPay：是否使用无支付功能模块的宏定义
- 
- */
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
-    [[YHQQManager sharedInstance] initWithAppID:QQ_APP_ID universalLink:@"https:///apple-app-site-association"];
-    [[YHWXManager sharedInstance] initWithAppID:WECHAT_APP_ID appSecret:WECHAT_APP_SECRET universalLink:@""];
-    [[YHSinaManager sharedInstance] initWithAppID:SINA_APP_KEY redirectURI:SINA_Redirect_URL];
+    //[[YHQQManager sharedInstance] initWithAppID:QQ_APP_ID universalLink:QQ_Universal_Links];
+    [[YHWXManager sharedInstance] initWithAppID:WECHAT_APP_ID appSecret:WECHAT_APP_SECRET universalLink:WECHAT_Universal_Links];
+    //[[YHSinaManager sharedInstance] initWithAppID:SINA_APP_KEY redirectURI:SINA_Redirect_URL];
     
     return YES;
 }
@@ -37,24 +32,30 @@
 // 9.0之后
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options{
     [[YHWXManager sharedInstance] handleOpenURL:url];
-    [[YHQQManager sharedInstance] handleOpenURL:url];
-    [[YHSinaManager sharedInstance] handleOpenURL:url];
+    //[[YHQQManager sharedInstance] handleOpenURL:url];
+    //[[YHSinaManager sharedInstance] handleOpenURL:url];
     return YES;
 }
 
 // 9.0之前
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url{
     [[YHWXManager sharedInstance] handleOpenURL:url];
-    [[YHQQManager sharedInstance] handleOpenURL:url];
-    [[YHSinaManager sharedInstance] handleOpenURL:url];
+    //[[YHQQManager sharedInstance] handleOpenURL:url];
+    //[[YHSinaManager sharedInstance] handleOpenURL:url];
     return YES;
 }
 
 // 测试发现，在模拟器上，未安装微博，使用网页打开微博，点击取消，程序崩溃，加上下面这个方法后，程序正常运行
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
     [[YHWXManager sharedInstance] handleOpenURL:url];
-    [[YHQQManager sharedInstance] handleOpenURL:url];
-    [[YHSinaManager sharedInstance] handleOpenURL:url];
+    //[[YHQQManager sharedInstance] handleOpenURL:url];
+    //[[YHSinaManager sharedInstance] handleOpenURL:url];
+    return YES;
+}
+
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler{
+    [[YHWXManager sharedInstance] handleOpenUniversalLink:userActivity];
+    //[[YHQQManager sharedInstance] handleUniversalLink:userActivity];
     return YES;
 }
 

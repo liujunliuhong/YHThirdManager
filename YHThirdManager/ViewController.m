@@ -11,7 +11,7 @@
 #import "YHWXManager.h"
 #import "YHQQManager.h"
 #import "YHSinaManager.h"
-
+#import "YHWXManager+Pay.h"
 #import "SDK.h"
 
 
@@ -34,6 +34,16 @@
     return self;
 }
 @end
+
+
+
+
+
+
+
+
+
+
 
 @interface ViewController () <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, strong) UITableView *tableView;
@@ -63,18 +73,32 @@
     }
     self.dataSource = [NSMutableArray array];
     
-    {
-        Model *model1 = [[Model alloc] initWithTitle:@"QQ授权" action:@selector(qq_auth)];
-        Model *model2 = [[Model alloc] initWithTitle:@"QQ获取用户信息" action:@selector(qq_getUserInfo)];
-        Model *model3 = [[Model alloc] initWithTitle:@"QQ网页分享" action:@selector(qq_webShare)];
-        Model *model4 = [[Model alloc] initWithTitle:@"QQ图片分享" action:@selector(qq_picShare)];
-        NSArray<Model *> *ary = @[model1, model2, model3, model4];
-        [self.dataSource addObject:ary];
-    }
+    
+    //        Model *model1 = [[Model alloc] initWithTitle:@"QQ授权" action:@selector(qq_auth)];
+    //        Model *model2 = [[Model alloc] initWithTitle:@"QQ获取用户信息" action:@selector(qq_getUserInfo)];
+    //        Model *model3 = [[Model alloc] initWithTitle:@"QQ网页分享" action:@selector(qq_webShare)];
+    //        Model *model4 = [[Model alloc] initWithTitle:@"QQ图片分享" action:@selector(qq_picShare)];
+    Model *model1 = [[Model alloc] initWithTitle:@"微信 - 获取code" action:@selector(weixin_getCode)];
+    Model *model2 = [[Model alloc] initWithTitle:@"微信 - 获取accessToken" action:@selector(weixin_getAccessToken)];
+    Model *model3 = [[Model alloc] initWithTitle:@"微信 - 获取获取用户信息" action:@selector(weixin_getUserInfo)];
+    Model *model4 = [[Model alloc] initWithTitle:@"微信 - 获取网页分享" action:@selector(weixin_webShare)];
+    Model *model5 = [[Model alloc] initWithTitle:@"微信 - 微信支付" action:@selector(weixin_pay)];
+    NSArray<Model *> *ary = @[model1, model2, model3, model4, model5];
+    [self.dataSource addObject:ary];
     
     
     
+    [self.tableView reloadData];
 }
+
+- (void)alertMessage:(id)object{
+    UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:@"信息" message:[NSString stringWithFormat:@"%@", object] preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+    [alertVC addAction:cancelAction];
+    [self presentViewController:alertVC animated:YES completion:nil];
+}
+
+
 #pragma mark UITableViewDataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return self.dataSource.count;
@@ -100,6 +124,77 @@
 
 
 
+
+
+
+
+
+#pragma mark ------------------ 微信(本demo导入的是包含支付功能的SDK) ------------------
+// 微信获取code
+- (void)weixin_getCode{
+    [[YHWXManager sharedInstance] authForGetCodeWithShowHUD:YES completionBlock:^(BOOL isGetCodeSuccess) {
+        NSLog(@"😆微信获取Code: %d", isGetCodeSuccess);
+    }];
+}
+
+// 微信获取accessToken
+- (void)weixin_getAccessToken{
+    __weak typeof(self) waekSelf = self;
+    [[YHWXManager sharedInstance] authForGetCodeWithShowHUD:YES completionBlock:^(BOOL isGetCodeSuccess) {
+        if (!isGetCodeSuccess) {
+            NSLog(@"😆微信获取AccessToken - 获取code失败");
+            return;
+        }
+        NSString *code = [YHWXManager sharedInstance].code;
+        [[YHWXManager sharedInstance] authForGetAccessTokenWithAppID:WECHAT_APP_ID appSecret:WECHAT_APP_SECRET code:code showHUD:YES completionBlock:^(BOOL isGetAccessTokenSuccess) {
+            NSLog(@"😆微信获取AccessToken: %d", isGetAccessTokenSuccess);
+            [waekSelf alertMessage:[YHWXManager sharedInstance].authResult.originAuthInfo];
+        }];
+    }];
+}
+
+// 微信获取用户信息
+- (void)weixin_getUserInfo{
+    __weak typeof(self) waekSelf = self;
+    [[YHWXManager sharedInstance] authForGetCodeWithShowHUD:YES completionBlock:^(BOOL isGetCodeSuccess) {
+        if (!isGetCodeSuccess) {
+            NSLog(@"😆微信获取用户信息 - 获取code失败");
+            return;
+        }
+        NSString *code = [YHWXManager sharedInstance].code;
+        [[YHWXManager sharedInstance] authForGetAccessTokenWithAppID:WECHAT_APP_ID appSecret:WECHAT_APP_SECRET code:code showHUD:YES completionBlock:^(BOOL isGetAccessTokenSuccess) {
+            if (!isGetAccessTokenSuccess) {
+                NSLog(@"😆微信获取用户信息 - 获取AccessToken失败");
+                return;
+            }
+            NSString *openID = [YHWXManager sharedInstance].authResult.openID;
+            NSString *accessToken = [YHWXManager sharedInstance].authResult.accessToken;
+            [[YHWXManager sharedInstance] getUserInfoWithOpenID:openID accessToken:accessToken showHUD:YES completionBlock:^(BOOL isGetUserInfoSuccess) {
+                NSLog(@"😆微信获取用户信息: %d", isGetUserInfoSuccess);
+                [waekSelf alertMessage:[YHWXManager sharedInstance].userInfo.originInfo];
+            }];
+        }];
+    }];
+}
+
+// 微信网页分享
+- (void)weixin_webShare{
+    NSString *url = @"https://www.baidu.com";
+    NSString *title = @"这是标题";
+    NSString *description = @"这是描述";
+    UIImage *thumbImage = [UIImage imageNamed:@"1.png"];
+    YHWXShareType shareType = YHWXShareType_Session;
+    [[YHWXManager sharedInstance] shareWebWithURL:url title:title description:description thumbImage:thumbImage shareType:shareType showHUD:YES completionBlock:^(BOOL isSuccess) {
+        NSLog(@"😆微信分享: %d", isSuccess);
+    }];
+}
+
+// 微信支付
+- (void)weixin_pay{
+    [[YHWXManager sharedInstance] pay1WithPartnerID:@"商户ID" secretKey:@"秘钥" prepayID:@"预支付ID" showHUD:YES comletionBlock:^(BOOL isSuccess) {
+        NSLog(@"😆微信支付:%d", isSuccess);
+    }];
+}
 
 
 
@@ -222,67 +317,6 @@
     //    }];
 }
 
-#pragma mark ------------------ 微信(本demo导入的是包含支付功能的SDK) ------------------
-// 微信授权
-- (void)weixin_auth{
-    //#ifdef kWechatNoPay
-    //    [[YHWXNoPayManager sharedInstance] authWithShowHUD:YES completionBlock:^(YHWXNoPayAuthResult * _Nullable authResult) {
-    //        NSLog(@"微信授权:😆:%@", authResult.description);
-    //    }];
-    //#else
-    //    [[YHWXManager sharedInstance] authWithShowHUD:YES completionBlock:^(YHWXAuthResult * _Nullable authResult) {
-    //        NSLog(@"微信授权:😆:%@", authResult.description);
-    //    }];
-    //#endif
-}
-
-// 微信获取用户信息
-- (void)weixin_getUserInfo{
-    //#ifdef kWechatNoPay
-    //    [[YHWXNoPayManager sharedInstance] authWithShowHUD:YES completionBlock:^(YHWXNoPayAuthResult * _Nullable authResult) {
-    //        if (!authResult) {
-    //            return ;
-    //        }
-    //        [[YHWXNoPayManager sharedInstance] getUserInfoWithOpenID:authResult.openID accessToken:authResult.accessToken showHUD:YES completionBlock:^(YHWXNoPayUserInfoResult * _Nullable userInfoResult) {
-    //            NSLog(@"微信获取用户信息:😆:%@", userInfoResult.description);
-    //        }];
-    //    }];
-    //#else
-    //    [[YHWXManager sharedInstance] authWithShowHUD:YES completionBlock:^(YHWXAuthResult * _Nullable authResult) {
-    //        if (!authResult) {
-    //            return ;
-    //        }
-    //        [[YHWXManager sharedInstance] getUserInfoWithOpenID:authResult.openID accessToken:authResult.accessToken showHUD:YES completionBlock:^(YHWXUserInfoResult * _Nullable userInfoResult) {
-    //            NSLog(@"微信获取用户信息:😆:%@", userInfoResult.description);
-    //        }];
-    //    }];
-    //#endif
-}
-
-// 微信网页分享
-- (void)weixin_webShare{
-    //#ifdef kWechatNoPay
-    //    [[YHWXNoPayManager sharedInstance] shareWebWithURL:@"https://www.baidu.com" title:@"测试标题" description:@"测试内容测试内容测试内容测试内容测试内容测试内容测试内容" thumbImage:[UIImage imageNamed:@"big_image.jpeg"] shareType:YHWXNoPayShareType_Session showHUD:YES completionBlock:^(BOOL isSuccess) {
-    //        NSLog(@"微信网页分享:😆:%d", isSuccess);
-    //    }];
-    //#else
-    //    [[YHWXManager sharedInstance] shareWebWithURL:@"https://www.baidu.com" title:@"测试标题" description:@"测试内容测试内容测试内容测试内容测试内容测试内容测试内容" thumbImage:[UIImage imageNamed:@"1.png"] shareType:YHWXShareType_Session showHUD:YES completionBlock:^(BOOL isSuccess) {
-    //        NSLog(@"微信网页分享:😆:%d", isSuccess);
-    //    }];
-    //#endif
-}
-
-- (void)weixin_pay1{
-    //    [[YHWXManager sharedInstance] pay1WithPartnerID:QAQ_WECHAT_PARTNERID secretKey:QAQ_WECHAT_SECRETKEY prepayID:@"wx081644129033974637e0de663796974002" showHUD:YES comletionBlock:^(BOOL isSuccess) {
-    //        NSLog(@"微信支付1:😆:%d", isSuccess);
-    //    }];
-}
-
-- (void)weixin_pay2{
-    //    [[YHWXManager sharedInstance] pay2WithPartnerID:QAQ_WECHAT_PARTNERID prepayID:@"wx081644129033974637e0de663796974002" sign:@"" nonceStr:@"" timeStamp:@"" showHUD:YES comletionBlock:^(BOOL isSuccess) {
-    //        NSLog(@"微信支付2:😆:%d", isSuccess);
-    //    }];
-}
 
 
 @end

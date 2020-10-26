@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
-
+/// 获取AccessToken之后相关信息的包装
 @interface YHWXAuthResult : NSObject
 @property (nonatomic, copy) NSString *code;
 @property (nonatomic, copy) NSString *openID;

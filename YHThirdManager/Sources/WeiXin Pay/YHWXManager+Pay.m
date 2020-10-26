@@ -9,16 +9,22 @@
 #import "YHWXManager+Pay.h"
 #import <objc/message.h>
 #import <CommonCrypto/CommonCrypto.h>
+
 #if __has_include(<MBProgressHUD/MBProgressHUD.h>)
-    #import <MBProgressHUD/MBProgressHUD.h>
+#import <MBProgressHUD/MBProgressHUD.h>
 #elif __has_include("MBProgressHUD.h")
-    #import "MBProgressHUD.h"
+#import "MBProgressHUD.h"
 #endif
+
 #import "YHThirdDefine.h"
 
 @interface YHWXManager()
+
 @property (nonatomic, strong) MBProgressHUD *payHUD;
+@property (nonatomic, assign) BOOL isNeedToHidePayHUD;
+
 @property (nonatomic, copy) void(^payCompletionBlock)(BOOL isSuccess);
+
 @end
 
 
@@ -31,8 +37,6 @@
            comletionBlock:(void (^)(BOOL))completionBlock{
     YHThird_WeakSelf
     dispatch_async(dispatch_get_main_queue(), ^{
-        
-        [weakSelf handleNotification];
         
         if (!weakSelf.appID && weakSelf.appID.length <= 0) {
             YHThirdDebugLog(@"[微信] [支付1] appID为空");
@@ -51,12 +55,14 @@
             return;
         }
         
+        [weakSelf handleNotification];
+        
         if (showHUD && [WXApi isWXAppInstalled]) {
             [weakSelf _removeObserve];
             [weakSelf _addObserve];
             weakSelf.payHUD = [weakSelf getHUD];
         }
-        weakSelf.sdkFlag = NO;
+        weakSelf.isNeedToHidePayHUD = YES;
         
         weakSelf.payCompletionBlock = completionBlock;
         
@@ -82,17 +88,19 @@
         request.sign = sign;
         
         [WXApi sendReq:request completion:^(BOOL success) {
-            
-            if (!success) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    if (completionBlock) {
-                        completionBlock(NO);
-                    }
-                    weakSelf.payCompletionBlock = nil;
-                });
+            if (success) {
+                return;
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (completionBlock) {
+                    completionBlock(NO);
+                }
+                weakSelf.payCompletionBlock = nil;
                 [weakSelf _removeObserve];
                 [weakSelf _hideHUD:weakSelf.payHUD];
-            }
+                [weakSelf removeNotification];
+                weakSelf.payHUD = nil;
+            });
         }];
     });
 }
@@ -107,8 +115,6 @@
            comletionBlock:(void (^)(BOOL))completionBlock{
     YHThird_WeakSelf
     dispatch_async(dispatch_get_main_queue(), ^{
-        
-        [weakSelf handleNotification];
         
         if (!weakSelf.appID && weakSelf.appID.length <= 0) {
             YHThirdDebugLog(@"[微信] [支付2] appID为空");
@@ -135,12 +141,14 @@
             return;
         }
         
+        [weakSelf handleNotification];
+        
         if (showHUD && [WXApi isWXAppInstalled]) {
             [weakSelf _removeObserve];
             [weakSelf _addObserve];
             weakSelf.payHUD = [weakSelf getHUD];
         }
-        weakSelf.sdkFlag = NO;
+        weakSelf.isNeedToHidePayHUD = YES;
         
         weakSelf.payCompletionBlock = completionBlock;
         
@@ -153,66 +161,79 @@
         request.sign = sign;
         
         [WXApi sendReq:request completion:^(BOOL success) {
-            if (!success) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    if (completionBlock) {
-                        completionBlock(NO);
-                    }
-                    weakSelf.payCompletionBlock = nil;
-                });
+            if (success) {
+                return;
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (completionBlock) {
+                    completionBlock(NO);
+                }
+                weakSelf.payCompletionBlock = nil;
                 [weakSelf _removeObserve];
                 [weakSelf _hideHUD:weakSelf.payHUD];
-            }
+                [weakSelf removeNotification];
+                weakSelf.payHUD = nil;
+            });
         }];
     });
 }
 
 
 - (void)handleNotification{
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"yh_wx_ppp_aaa_yyy_notification" object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"yh_wx_hide_hud_ppp_aaa_yyy_notification" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(payNotification:) name:@"yh_wx_ppp_aaa_yyy_notification" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hidePayHUDNotification) name:@"yh_wx_hide_hud_ppp_aaa_yyy_notification" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:@"yh_wx_ppp_aaa_yyy_notification"
+                                                  object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:@"yh_wx_hide_hud_ppp_aaa_yyy_notification"
+                                                  object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(payNotification:)
+                                                 name:@"yh_wx_ppp_aaa_yyy_notification"
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(hidePayHUDNotification)
+                                                 name:@"yh_wx_hide_hud_ppp_aaa_yyy_notification"
+                                               object:nil];
 }
 
 
 - (void)payNotification:(NSNotification *)noti{
     BaseResp *resp = noti.userInfo[@"resp"];
-    if ([resp isKindOfClass:[PayResp class]]) {
-        // 支付
-        PayResp *response = (PayResp *)resp;
-        YHThirdDebugLog(@"[微信] [onResp] [PayResp] [errCode] %d [returnKey] %@", response.errCode, response.returnKey);
-        if (response.errCode == WXSuccess) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (self.payCompletionBlock) {
-                    self.payCompletionBlock(YES);
-                }
-                self.payCompletionBlock = nil;
-            });
-            [self _removeObserve];
-            [self _hideHUD:self.payHUD];
-        } else if (response.errCode == WXErrCodeCommon ||
-                   response.errCode == WXErrCodeUserCancel ||
-                   response.errCode == WXErrCodeSentFail ||
-                   response.errCode == WXErrCodeAuthDeny ||
-                   response.errCode == WXErrCodeUnsupport) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (self.payCompletionBlock) {
-                    self.payCompletionBlock(NO);
-                }
-                self.payCompletionBlock = nil;
-            });
-            [self _removeObserve];
-            [self _hideHUD:self.payHUD];
-        }
+    if (![resp isKindOfClass:[PayResp class]]) {
+        return;
     }
+    self.isNeedToHidePayHUD = YES;
+    // 支付
+    PayResp *response = (PayResp *)resp;
+    YHThirdDebugLog(@"[微信支付] [onResp] [PayResp] [errCode] %d [returnKey] %@", response.errCode, response.returnKey);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.payCompletionBlock) {
+            self.payCompletionBlock(response.errCode == WXSuccess);
+        }
+        self.payCompletionBlock = nil;
+    });
+    [self _removeObserve];
+    [self _hideHUD:self.payHUD];
+    [self removeNotification];
+    self.payHUD = nil;
 }
 
 - (void)hidePayHUDNotification{
-    [self _hideHUD:self.payHUD];
+    if (self.isNeedToHidePayHUD) {
+        [self _hideHUD:self.payHUD];
+        [self removeNotification];
+        self.isNeedToHidePayHUD = YES;
+        self.payHUD = nil;
+    }
 }
 
 
+
+
+- (void)removeNotification{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"yh_wx_ppp_aaa_yyy_notification" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"yh_wx_hide_hud_ppp_aaa_yyy_notification" object:nil];
+}
 
 
 
@@ -232,11 +253,11 @@
 
 
 - (MBProgressHUD *)payHUD{
-    return [self getHUD];
+    return objc_getAssociatedObject(self, @selector(payHUD));
 }
 
 - (void)setPayHUD:(MBProgressHUD *)payHUD{
-    self.payHUD = payHUD;
+    objc_setAssociatedObject(self, @selector(payHUD), payHUD, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (void (^)(BOOL))payCompletionBlock{
@@ -245,6 +266,13 @@
 
 - (void)setPayCompletionBlock:(void (^)(BOOL))payCompletionBlock{
     objc_setAssociatedObject(self, @selector(payCompletionBlock), payCompletionBlock, OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+- (BOOL)isNeedToHidePayHUD{
+    return [objc_getAssociatedObject(self, @selector(isNeedToHidePayHUD)) boolValue];
+}
+- (void)setIsNeedToHidePayHUD:(BOOL)isNeedToHidePayHUD{
+    objc_setAssociatedObject(self, @selector(isNeedToHidePayHUD), [NSNumber numberWithBool:isNeedToHidePayHUD], OBJC_ASSOCIATION_ASSIGN);
 }
 
 

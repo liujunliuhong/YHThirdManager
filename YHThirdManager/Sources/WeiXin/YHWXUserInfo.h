@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
-
+/// 用户信息的包装
 @interface YHWXUserInfo : NSObject
 // 普通用户昵称
 @property (nonatomic, copy) NSString *nickName;

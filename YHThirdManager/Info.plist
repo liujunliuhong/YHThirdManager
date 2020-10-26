@@ -23,7 +23,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>wxd009b4125786d152</string>
+				<string>wx5d58c3b41fdca0a8</string>
 			</array>
 		</dict>
 		<dict>
@@ -31,7 +31,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>tencent1106091425</string>
+				<string>tencent1106359296</string>
 			</array>
 		</dict>
 		<dict>
@@ -39,23 +39,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>wb1354693372</string>
-			</array>
-		</dict>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>qaq</string>
-			</array>
-		</dict>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>tbopen23824132</string>
+				<string>wb2104401357</string>
 			</array>
 		</dict>
 	</array>
@@ -63,6 +47,7 @@
 	<string>1</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>weixinULAPI</string>
 		<string>qaq</string>
 		<string>wechat</string>
 		<string>weixin</string>

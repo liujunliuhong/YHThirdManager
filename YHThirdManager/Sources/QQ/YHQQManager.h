@@ -31,7 +31,7 @@ typedef NS_ENUM(NSUInteger, YHQQShareDestType) {
 
 
 /**
- * SDK版本：3.3.7
+ * SDK版本：3.3.9（2020.10.26）
  * QQ登录、分享功能的封装(文档:http://wiki.connect.qq.com/)
  * 不包含QQ支付功能，QQ支付和分享是不同的SDK
  * 吐槽一下QQ的SDK：在sdkdef.h文件里，定义了log等级，但是并没有提供关闭日志的方法，导致每次QQ登录的时候，控制台一堆的log

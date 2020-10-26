@@ -29,7 +29,7 @@ typedef NS_ENUM(NSUInteger, YHWXShareType) {
 
 
 /**
- * SDK版本:1.8.6.1
+ * SDK版本:1.8.7.1（2020.10.26）
  * 微信授权、登录、分享封装(该模块不包含支付功能)
  * 文档1:https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419317853&lang=zh_CN
  */
@@ -107,9 +107,9 @@ typedef NS_ENUM(NSUInteger, YHWXShareType) {
  新版本微信SDK分享的时候，即使点击微信分享页面的取消按钮时，也是回调的分享成功。具体请看:https://mp.weixin.qq.com/s?__biz=MjM5NDAwMTA2MA==&mid=2695730124&idx=1&sn=666a448b047d657350de7684798f48d3&chksm=83d74a07b4a0c311569a748f4d11a5ebcce3ba8f6bd5a4b3183a4fea0b3442634a1c71d3cdd0&scene=21#wechat_redirect
  
  @param URL 链接
- @param title 标题
- @param description 描述
- @param thumbImage 缩略图
+ @param title 标题（限制长度不超过512Bytes）
+ @param description 描述（限制长度不超过1KB）
+ @param thumbImage 缩略图（限制内容大小不超过32KB）
  @param shareType 分享类型（目前只能分享到朋友圈和聊天界面）
  @param showHUD 是否显示HUD
  @param completionBlock 分享完成后在主线程的回调
@@ -126,7 +126,6 @@ typedef NS_ENUM(NSUInteger, YHWXShareType) {
 
 
 @interface YHWXManager (Private)
-@property (nonatomic, assign) BOOL sdkFlag;
 - (MBProgressHUD *)getHUD;
 - (void)_hideHUD:(MBProgressHUD *)hud;
 - (void)_removeObserve;
