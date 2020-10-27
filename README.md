@@ -47,14 +47,14 @@ pod 'AFNetworking'
 
 ## 使用方法
 ### 一、微信相关功能
-##### 初始化
+#### 初始化
 初始化非常简单
 ```
 - (void)initWithAppID:(NSString *)appID
             appSecret:(nullable NSString *)appSecret
         universalLink:(NSString *)universalLink;
 ```
-##### 处理微信回调
+#### 处理微信回调
 ```
 // 9.0之后
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options{
@@ -80,7 +80,7 @@ pod 'AFNetworking'
 }
 ```
 
-##### 获取用户信息（微信登录）
+#### 获取用户信息（微信登录）
 通过查看微信开发者文档，发现通过微信SDK不能直接获取到用户信息，要获取用户信息，需要由3个步骤:
 - 通过微信SDK获取code
 
@@ -125,7 +125,7 @@ YHWXUserInfo *userInfo = [YHWXManager sharedInstance].userInfo;
 ```
 
 
-##### 微信分享网页
+#### 微信分享网页
 ```
 - (void)shareWebWithURL:(NSString *)URL
                   title:(nullable NSString *)title
@@ -136,7 +136,7 @@ YHWXUserInfo *userInfo = [YHWXManager sharedInstance].userInfo;
         completionBlock:(void(^_Nullable)(BOOL isSuccess))completionBlock;
 ```
 
-##### 微信支付
+#### 微信支付
 微信支付是一个单独的模块，如果你的应用不包含微信支付，请不要导入，否则可能会被拒。
 ```
 /// 微信支付方式一：服务端只需要提供prepayID，其余的secretKey、partnerID、appID在APP里面写死（客户端做签名，不安全）
