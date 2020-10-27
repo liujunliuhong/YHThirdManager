@@ -74,16 +74,16 @@
     self.dataSource = [NSMutableArray array];
     
     
-    //        Model *model1 = [[Model alloc] initWithTitle:@"QQ授权" action:@selector(qq_auth)];
-    //        Model *model2 = [[Model alloc] initWithTitle:@"QQ获取用户信息" action:@selector(qq_getUserInfo)];
-    //        Model *model3 = [[Model alloc] initWithTitle:@"QQ网页分享" action:@selector(qq_webShare)];
-    //        Model *model4 = [[Model alloc] initWithTitle:@"QQ图片分享" action:@selector(qq_picShare)];
     Model *model1 = [[Model alloc] initWithTitle:@"微信 - 获取code" action:@selector(weixin_getCode)];
     Model *model2 = [[Model alloc] initWithTitle:@"微信 - 获取accessToken" action:@selector(weixin_getAccessToken)];
     Model *model3 = [[Model alloc] initWithTitle:@"微信 - 获取获取用户信息" action:@selector(weixin_getUserInfo)];
     Model *model4 = [[Model alloc] initWithTitle:@"微信 - 获取网页分享" action:@selector(weixin_webShare)];
     Model *model5 = [[Model alloc] initWithTitle:@"微信 - 微信支付" action:@selector(weixin_pay)];
-    NSArray<Model *> *ary = @[model1, model2, model3, model4, model5];
+    Model *model6 = [[Model alloc] initWithTitle:@"QQ授权" action:@selector(qq_auth)];
+    Model *model7 = [[Model alloc] initWithTitle:@"QQ获取用户信息" action:@selector(qq_getUserInfo)];
+    Model *model8 = [[Model alloc] initWithTitle:@"QQ网页分享" action:@selector(qq_webShare)];
+    Model *model9 = [[Model alloc] initWithTitle:@"QQ图片分享" action:@selector(qq_picShare)];
+    NSArray<Model *> *ary = @[model1, model2, model3, model4, model5, model6, model7, model8, model9];
     [self.dataSource addObject:ary];
     
     
@@ -200,8 +200,6 @@
 
 
 
-
-
 #pragma mark ------------------ QQ ------------------
 // QQ授权
 - (void)qq_auth{
@@ -232,6 +230,7 @@
                 return;
             }
             NSLog(@"😋获取用户信息成功");
+            [self alertMessage:[YHQQManager sharedInstance].userInfo.originInfo];
         }];
     }];
 }
@@ -257,6 +256,22 @@
         NSLog(@"😋分享成功");
     }];
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #pragma mark ------------------ 新浪微博 ------------------

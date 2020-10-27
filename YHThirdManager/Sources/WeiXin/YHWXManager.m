@@ -23,7 +23,6 @@
 #define kGetUserInfoAPI      @"https://api.weixin.qq.com/sns/userinfo"
 
 
-
 @interface YHWXManager() <WXApiDelegate>
 @property (nonatomic, copy) NSString *appID;
 @property (nonatomic, copy) NSString *appSecret;
@@ -36,12 +35,6 @@
 @property (nonatomic, strong) MBProgressHUD *requestAccessTokenHUD;
 @property (nonatomic, strong) MBProgressHUD *getUserInfoHUD;
 @property (nonatomic, strong) MBProgressHUD *shareWebHUD;
-
-
-@property (nonatomic, assign) BOOL isNeedToHideRequestCodeHUD;
-@property (nonatomic, assign) BOOL isNeedToHideRequestAccessTokenHUD;
-@property (nonatomic, assign) BOOL isNeedToHideGetUserInfoHUD;
-@property (nonatomic, assign) BOOL isNeedToHideShareWebHUD;
 
 
 @property (nonatomic, copy) void(^getCodeCompletionBlock)(BOOL isSuccess);
@@ -100,12 +93,11 @@
             YHThirdDebugLog(@"[微信] [获取code] appID为空");
             return;
         }
-        self.isNeedToHideRequestCodeHUD = YES;
         
         if (showHUD && [WXApi isWXAppInstalled]) {
             [self _removeObserve];
             [self _addObserve];
-            self.requestCodeHUD = [self getHUD];
+            self.requestCodeHUD = YHThird_GetHud;
         }
         
         self.getCodeCompletionBlock = completionBlock;
@@ -123,7 +115,7 @@
                 }
                 weakSelf.getCodeCompletionBlock = nil;
                 [weakSelf _removeObserve];
-                [weakSelf _hideHUD:weakSelf.requestCodeHUD];
+                YHThird_HideHud(weakSelf.requestCodeHUD);
                 weakSelf.requestCodeHUD = nil;
             });
         }];
@@ -142,11 +134,8 @@
                        completionBlock:(void (^)(BOOL))completionBlock{
     YHThird_WeakSelf
     dispatch_async(dispatch_get_main_queue(), ^{
-        
-        weakSelf.isNeedToHideRequestAccessTokenHUD = NO; // 网络请求，需要等到网络数据返回才隐藏
-        
         if (showHUD) {
-            weakSelf.requestAccessTokenHUD = [weakSelf getHUD];
+            weakSelf.requestAccessTokenHUD = YHThird_GetHud;
         }
         
         NSDictionary *param = @{@"appid": appID ? appID : @"",
@@ -158,9 +147,8 @@
         
         [[YHThirdHttpRequest sharedInstance] requestWithURL:kGetAccessTokenAPI method:YHThirdHttpRequestMethodGET parameter:param successBlock:^(id  _Nonnull responseObject) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf _hideHUD:weakSelf.requestAccessTokenHUD];
+                YHThird_HideHud(weakSelf.requestAccessTokenHUD);
                 weakSelf.requestAccessTokenHUD = nil;
-                weakSelf.isNeedToHideRequestAccessTokenHUD = YES;
                 if (![responseObject isKindOfClass:[NSDictionary class]]) {
                     YHThirdDebugLog(@"[微信] [获取accessToken失败] [数据格式不正确] %@", responseObject);
                     weakSelf.authResult = nil; // 置为nil
@@ -197,7 +185,7 @@
         } failureBlock:^(NSError * _Nonnull error) {
             YHThirdDebugLog(@"[微信] [获取accessToken失败] %@", error);
             dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf _hideHUD:weakSelf.requestAccessTokenHUD];
+                YHThird_HideHud(weakSelf.requestAccessTokenHUD);
                 weakSelf.requestAccessTokenHUD = nil;
                 weakSelf.authResult = nil; // 置为nil
                 if (completionBlock) {
@@ -222,10 +210,8 @@
     YHThird_WeakSelf
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        weakSelf.isNeedToHideGetUserInfoHUD = NO; // 网络请求，需要等到网络数据返回才隐藏
-        
         if (showHUD) {
-            weakSelf.getUserInfoHUD = [weakSelf getHUD];
+            weakSelf.getUserInfoHUD = YHThird_GetHud;
         }
         
         NSDictionary *param = @{@"access_token": accessToken ? accessToken : @"",
@@ -235,9 +221,8 @@
         
         [[YHThirdHttpRequest sharedInstance] requestWithURL:kGetUserInfoAPI method:YHThirdHttpRequestMethodGET parameter:param successBlock:^(id  _Nonnull responseObject) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf _hideHUD:weakSelf.getUserInfoHUD];
+                YHThird_HideHud(weakSelf.getUserInfoHUD);
                 weakSelf.getUserInfoHUD = nil;
-                weakSelf.isNeedToHideGetUserInfoHUD = YES;
                 if (![responseObject isKindOfClass:[NSDictionary class]]) {
                     YHThirdDebugLog(@"[微信] [获取用户信息失败] [数据格式不正确] %@", responseObject);
                     weakSelf.userInfo = nil; // 置为nil
@@ -287,7 +272,7 @@
         } failureBlock:^(NSError * _Nonnull error) {
             YHThirdDebugLog(@"[微信] [获取用户信息失败] %@", error);
             dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf _hideHUD:weakSelf.getUserInfoHUD];
+                YHThird_HideHud(weakSelf.getUserInfoHUD);
                 weakSelf.getUserInfoHUD = nil;
                 weakSelf.userInfo = nil; // 置为nil
                 if (completionBlock) {
@@ -330,9 +315,8 @@
         if (showHUD && [WXApi isWXAppInstalled]) {
             [weakSelf _removeObserve];
             [weakSelf _addObserve];
-            weakSelf.shareWebHUD = [weakSelf getHUD];
+            weakSelf.shareWebHUD = YHThird_GetHud;
         }
-        weakSelf.isNeedToHideShareWebHUD = YES;
         
         weakSelf.shareWebCompletionBlock = completionBlock;
         
@@ -367,7 +351,7 @@
                 }
                 weakSelf.shareWebCompletionBlock = nil;
                 [weakSelf _removeObserve];
-                [weakSelf _hideHUD:weakSelf.shareWebHUD];
+                YHThird_HideHud(weakSelf.shareWebHUD);
                 weakSelf.shareWebHUD = nil;
             });
         }];
@@ -378,22 +362,12 @@
 - (void)applicationWillEnterForeground:(NSNotification *)noti{
     YHThirdDebugLog(@"[微信] applicationWillEnterForeground");
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (self.isNeedToHideRequestCodeHUD) {
-            [self _hideHUD:self.requestCodeHUD];
-            self.requestCodeHUD = nil;
-        }
-        if (self.isNeedToHideRequestAccessTokenHUD) {
-            [self _hideHUD:self.requestAccessTokenHUD];
-            self.requestAccessTokenHUD = nil;
-        }
-        if (self.isNeedToHideGetUserInfoHUD) {
-            [self _hideHUD:self.getUserInfoHUD];
-            self.getUserInfoHUD = nil;
-        }
-        if (self.isNeedToHideShareWebHUD) {
-            [self _hideHUD:self.shareWebHUD];
-            self.shareWebHUD = nil;
-        }
+        //
+        YHThird_HideHud(self.requestCodeHUD);
+        self.requestCodeHUD = nil;
+        //
+        YHThird_HideHud(self.shareWebHUD)
+        self.shareWebHUD = nil;
         // for pay
         [[NSNotificationCenter defaultCenter] postNotificationName:@"yh_wx_hide_hud_ppp_aaa_yyy_notification" object:nil userInfo:nil];
     });
@@ -406,22 +380,12 @@
 - (void)applicationDidBecomeActive:(NSNotification *)noti{
     YHThirdDebugLog(@"[微信] applicationDidBecomeActive");
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (self.isNeedToHideRequestCodeHUD) {
-            [self _hideHUD:self.requestCodeHUD];
-            self.requestCodeHUD = nil;
-        }
-        if (self.isNeedToHideRequestAccessTokenHUD) {
-            [self _hideHUD:self.requestAccessTokenHUD];
-            self.requestAccessTokenHUD = nil;
-        }
-        if (self.isNeedToHideGetUserInfoHUD) {
-            [self _hideHUD:self.getUserInfoHUD];
-            self.getUserInfoHUD = nil;
-        }
-        if (self.isNeedToHideShareWebHUD) {
-            [self _hideHUD:self.shareWebHUD];
-            self.shareWebHUD = nil;
-        }
+        //
+        YHThird_HideHud(self.requestCodeHUD);
+        self.requestCodeHUD = nil;
+        //
+        YHThird_HideHud(self.shareWebHUD)
+        self.shareWebHUD = nil;
         // for pay
         [[NSNotificationCenter defaultCenter] postNotificationName:@"yh_wx_hide_hud_ppp_aaa_yyy_notification" object:nil userInfo:nil];
     });
@@ -455,9 +419,8 @@
         
         dispatch_async(dispatch_get_main_queue(), ^{
             self.code = response.errCode == WXSuccess ? response.code : nil;
-            self.isNeedToHideRequestCodeHUD = YES;
             [self _removeObserve];
-            [self _hideHUD:self.requestCodeHUD];
+            YHThird_HideHud(self.requestCodeHUD);
             self.requestCodeHUD = nil;
             if (self.getCodeCompletionBlock) {
                 self.getCodeCompletionBlock(response.errCode == WXSuccess);
@@ -470,9 +433,8 @@
         YHThirdDebugLog(@"[微信] [onResp] [SendMessageToWXResp] [errCode] %d", response.errCode);
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.isNeedToHideShareWebHUD = YES;
             [self _removeObserve];
-            [self _hideHUD:self.shareWebHUD];
+            YHThird_HideHud(self.shareWebHUD);
             self.shareWebHUD = nil;
             if (self.shareWebCompletionBlock) {
                 self.shareWebCompletionBlock(response.errCode == WXSuccess);
@@ -489,30 +451,6 @@
 
 
 @implementation YHWXManager (Private)
-// 显示HUD
-- (MBProgressHUD *)getHUD{
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:[UIApplication sharedApplication].keyWindow animated:YES];//必须在主线程，源码规定
-    hud.mode = MBProgressHUDModeIndeterminate;
-    hud.contentColor = YHThird_Color(255, 255, 255, 1);
-    hud.bezelView.style = MBProgressHUDBackgroundStyleSolidColor;
-    hud.bezelView.color = [YHThird_Color(0, 0, 0, 1) colorWithAlphaComponent:0.7];
-    hud.removeFromSuperViewOnHide = YES;
-    return hud;
-}
-
-
-// 隐藏HUD
-- (void)_hideHUD:(MBProgressHUD *)hud{
-    if (!hud) {
-        return;
-    }
-    __weak typeof(hud) weakHUD = hud;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        __strong typeof(weakHUD) strongHUD = weakHUD;
-        [strongHUD hideAnimated:YES];
-        strongHUD = nil;
-    });
-}
 // 添加观察者
 - (void)_addObserve{
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];

@@ -7,11 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-
-#if __has_include(<TencentOpenAPI/TencentOAuth.h>) && __has_include(<TencentOpenAPI/QQApiInterface.h>)
-    #import <TencentOpenAPI/TencentOAuth.h>
-    #import <TencentOpenAPI/QQApiInterface.h>
-#endif
+#import <TencentOpenAPI/TencentOAuth.h>
+#import <TencentOpenAPI/QQApiInterface.h>
 
 #import "YHQQUserInfo.h"
 
@@ -34,24 +31,52 @@ typedef NS_ENUM(NSUInteger, YHQQShareDestType) {
  * SDK版本：3.3.9（2020.10.26）
  * QQ登录、分享功能的封装(文档:http://wiki.connect.qq.com/)
  * 不包含QQ支付功能，QQ支付和分享是不同的SDK
- * 吐槽一下QQ的SDK：在sdkdef.h文件里，定义了log等级，但是并没有提供关闭日志的方法，导致每次QQ登录的时候，控制台一堆的log
+ * 吐槽一下QQ的SDK：在sdkdef.h文件里，定义了log等级，但是并没有提供关闭日志的方法，导致每次QQ登录的时候，控制台一堆的log😡
+ * 再吐槽一下QQ的文档，它的`iOS_SDK环境搭建`这篇文章已经过时
+ <key>LSApplicationQueriesSchemes</key>
+ <array>
+ <string>tim</string>
+ <string>mqq</string>
+ <string>mqqapi</string>
+ <string>mqqbrowser</string>
+ <string>mttbrowser</string>
+ <string>mqqOpensdkSSoLogin</string>
+ <string>mqqopensdkapiV2</string>
+ <string>mqqopensdkapiV4</string>
+ <string>mqzone</string>
+ <string>mqzoneopensdk</string>
+ <string>mqzoneopensdkapi</string>
+ <string>mqzoneopensdkapi19</string>
+ <string>mqzoneopensdkapiV2</string>
+ <string>mqqapiwallet</string>
+ <string>mqqopensdkfriend</string>
+ <string>mqqopensdkavatar</string>
+ <string>mqqopensdkminiapp</string>
+ <string>mqqopensdkdataline</string>
+ <string>mqqgamebindinggroup</string>
+ <string>mqqopensdkgrouptribeshare</string>
+ <string>tencentapi.qq.reqContent</string>
+ <string>tencentapi.qzone.reqContent</string>
+ <string>mqqthirdappgroup</string>
+ <string>mqqopensdklaunchminiapp</string>
+ </array>
  */
 @class MBProgressHUD;
 @interface YHQQManager : NSObject
-#if __has_include(<TencentOpenAPI/TencentOAuth.h>) && __has_include(<TencentOpenAPI/QQApiInterface.h>)
+
 /// 初始化SDK的appID
 @property (nonatomic, copy, readonly) NSString *appID;
 /// 授权成功后的信息保存在此对象里面，需要什么信息自己去拿
 @property (nonatomic, strong, readonly, nullable) TencentOAuth *oauth;
 /// QQ登录获取的个人信息
 @property (nonatomic, strong, readonly, nullable) YHQQUserInfo *userInfo;
-#endif
+
 
 + (instancetype)sharedInstance;
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 
-#if __has_include(<TencentOpenAPI/TencentOAuth.h>) && __has_include(<TencentOpenAPI/QQApiInterface.h>)
+
 #pragma mark Init
 /// QQ SDK初始化
 /// @param appID appID
@@ -133,13 +158,12 @@ typedef NS_ENUM(NSUInteger, YHQQShareDestType) {
 /// @param showHUD 是否显示HUD
 /// @param completionBlock 分享完成回调（是否分享成功）
 - (void)shareImageWithImageData:(NSData *)imageData
-            thumbImageData:(nullable NSData *)thumbImageData
-                     title:(nullable NSString *)title
-               description:(nullable NSString *)description
-             shareDestType:(YHQQShareDestType)shareDestType
-                   showHUD:(BOOL)showHUD
-           completionBlock:(void(^_Nullable)(BOOL isSuccess))completionBlock;
-#endif
+                 thumbImageData:(nullable NSData *)thumbImageData
+                          title:(nullable NSString *)title
+                    description:(nullable NSString *)description
+                  shareDestType:(YHQQShareDestType)shareDestType
+                        showHUD:(BOOL)showHUD
+                completionBlock:(void(^_Nullable)(BOOL isSuccess))completionBlock;
 @end
 
 
@@ -148,7 +172,5 @@ typedef NS_ENUM(NSUInteger, YHQQShareDestType) {
 @interface YHQQManager (Private)
 - (void)_addObserve;
 - (void)_removeObserve;
-- (MBProgressHUD *)getHUD;
-- (void)_hideHUD:(MBProgressHUD *)hud;
 @end
 NS_ASSUME_NONNULL_END

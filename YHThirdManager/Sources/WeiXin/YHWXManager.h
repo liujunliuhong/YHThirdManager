@@ -126,8 +126,6 @@ typedef NS_ENUM(NSUInteger, YHWXShareType) {
 
 
 @interface YHWXManager (Private)
-- (MBProgressHUD *)getHUD;
-- (void)_hideHUD:(MBProgressHUD *)hud;
 - (void)_removeObserve;
 - (void)_addObserve;
 @end

@@ -18,11 +18,7 @@
 
 #define kGetUserInfoAPI    @"https://graph.qq.com/user/get_user_info"
 
-@interface YHQQManager()
-#if __has_include(<TencentOpenAPI/TencentOAuth.h>) && __has_include(<TencentOpenAPI/QQApiInterface.h>)
-<TencentSessionDelegate, QQApiInterfaceDelegate>
-#endif
-#if __has_include(<TencentOpenAPI/TencentOAuth.h>) && __has_include(<TencentOpenAPI/QQApiInterface.h>)
+@interface YHQQManager()<TencentSessionDelegate, QQApiInterfaceDelegate>
 @property (nonatomic, copy) NSString *appID;
 @property (nonatomic, strong) TencentOAuth *oauth;
 @property (nonatomic, strong) YHQQUserInfo *userInfo;
@@ -34,8 +30,6 @@
 @property (nonatomic, copy) void(^authComplectionBlock)(BOOL isSuccess);
 @property (nonatomic, copy) void(^shareComplectionBlock)(BOOL isSuccess);
 
-@property (nonatomic, assign) BOOL sdkFlag;
-#endif
 @end
 
 
@@ -58,18 +52,18 @@
     }
     return self;
 }
-#if __has_include(<TencentOpenAPI/TencentOAuth.h>) && __has_include(<TencentOpenAPI/QQApiInterface.h>)
+
 #pragma mark Init
 - (void)initWithAppID:(NSString *)appID universalLink:(NSString *)universalLink{
     if (self.oauth) {
         self.oauth = nil;
     }
-    if (!appID) {
+    if (!appID || appID.length <= 0) {
         YHThirdDebugLog(@"[QQ] [初始化] appID为空");
         return;
     }
     self.appID = appID;
-    if (universalLink) {
+    if (universalLink && universalLink.length > 0) {
         self.oauth = [[TencentOAuth alloc] initWithAppId:appID andUniversalLink:universalLink andDelegate:self];
     } else {
         self.oauth = [[TencentOAuth alloc] initWithAppId:appID andDelegate:self];
@@ -90,15 +84,14 @@
 - (void)authWithShowHUD:(BOOL)showHUD
         completionBlock:(void (^)(BOOL))completionBlock{
     dispatch_async(dispatch_get_main_queue(), ^{
+        [self _removeObserve];
         if (!self.appID) {
             YHThirdDebugLog(@"[QQ] [授权] appID为空");
             return;
         }
-        self.sdkFlag = NO;
         if (showHUD && [QQApiInterface isQQInstalled]) { // 此处做了个判断：只有安装了QQ,才会显示HUD，否则不显示
-            [self _removeObserve];
             [self _addObserve];
-            self.authHUD = [self getHUD];
+            self.authHUD = YHThird_GetHud;
         }
         self.authComplectionBlock = completionBlock;
         
@@ -106,15 +99,17 @@
                                  kOPEN_PERMISSION_GET_USER_INFO,
                                  kOPEN_PERMISSION_GET_SIMPLE_USER_INFO];
         BOOL result = [self.oauth authorize:permissions];
-        if (!result) {
-            YHThirdDebugLog(@"[QQ] [授权] 授权失败");
-            if (completionBlock) {
-                completionBlock(NO);
-            }
-            self.authComplectionBlock = nil;
-            [self _hideHUD:self.authHUD];
-            [self _removeObserve];
+        if (result) {
+            return;
         }
+        YHThirdDebugLog(@"[QQ] [授权] 授权失败");
+        if (completionBlock) {
+            completionBlock(NO);
+        }
+        self.authComplectionBlock = nil;
+        YHThird_HideHud(self.authHUD);
+        self.authHUD = nil;
+        [self _removeObserve];
     });
 }
 
@@ -126,82 +121,86 @@
                    completionBlock:(void (^)(BOOL))completionBlock{
     YHThird_WeakSelf
     dispatch_async(dispatch_get_main_queue(), ^{
+        [self _removeObserve];
         NSDictionary *param = @{@"access_token": accessToken ? accessToken : @"",
                                 @"oauth_consumer_key": appID ? appID : @"",
                                 @"openid": openId ? openId : @""};
         YHThirdDebugLog(@"[QQ] [获取个人信息参数] %@", param);
-        weakSelf.sdkFlag = YES;
         if (showHUD) {
-            weakSelf.getUserInfoHUD = [weakSelf getHUD];
+            weakSelf.getUserInfoHUD = YHThird_GetHud;
         }
         
         [[YHThirdHttpRequest sharedInstance] requestWithURL:kGetUserInfoAPI method:YHThirdHttpRequestMethodGET parameter:param successBlock:^(id  _Nonnull responseObject) {
-            if (![responseObject isKindOfClass:[NSDictionary class]]) {
-                YHThirdDebugLog(@"[QQ] [获取个人信息失败] [数据格式不正确] %@", responseObject);
-                weakSelf.userInfo = nil;
-                [weakSelf _hideHUD:weakSelf.getUserInfoHUD];
-                dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf _removeObserve];
+                if (![responseObject isKindOfClass:[NSDictionary class]]) {
+                    YHThirdDebugLog(@"[QQ] [获取个人信息失败] [数据格式不正确] %@", responseObject);
+                    weakSelf.userInfo = nil;
+                    YHThird_HideHud(weakSelf.getUserInfoHUD);
+                    weakSelf.getUserInfoHUD = nil;
                     if (completionBlock) {
                         completionBlock(NO);
                     }
-                });
-                return ;
-            }
-            
-            YHThirdDebugLog(@"[QQ] [获取个人信息成功] %@", responseObject);
-            
-            NSDictionary *infoDic = (NSDictionary *)responseObject;
-            
-            YHQQUserInfo *result = [[YHQQUserInfo alloc] init];
-            
-            result.originInfo = infoDic;
-            
-            if ([infoDic.allKeys containsObject:@"nickname"]) {
-                result.nickName = [NSString stringWithFormat:@"%@", infoDic[@"nickname"]];
-            }
-            if ([infoDic.allKeys containsObject:@"gender"]) {
-                NSString *sex = [NSString stringWithFormat:@"%@", infoDic[@"gender"]];
-                if ([sex isEqualToString:@"男"]) {
-                    result.sex = 1;
-                } else if ([sex isEqualToString:@"女"]) {
-                    result.sex = 2;
-                } else {
-                    result.sex = 0;
+                    return ;
                 }
-            }
-            if ([infoDic.allKeys containsObject:@"province"]) {
-                result.province = [NSString stringWithFormat:@"%@", infoDic[@"province"]];
-            }
-            if ([infoDic.allKeys containsObject:@"city"]) {
-                result.city = [NSString stringWithFormat:@"%@", infoDic[@"city"]];
-            }
-            
-            // 依次取头像，保证一定有头像返回
-            if ([infoDic.allKeys containsObject:@"figureurl_qq"]) {
-                result.headImgURL = [NSString stringWithFormat:@"%@", infoDic[@"figureurl_qq"]];
-            } else if ([infoDic.allKeys containsObject:@"figureurl_qq_2"]) {
-                result.headImgURL = [NSString stringWithFormat:@"%@", infoDic[@"figureurl_qq_2"]];
-            } else if ([infoDic.allKeys containsObject:@"figureurl_2"]) {
-                result.headImgURL = [NSString stringWithFormat:@"%@", infoDic[@"figureurl_2"]];
-            } else if ([infoDic.allKeys containsObject:@"figureurl_1"]) {
-                result.headImgURL = [NSString stringWithFormat:@"%@", infoDic[@"figureurl_1"]];
-            } else if ([infoDic.allKeys containsObject:@"figureurl"]) {
-                result.headImgURL = [NSString stringWithFormat:@"%@", infoDic[@"figureurl"]];
-            } else if ([infoDic.allKeys containsObject:@"figureurl_qq_1"]) {
-                result.headImgURL = [NSString stringWithFormat:@"%@", infoDic[@"figureurl_qq_1"]];
-            }
-            weakSelf.userInfo = result;
-            [weakSelf _hideHUD:weakSelf.getUserInfoHUD];
-            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                YHThirdDebugLog(@"[QQ] [获取个人信息成功] %@", responseObject);
+                
+                NSDictionary *infoDic = (NSDictionary *)responseObject;
+                
+                YHQQUserInfo *result = [[YHQQUserInfo alloc] init];
+                
+                result.originInfo = infoDic;
+                
+                if ([infoDic.allKeys containsObject:@"nickname"]) {
+                    result.nickName = [NSString stringWithFormat:@"%@", infoDic[@"nickname"]];
+                }
+                if ([infoDic.allKeys containsObject:@"gender"]) {
+                    NSString *sex = [NSString stringWithFormat:@"%@", infoDic[@"gender"]];
+                    if ([sex isEqualToString:@"男"]) {
+                        result.sex = 1;
+                    } else if ([sex isEqualToString:@"女"]) {
+                        result.sex = 2;
+                    } else {
+                        result.sex = 0;
+                    }
+                }
+                if ([infoDic.allKeys containsObject:@"province"]) {
+                    result.province = [NSString stringWithFormat:@"%@", infoDic[@"province"]];
+                }
+                if ([infoDic.allKeys containsObject:@"city"]) {
+                    result.city = [NSString stringWithFormat:@"%@", infoDic[@"city"]];
+                }
+                
+                // 依次取头像，保证一定有头像返回
+                if ([infoDic.allKeys containsObject:@"figureurl_qq"]) {
+                    result.headImgURL = [NSString stringWithFormat:@"%@", infoDic[@"figureurl_qq"]];
+                } else if ([infoDic.allKeys containsObject:@"figureurl_qq_2"]) {
+                    result.headImgURL = [NSString stringWithFormat:@"%@", infoDic[@"figureurl_qq_2"]];
+                } else if ([infoDic.allKeys containsObject:@"figureurl_2"]) {
+                    result.headImgURL = [NSString stringWithFormat:@"%@", infoDic[@"figureurl_2"]];
+                } else if ([infoDic.allKeys containsObject:@"figureurl_1"]) {
+                    result.headImgURL = [NSString stringWithFormat:@"%@", infoDic[@"figureurl_1"]];
+                } else if ([infoDic.allKeys containsObject:@"figureurl"]) {
+                    result.headImgURL = [NSString stringWithFormat:@"%@", infoDic[@"figureurl"]];
+                } else if ([infoDic.allKeys containsObject:@"figureurl_qq_1"]) {
+                    result.headImgURL = [NSString stringWithFormat:@"%@", infoDic[@"figureurl_qq_1"]];
+                }
+                weakSelf.userInfo = result;
+                YHThird_HideHud(weakSelf.getUserInfoHUD);
+                weakSelf.getUserInfoHUD = nil;
                 if (completionBlock) {
                     completionBlock(YES);
                 }
             });
         } failureBlock:^(NSError * _Nonnull error) {
             YHThirdDebugLog(@"[QQ] [获取个人信息失败] %@", error);
-            [weakSelf _hideHUD:weakSelf.getUserInfoHUD];
-            weakSelf.userInfo = nil;
             dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf _removeObserve];
+                YHThird_HideHud(weakSelf.getUserInfoHUD);
+                weakSelf.getUserInfoHUD = nil;
+                weakSelf.userInfo = nil;
+                
                 if (completionBlock) {
                     completionBlock(NO);
                 }
@@ -221,19 +220,18 @@
                 showHUD:(BOOL)showHUD
         completionBlock:(void (^)(BOOL))completionBlock{
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (!self.appID) {
+        [self _removeObserve];
+        if (!self.appID || self.appID.length <= 0) {
             YHThirdDebugLog(@"[QQ] [分享] appID为空");
             return;
         }
-        self.sdkFlag = NO;
         if (showHUD && [QQApiInterface isQQInstalled]) {
-            [self _removeObserve];
             [self _addObserve];
-            self.shareHUD = [self getHUD];
+            self.shareHUD = YHThird_GetHud;
         }
         self.shareComplectionBlock = completionBlock;
         
-        QQApiNewsObject *object = [QQApiNewsObject objectWithURL:[NSURL URLWithString:URL] title:title description:description previewImageURL:[NSURL URLWithString:thumbImageURL]];
+    QQApiNewsObject *object = [QQApiNewsObject objectWithURL:[NSURL URLWithString:URL] title:title description:description previewImageURL:thumbImageURL ? [NSURL URLWithString:thumbImageURL] : nil];
         
         ShareDestType destType = ShareDestTypeQQ;
         if (shareDestType == YHQQShareDestType_QQ) {
@@ -246,20 +244,24 @@
         SendMessageToQQReq *rq = [SendMessageToQQReq reqWithContent:object];
         
         QQApiSendResultCode sendResultCode = EQQAPISENDFAILD;
+        
         if (shareTye == YHQQShareType_QQ) {
             sendResultCode = [QQApiInterface sendReq:rq];
         } else if (shareTye == YHQQShareType_QZone) {
             sendResultCode = [QQApiInterface SendReqToQZone:rq];
         }
+        
         YHThirdDebugLog(@"[QQ] [分享] [QQApiSendResultCode] %d", (int)sendResultCode);
-        if (sendResultCode != EQQAPISENDSUCESS) {
-            if (completionBlock) {
-                completionBlock(NO);
-            }
-            self.shareComplectionBlock = nil;
-            [self _hideHUD:self.shareHUD];
-            [self _removeObserve];
+        if (sendResultCode == EQQAPISENDSUCESS) {
+            return;
         }
+        if (completionBlock) {
+            completionBlock(NO);
+        }
+        self.shareComplectionBlock = nil;
+        YHThird_HideHud(self.shareHUD);
+        self.shareHUD = nil;
+        [self _removeObserve];
     });
 }
 
@@ -272,15 +274,14 @@
                 showHUD:(BOOL)showHUD
         completionBlock:(void (^)(BOOL))completionBlock{
     dispatch_async(dispatch_get_main_queue(), ^{
+        [self _removeObserve];
         if (!self.appID) {
             YHThirdDebugLog(@"[QQ] [分享] appID为空");
             return;
         }
-        self.sdkFlag = NO;
         if (showHUD && [QQApiInterface isQQInstalled]) {
-            [self _removeObserve];
             [self _addObserve];
-            self.shareHUD = [self getHUD];
+            self.shareHUD = YHThird_GetHud;
         }
         self.shareComplectionBlock = completionBlock;
         
@@ -303,14 +304,16 @@
             sendResultCode = [QQApiInterface SendReqToQZone:rq];
         }
         YHThirdDebugLog(@"[QQ] [分享] [QQApiSendResultCode] %d", (int)sendResultCode);
-        if (sendResultCode != EQQAPISENDSUCESS) {
-            if (completionBlock) {
-                completionBlock(NO);
-            }
-            self.shareComplectionBlock = nil;
-            [self _hideHUD:self.shareHUD];
-            [self _removeObserve];
+        if (sendResultCode == EQQAPISENDSUCESS) {
+            return;
         }
+        if (completionBlock) {
+            completionBlock(NO);
+        }
+        self.shareComplectionBlock = nil;
+        YHThird_HideHud(self.shareHUD);
+        self.shareHUD = nil;
+        [self _removeObserve];
     });
 }
 
@@ -322,15 +325,14 @@
                         showHUD:(BOOL)showHUD
                 completionBlock:(void (^)(BOOL))completionBlock{
     dispatch_async(dispatch_get_main_queue(), ^{
+        [self _removeObserve];
         if (!self.appID) {
             YHThirdDebugLog(@"[QQ] [分享] appID为空");
             return;
         }
-        self.sdkFlag = NO;
         if (showHUD && [QQApiInterface isQQInstalled]) {
-            [self _removeObserve];
             [self _addObserve];
-            self.shareHUD = [self getHUD];
+            self.shareHUD = YHThird_GetHud;
         }
         self.shareComplectionBlock = completionBlock;
         
@@ -348,14 +350,16 @@
         
         QQApiSendResultCode sendResultCode = [QQApiInterface sendReq:rq];
         YHThirdDebugLog(@"[QQ] [分享] [QQApiSendResultCode] %d", (int)sendResultCode);
-        if (sendResultCode != EQQAPISENDSUCESS) {
-            if (completionBlock) {
-                completionBlock(NO);
-            }
-            self.shareComplectionBlock = nil;
-            [self _hideHUD:self.shareHUD];
-            [self _removeObserve];
+        if (sendResultCode == EQQAPISENDSUCESS) {
+            return;
         }
+        if (completionBlock) {
+            completionBlock(NO);
+        }
+        self.shareComplectionBlock = nil;
+        YHThird_HideHud(self.shareHUD);
+        self.shareHUD = nil;
+        [self _removeObserve];
     });
 }
 
@@ -363,34 +367,43 @@
 // 登录成功后的回调.
 - (void)tencentDidLogin {
     YHThirdDebugLog(@"[QQ] [授权] [TencentLoginDelegate] tencentDidLogin");
-    if (self.authComplectionBlock) {
-        self.authComplectionBlock(YES);
-    }
-    self.authComplectionBlock = nil;
-    [self _hideHUD:self.authHUD];
-    [self _removeObserve];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.authComplectionBlock) {
+            self.authComplectionBlock(YES);
+        }
+        self.authComplectionBlock = nil;
+        YHThird_HideHud(self.authHUD);
+        self.authHUD = nil;
+        [self _removeObserve];
+    });
 }
 
 // 授权失败后的回调.
 - (void)tencentDidNotLogin:(BOOL)cancelled {
     YHThirdDebugLog(@"[QQ] [授权] [TencentLoginDelegate] tencentDidNotLogin");
-    if (self.authComplectionBlock) {
-        self.authComplectionBlock(NO);
-    }
-    self.authComplectionBlock = nil;
-    [self _hideHUD:self.authHUD];
-    [self _removeObserve];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.authComplectionBlock) {
+            self.authComplectionBlock(NO);
+        }
+        self.authComplectionBlock = nil;
+        YHThird_HideHud(self.authHUD);
+        self.authHUD = nil;
+        [self _removeObserve];
+    });
 }
 
 // 授权时网络有问题的回调.
 - (void)tencentDidNotNetWork {
     YHThirdDebugLog(@"[QQ] [授权] [TencentLoginDelegate] tencentDidNotNetWork");
-    if (self.authComplectionBlock) {
-        self.authComplectionBlock(NO);
-    }
-    self.authComplectionBlock = nil;
-    [self _hideHUD:self.authHUD];
-    [self _removeObserve];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.authComplectionBlock) {
+            self.authComplectionBlock(NO);
+        }
+        self.authComplectionBlock = nil;
+        YHThird_HideHud(self.authHUD);
+        self.authHUD = nil;
+        [self _removeObserve];
+    });
 }
 
 - (void)didGetUnionID{
@@ -409,21 +422,15 @@
     if ([resp isKindOfClass:[SendMessageToQQResp class]]) {
         SendMessageToQQResp *response = (SendMessageToQQResp *)resp;
         YHThirdDebugLog(@"[QQ] [分享] [QQApiInterfaceDelegate] [onResp] [SendMessageToQQResp] [result] %@", response.result);
-        if ([response.result isEqualToString:@"0"]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
             if (self.shareComplectionBlock) {
-                self.shareComplectionBlock(YES);
+                self.shareComplectionBlock([response.result isEqualToString:@"0"]);
             }
             self.shareComplectionBlock = nil;
-            [self _hideHUD:self.shareHUD];
+            YHThird_HideHud(self.shareHUD);
+            self.shareHUD = nil;
             [self _removeObserve];
-        } else {
-            if (self.shareComplectionBlock) {
-                self.shareComplectionBlock(NO);
-            }
-            self.shareComplectionBlock = nil;
-            [self _hideHUD:self.shareHUD];
-            [self _removeObserve];
-        }
+        });
     }
 }
 
@@ -435,8 +442,14 @@
 #pragma mark Notification
 - (void)applicationWillEnterForeground:(NSNotification *)noti{
     YHThirdDebugLog(@"applicationWillEnterForeground");
-    [self _hideHUD:self.authHUD];
-    [self _hideHUD:self.shareHUD];
+    //
+    YHThird_HideHud(self.shareHUD);
+    self.shareHUD = nil;
+    //
+    YHThird_HideHud(self.authHUD);
+    self.authHUD = nil;
+    //
+    [self _removeObserve];
 }
 
 - (void)applicationDidEnterBackground:(NSNotification *)noti{
@@ -445,14 +458,16 @@
 
 - (void)applicationDidBecomeActive:(NSNotification *)noti{
     YHThirdDebugLog(@"applicationDidBecomeActive");
-    // 经过不断测试发现：当代理tencentDidLogin回调之后，有时仍然会走该通知回调。因此定义了一个flag，当tencentDidLogin回调之后，设置该flag为YES，否则HUD会提前关闭
-    if (self.sdkFlag) {
-        return;
-    }
-    [self _hideHUD:self.authHUD];
-    [self _hideHUD:self.shareHUD];
+    //
+    YHThird_HideHud(self.shareHUD);
+    self.shareHUD = nil;
+    //
+    YHThird_HideHud(self.authHUD);
+    self.authHUD = nil;
+    //
+    [self _removeObserve];
 }
-#endif
+
 @end
 
 
@@ -470,24 +485,5 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
-}
-
-// 显示HUD
-- (MBProgressHUD *)getHUD{
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:[UIApplication sharedApplication].keyWindow animated:YES];//必须在主线程，源码规定
-    hud.mode = MBProgressHUDModeIndeterminate;
-    hud.contentColor = [UIColor whiteColor];
-    hud.bezelView.style = MBProgressHUDBackgroundStyleSolidColor;
-    hud.bezelView.color = [[UIColor blackColor] colorWithAlphaComponent:0.7];
-    hud.removeFromSuperViewOnHide = YES;
-    return hud;
-}
-
-// 隐藏HUD
-- (void)_hideHUD:(MBProgressHUD *)hud{
-    if (!hud) { return; }
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [hud hideAnimated:YES];
-    });
 }
 @end

@@ -60,7 +60,7 @@
         if (showHUD && [WXApi isWXAppInstalled]) {
             [weakSelf _removeObserve];
             [weakSelf _addObserve];
-            weakSelf.payHUD = [weakSelf getHUD];
+            weakSelf.payHUD = YHThird_GetHud;
         }
         weakSelf.isNeedToHidePayHUD = YES;
         
@@ -97,7 +97,7 @@
                 }
                 weakSelf.payCompletionBlock = nil;
                 [weakSelf _removeObserve];
-                [weakSelf _hideHUD:weakSelf.payHUD];
+                YHThird_HideHud(weakSelf.payHUD);
                 [weakSelf removeNotification];
                 weakSelf.payHUD = nil;
             });
@@ -146,7 +146,7 @@
         if (showHUD && [WXApi isWXAppInstalled]) {
             [weakSelf _removeObserve];
             [weakSelf _addObserve];
-            weakSelf.payHUD = [weakSelf getHUD];
+            weakSelf.payHUD = YHThird_GetHud;
         }
         weakSelf.isNeedToHidePayHUD = YES;
         
@@ -170,7 +170,7 @@
                 }
                 weakSelf.payCompletionBlock = nil;
                 [weakSelf _removeObserve];
-                [weakSelf _hideHUD:weakSelf.payHUD];
+                YHThird_HideHud(weakSelf.payHUD);
                 [weakSelf removeNotification];
                 weakSelf.payHUD = nil;
             });
@@ -212,7 +212,7 @@
         }
         self.payCompletionBlock = nil;
         [self _removeObserve];
-        [self _hideHUD:self.payHUD];
+        YHThird_HideHud(self.payHUD);
         [self removeNotification];
         self.payHUD = nil;
     });
@@ -222,7 +222,7 @@
     if (!self.isNeedToHidePayHUD) {
         return;
     }
-    [self _hideHUD:self.payHUD];
+    YHThird_HideHud(self.payHUD);
     [self removeNotification];
     self.isNeedToHidePayHUD = YES;
     self.payHUD = nil;

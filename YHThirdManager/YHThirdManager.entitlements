@@ -4,9 +4,9 @@
 <dict>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>https://mlive.qqrom.com/ymdj/</string>
-		<string>https://help.qq.com/app/</string>
-		<string>https://help.wechat.com/app/</string>
+		<string>applinks:mlive.qqrom.com/ymdj/</string>
+		<string>applinks:help.qq.com/app/</string>
+		<string>applinks:help.wechat.com/app/</string>
 		<string>https://help.wechat.com/sdksample/</string>
 	</array>
 </dict>
