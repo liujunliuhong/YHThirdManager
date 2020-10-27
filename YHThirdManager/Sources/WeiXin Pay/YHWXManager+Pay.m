@@ -211,20 +211,21 @@
             self.payCompletionBlock(response.errCode == WXSuccess);
         }
         self.payCompletionBlock = nil;
+        [self _removeObserve];
+        [self _hideHUD:self.payHUD];
+        [self removeNotification];
+        self.payHUD = nil;
     });
-    [self _removeObserve];
-    [self _hideHUD:self.payHUD];
-    [self removeNotification];
-    self.payHUD = nil;
 }
 
 - (void)hidePayHUDNotification{
-    if (self.isNeedToHidePayHUD) {
-        [self _hideHUD:self.payHUD];
-        [self removeNotification];
-        self.isNeedToHidePayHUD = YES;
-        self.payHUD = nil;
+    if (!self.isNeedToHidePayHUD) {
+        return;
     }
+    [self _hideHUD:self.payHUD];
+    [self removeNotification];
+    self.isNeedToHidePayHUD = YES;
+    self.payHUD = nil;
 }
 
 

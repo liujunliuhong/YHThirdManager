@@ -7,17 +7,19 @@
 //
 
 #import "YHThirdHttpRequest.h"
-@import AFNetworking;
+
+#if __has_include(<AFNetworking/AFNetworking.h>)
+#import <AFNetworking/AFNetworking.h>
+#elif __has_include("AFNetworking.h")
+#import "AFNetworking.h"
+#endif
 
 #define kTimeOutInterval        60
 
 @interface YHThirdHttpRequest ()
-
 @property (nonatomic, strong) AFHTTPSessionManager *sessionManager;
-
 @property (nonatomic, strong) AFJSONRequestSerializer *requestSerializerForJSON;
 @property (nonatomic, strong) AFJSONResponseSerializer *responseSerializerForJSON;
-
 @end
 
 @implementation YHThirdHttpRequest
